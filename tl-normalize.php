@@ -1,12 +1,15 @@
 <?php
 /**
  * Plugin Name: TL Normalizer
- * Plugin URI: http://torstenlandsiedel.de
+ * Plugin URI: https://github.com/Zodiac1978/tl-normalizer
  * Description: Normalizes content, excerpt, title and comment content to Normalization Form C.
  * Version: 1.0.0
  * Author: Torsten Landsiedel
  * Author URI: http://torstenlandsiedel.de
  * License: GPLv2
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: tl-normalizer
+ * Domain Path: /languages
  */
 
 function tl_normalizer( $content ) {
