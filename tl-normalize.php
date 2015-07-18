@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: TL Normalizer
+ * Plugin Name: Normalizer
  * Plugin URI: https://github.com/Zodiac1978/tl-normalizer
  * Description: Normalizes content, excerpt, title and comment content to Normalization Form C.
  * Version: 1.0.0

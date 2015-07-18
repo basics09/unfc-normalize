@@ -1,4 +1,4 @@
-=== TL Normalizer ===
+=== Normalizer ===
 Contributors: zodiac1978
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LCH9UVV7RKDFY
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer
@@ -21,7 +21,7 @@ See: http://php.net/manual/en/normalizer.normalize.php
 
 == Installation ==
 
-1. Upload the zip file from this plugin on your plugins page or search for `TL Normalizer` and install it directly from the repository
+1. Upload the zip file from this plugin on your plugins page or search for `Normalizer` and install it directly from the repository
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Done!
 
@@ -29,11 +29,11 @@ See: http://php.net/manual/en/normalizer.normalize.php
 
 = I don't see any changes. =
 
-The plugin just adds the normalization if there is a problem. Furthermore it does do the normalization before saving, so you don't see any anything. It just works if it is needed.
+The plugin just adds the normalization if there are problematic characters. Furthermore it does do the normalization before saving, so you don't see any anything. It just works if it is needed.
 
 = Will this slow down my site? =
 
-Sorry, but I don't have a clue. Maybe a little bit. 
+Sorry, but I don't have a clue. Maybe just a little bit. 
 
 == Screenshots ==
 
