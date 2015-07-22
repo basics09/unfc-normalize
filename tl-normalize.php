@@ -8,7 +8,7 @@
  * Author URI: http://torstenlandsiedel.de
  * License: GPLv2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: tl-normalizer
+ * Text Domain: normalizer
  * Domain Path: /languages
  */
 
@@ -38,7 +38,7 @@ class TLNormalizer {
     static function activation_check() {
         if ( ! self::compatible_version() ) {
             deactivate_plugins( plugin_basename( __FILE__ ) );
-            wp_die( __( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'tl-normalizer' ) );
+            wp_die( __( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'normalizer' ) );
         }
     }
 
@@ -59,7 +59,7 @@ class TLNormalizer {
     function disabled_notice() {
     	$error_message  = '<div id="message" class="updated notice is-dismissible">';
     	$error_message .= '<p><strong>' . __('Plugin deactivated!') . '</strong> ';
-    	$error_message .= esc_html__( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'tl-normalizer' );
+    	$error_message .= esc_html__( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'normalizer' );
     	$error_message .= '</p></div>';
     	echo $error_message;
     } 
