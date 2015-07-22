@@ -12,6 +12,24 @@
  * Domain Path: /languages
  */
 
+
+function check_php() {
+	if ( !extension_loaded( 'intl' ) && !extension_loaded( 'icu' ) ) {
+		// extensions are NOT loaded
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+		wp_die( __( '<strong>Activation failed:</strong> Your PHP is missing one of the required extensions intl and icu.', 'tl-normalizer' ) );
+	}
+
+
+	if ( !version_compare( phpversion(), "5.3.0", ">=" ) ) {
+		// you're NOT on PHP 5.3.0 or later
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+		wp_die( __( '<strong>Activation failed:</strong> Your PHP version hast to be 5.3.0 or later.', 'tl-normalizer' ) );
+	}
+}
+add_action( 'admin_init', 'check_php' );
+
+
 function tl_normalizer( $content ) {
 
 	/*
@@ -25,7 +43,7 @@ function tl_normalizer( $content ) {
 	 * See: http://php.net/manual/en/normalizer.normalize.php
 	 */
 	if ( ! normalizer_is_normalized( $content, Normalizer::FORM_C ) ) {
-		$content = normalizer_normalize( $content, Normalizer::FORM_C );	
+		$content = normalizer_normalize( $content, Normalizer::FORM_C );
 	}
 
 	return $content;
