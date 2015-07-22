@@ -38,7 +38,7 @@ class TLNormalizer {
     static function activation_check() {
         if ( ! self::compatible_version() ) {
             deactivate_plugins( plugin_basename( __FILE__ ) );
-            wp_die( __( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions.', 'tl-normalizer' ) );
+            wp_die( __( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'tl-normalizer' ) );
         }
     }
 
@@ -57,7 +57,11 @@ class TLNormalizer {
     }
 
     function disabled_notice() {
-       echo '<strong>' . esc_html__( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions.', 'tl-normalizer' ) . '</strong>';
+    	$error_message  = '<div id="message" class="updated notice is-dismissible">';
+    	$error_message .= '<p><strong>' . __('Plugin deactivated!') . '</strong> ';
+    	$error_message .= esc_html__( 'Your PHP version is not 5.3.0 or later or your PHP is missing one of the required extensions (intl and icu).', 'tl-normalizer' );
+    	$error_message .= '</p></div>';
+    	echo $error_message;
     } 
 
     static function compatible_version() {
