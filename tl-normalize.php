@@ -3,7 +3,7 @@
  * Plugin Name: Normalizer
  * Plugin URI: https://github.com/Zodiac1978/tl-normalizer
  * Description: Normalizes content, excerpt, title and comment content to Normalization Form C.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Torsten Landsiedel
  * Author URI: http://torstenlandsiedel.de
  * License: GPLv2
@@ -27,10 +27,13 @@ class TLNormalizer {
             return;
         }
 
+        //add_filter( 'acf/update_value/type=wysiwyg', array( $this, 'tl_normalizer' ) );
+        add_filter( 'acf/update_value', array( $this, 'tl_normalizer' ) );
+        add_filter( 'widget_update_callback', array( $this, 'tl_normalizer_widget' ) );
         add_filter( 'content_save_pre', array( $this, 'tl_normalizer' ) );
-        add_filter( 'title_save_pre' , array( $this, 'tl_normalizer' ) );
-        add_filter( 'pre_comment_content' , array( $this, 'tl_normalizer' ) );
-        add_filter( 'excerpt_save_pre' , array( $this, 'tl_normalizer' ) );
+        add_filter( 'title_save_pre', array( $this, 'tl_normalizer' ) );
+        add_filter( 'pre_comment_content', array( $this, 'tl_normalizer' ) );
+        add_filter( 'excerpt_save_pre', array( $this, 'tl_normalizer' ) );
     }
 
     // The primary sanity check, automatically disable the plugin on activation if it doesn't
@@ -67,12 +70,8 @@ class TLNormalizer {
     static function compatible_version() {
 
         // Add sanity checks for other version requirements here
-        if ( !extension_loaded( 'intl' ) && !extension_loaded( 'icu' ) ) {
-             return false;
-        }
-
-        if ( !version_compare( phpversion(), "5.3.0", ">=" ) ) {
-             return false;
+        if ( !function_exists( 'normalizer_normalize' )) {
+            return false;
         }
 
         return true;
@@ -96,6 +95,28 @@ class TLNormalizer {
 
         return $content;
     }
+    function tl_normalizer_widget( $instance ) {
+
+        /*
+         * Why?
+         *
+         * For everyone getting this warning from W3C: "Text run is not in Unicode Normalization Form C."
+         * http://www.w3.org/International/docs/charmod-norm/#choice-of-normalization-form
+         *
+         * Requires PHP 5.3+
+         * Be sure to have the PHP-Normalizer-extension (intl and icu) installed.
+         * See: http://php.net/manual/en/normalizer.normalize.php
+         */
+
+        foreach ($instance as $key => $value) {
+            if ( ! normalizer_is_normalized( $instance[$key], Normalizer::FORM_C ) ) {
+                $instance[$key] = normalizer_normalize( $instance[$key], Normalizer::FORM_C );
+            }
+        }
+
+        return $instance;
+    }
+
 }
 
 global $normalizer;
