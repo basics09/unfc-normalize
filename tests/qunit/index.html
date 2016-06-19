@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Normalizer QUnit Test Suite</title>
+
+		<!-- Dependencies -->
+		<script src="http://localhost/wordpress-develop/src/wp-includes/js/jquery/jquery.js"></script>
+		<script src="http://localhost/wordpress-develop/src/wp-includes/js/jquery/ui/core.js"></script>
+		<script src="http://localhost/wordpress-develop/src/wp-includes/js/underscore.min.js"></script>
+		<script src="http://localhost/wordpress-develop/src/wp-includes/js/backbone.min.js"></script>
+
+		<!-- QUnit -->
+		<link rel="stylesheet" href="vendor/qunit.css" type="text/css" media="screen" />
+		<script src="vendor/qunit.js"></script>
+		<script src="vendor/sinon.js"></script>
+		<script src="vendor/sinon-qunit.js"></script>
+		<script>QUnit.config.hidepassed = false;</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture">
+		</div>
+
+		<!-- Tested files -->
+		<script src="../../unorm/lib/unorm.js"></script>
+
+		<!-- Unit tests -->
+		<script src="unorm.js"></script>
+	</body>
+</html>

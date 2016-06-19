@@ -1,0 +1,566 @@
+# Copyright (C) 2016 Torsten Landsiedel
+# This file is distributed under the GPLv2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Normalizer 2.0.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/tl-normalize\n"
+"POT-Creation-Date: 2016-06-19 20:04+0100\n"
+"PO-Revision-Date: 2016-06-19 20:05+0100\n"
+"Last-Translator: MB <mb@mb.ie>\n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
+"_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;"
+"esc_html_x:1,2c\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: class-tl-normalizer.php:217
+msgid ""
+"The plugin \"Normalizer\" is not compatible with your system and can't be "
+"activated."
+msgstr ""
+"L&rsquo;extension &laquo;&nbsp;Normalizer&nbsp;&raquo; n&rsquo;est pas "
+"compatible avec votre système et ne peut pas être activée."
+
+#: class-tl-normalizer.php:271
+msgid "Plugin deactivated!"
+msgstr "Extension désactivée !"
+
+#: class-tl-normalizer.php:272
+msgid ""
+"The plugin \"Normalizer\" is not compatible with your system and has been "
+"deactivated."
+msgstr ""
+"L&rsquo;extension &laquo;&nbsp;Normalizer&nbsp;&raquo; n&rsquo;est pas "
+"compatible avec votre système et a été désactivée."
+
+#: class-tl-normalizer.php:295
+msgid "Warning: untested!"
+msgstr "Attention&nbsp;: non-testé&nbsp;!"
+
+#. translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress
+#. version tested; %3$s: user's current WordPress version.
+#: class-tl-normalizer.php:301
+msgid ""
+"The plugin \"Normalizer\" has only been tested on WordPress Versions %1$s to "
+"%2$s. You have WordPress Version %3$s."
+msgstr ""
+"L&rsquo;extension &laquo;&nbsp;Normalizer&nbsp;&raquo; n&rsquo;a été testée "
+"que sur des versions de WordPress %1$s à %2$s. Vous avez WordPress version "
+"%3$s."
+
+#: class-tl-normalizer.php:816
+msgid "Please wait..."
+msgstr "S&rsquo;il vous plaît attendre..."
+
+#: class-tl-normalizer.php:947 class-tl-normalizer.php:1170
+msgid "Nörmalizer Database Check"
+msgstr "Nörmalizer vérifier la base de données"
+
+#: class-tl-normalizer.php:947
+msgid "Nörmalizer Db Check"
+msgstr "Nörmalizer vérifier"
+
+#: class-tl-normalizer.php:1229
+msgid "Rescan the Database"
+msgstr "Parcourir à nouveau la base de données"
+
+#: class-tl-normalizer.php:1231
+msgid "Scan the Database"
+msgstr "Parcourir la base de données"
+
+#: class-tl-normalizer.php:1239
+msgid ""
+"You can scan the database for non-normalized data (nothing will be updated):"
+msgstr ""
+"Vous pouvez parcourir la base de données pour les données non-normalisées "
+"(rien ne sera mis à jour)&nbsp;:"
+
+#: class-tl-normalizer.php:1244
+msgid ""
+"Scanning the database can take a long time depending on the amount and type "
+"of data you have."
+msgstr ""
+"Parcourir la base de données peut prendre un certain temps en fonction de la "
+"quantité et le type des données que vous avez."
+
+#: class-tl-normalizer.php:1261
+msgid ""
+"You can normalize the non-normalized data found in the database. The "
+"database <strong>will be updated</strong>."
+msgstr ""
+"Vous pouvez normaliser les données non-normalisées trouvées dans la base de "
+"données. La base de données <strong>sera mise à jour</strong>."
+
+#: class-tl-normalizer.php:1264
+msgid ""
+"<strong>Important:</strong> before updating, please <a href=\"https://codex."
+"wordpress.org/WordPress_Backups\">back up your database</a>."
+msgstr ""
+"<strong>Important&nbsp;:</strong> avant de faire une mise à jour, veillez à "
+"<a href=\\\"https://codex.wordpress.org/fr:WordPress_Backups\\\">faire une "
+"sauvegarde de votre base de données </a>."
+
+#: class-tl-normalizer.php:1266
+msgid "Normalize All"
+msgstr "Normaliser tous"
+
+#: class-tl-normalizer.php:1268
+msgid ""
+"Normalizing can take a long time depending on the amount and type of data "
+"you have."
+msgstr ""
+"Normaliser peut prendre un certain temps en fonction de la quantité et le "
+"type des données que vous avez."
+
+#. translators: %1$s: formatted maximum number of non-normalized items listed;
+#. %2$s: formatted total number of non-normalized items found.
+#: class-tl-normalizer.php:1284
+msgid "First %1$s Non-Normalized Items of %2$s Found"
+msgstr "%1$s premiers identifiants non-normalisés de %2$s trouvés"
+
+#: class-tl-normalizer.php:1288
+msgid "Non-Normalized Items"
+msgstr "Éléments non-normalisés"
+
+#: class-tl-normalizer.php:1314
+msgid "Rescan Slugs"
+msgstr "Parcourir à nouveau les identifiants"
+
+#: class-tl-normalizer.php:1316
+msgid "Scan Slugs"
+msgstr "Parcourir les identifiants"
+
+#: class-tl-normalizer.php:1324
+msgid ""
+"You can scan the database for slugs that could be percent-encoded from non-"
+"normalized data (nothing will be updated):"
+msgstr ""
+"Vous pouvez parcourir la base de données pour les identifiants qui "
+"pourraient être pour-cent encodé à partir des données non-normalisées (rien "
+"ne sera mis à jour)&nbsp;:"
+
+#: class-tl-normalizer.php:1327
+msgid "A list of posts and/or terms with suspect slugs will be displayed."
+msgstr ""
+"Une liste des articles et&nbsp;/&nbsp;ou des termes avec les identifiants "
+"suspects sera affichée."
+
+#: class-tl-normalizer.php:1332
+msgid ""
+"Scanning the slugs can take a long time depending on the amount and type of "
+"data you have."
+msgstr ""
+"Parcourir les identifiants peut prendre un certain temps en fonction de la "
+"quantité et le type des données que vous avez."
+
+#. translators: %1$s: formatted maximum number of non-normalized slugs listed;
+#. %2$s: formatted total number of non-normalized slugs found.
+#: class-tl-normalizer.php:1348
+msgid "First %1$s Non-Normalized Slugs of %2$s Found"
+msgstr "%1$s premiers identifiants non-normalisés de %2$s trouvés"
+
+#: class-tl-normalizer.php:1352
+msgid "Non-Normalized Slugs"
+msgstr "Identifiants non-normalisés"
+
+#: class-tl-normalizer.php:1523
+msgid "Database error."
+msgstr "Erreur de base de données."
+
+#: class-tl-normalizer.php:1524
+msgid "Meta data error."
+msgstr "Erreur de métadonnées."
+
+#: class-tl-normalizer.php:1525
+msgid "Parameters error."
+msgstr "Erreur de paramètres."
+
+#: class-tl-normalizer.php:1526
+msgid "Transient has expired. Please re-scan."
+msgstr "Le transitoire a expiré. Veuillez parcourir à nouveau."
+
+#: class-tl-normalizer.php:1527
+msgid "Data out of sync!"
+msgstr "Les données se sont désynchronisées&nbsp;!"
+
+#: class-tl-normalizer.php:1528
+msgid "No items selected!"
+msgstr "Aucun élément sélectionné&nbsp;!"
+
+#: class-tl-normalizer.php:1600 class-tl-normalizer.php:2030
+msgid "..."
+msgstr "..."
+
+#. translators: %s: formatted number of items detected.
+#: class-tl-normalizer.php:1637
+msgid "%s non-normalized item detected."
+msgid_plural "%s non-normalized items detected."
+msgstr[0] "%s élement non-normalisé a détecté."
+msgstr[1] "%s élements non-normalisées ont détecté."
+
+#: class-tl-normalizer.php:1640
+msgid "<strong>No</strong> non-normalized data detected!"
+msgstr "<strong>Aucune</strong> donnée non-normalisée a détecté&nbsp;!"
+
+#. translators: %s: formatted number of items normalized.
+#: class-tl-normalizer.php:1815
+msgid "%s item normalized."
+msgid_plural "%s items normalized."
+msgstr[0] "%s élément a normalisé."
+msgstr[1] "%s éléments ont normalisé."
+
+#: class-tl-normalizer.php:1817 class-tl-normalizer.php:2246
+msgid "Nothing updated!"
+msgstr "Rien mis à jour&nbsp;!"
+
+#. translators: %s: formatted number of items locked.
+#: class-tl-normalizer.php:1822
+msgid "%s item not normalized, somebody is editing it."
+msgid_plural "%s items not normalized, somebody is editing them."
+msgstr[0] ""
+"%s élément n&rsquo;a pas normalisé, car quelqu&rsquo;un est en train de le "
+"modifier."
+msgstr[1] ""
+"%s éléments n&rsquo;ont pas normalisé, car quelqu&rsquo;un est en train de "
+"les modifier."
+
+#. translators: %s: formatted number of items that failed to normalize.
+#: class-tl-normalizer.php:1828
+msgid "%s item not normalized, failed to normalize."
+msgid_plural "%s items not normalized, failed to normalize."
+msgstr[0] "%s élément n&rsquo;a pas normalisé, échoué à normaliser."
+msgstr[1] "%s éléments n&rsquo;ont pas normalisé, échoué à normaliser."
+
+#. translators: %s: formatted number of percent-encoded items detected.
+#: class-tl-normalizer.php:2064
+msgid "%s non-normalized percent-encoded slug detected."
+msgid_plural "%s non-normalized percent-encoded slugs detected."
+msgstr[0] "%s identifiant pour-cent encodé non-normalisé a détecté."
+msgstr[1] "%s identifiants pour-cent encodés non-normalisés ont détecté."
+
+#: class-tl-normalizer.php:2068
+msgid "<strong>No</strong> non-normalized percent-encoded slugs detected!"
+msgstr ""
+"<strong>Aucun</strong> identifiant pour-cent encodé non-normalisé a "
+"détecté&nbsp;!"
+
+#. translators: %s: formatted number of slugs normalized.
+#: class-tl-normalizer.php:2244
+msgid "%s slug normalized."
+msgid_plural "%s slugs normalized."
+msgstr[0] "%s identifiant a normalisé."
+msgstr[1] "%s identifiants ont normalisé."
+
+#. translators: %s: formatted number of items locked.
+#: class-tl-normalizer.php:2251
+msgid "%s slug not normalized, somebody is editing it."
+msgid_plural "%s slugs not normalized, somebody is editing them."
+msgstr[0] ""
+"%s identifiant n&rsquo;a pas normalisé, car quelqu&rsquo;un est en train de "
+"le modifier."
+msgstr[1] ""
+"%s identifiants n&rsquo;ont pas normalisé, car quelqu&rsquo;un est en train "
+"de les modifier."
+
+#. translators: %s: formatted number of slugs not found.
+#: class-tl-normalizer.php:2257
+msgid "%s slug not normalized, no longer exists."
+msgid_plural "%s slugs not normalized, no longer exist."
+msgstr[0] "%s identifiant n&rsquo;a pas normalisé, n&rsquo;existe plus."
+msgstr[1] "%s identifiants n&rsquo;ont pas normalisé, n&rsquo;existent plus."
+
+#. translators: %s: formatted number of slugs not non-normalized.
+#: class-tl-normalizer.php:2263
+msgid "%s slug not normalized, no longer non-normalized."
+msgid_plural "%s slugs not normalized, no longer non-normalized."
+msgstr[0] "%s identifiant n&rsquo;a pas normalisé, plus non-normalisé."
+msgstr[1] "%s identifiants n&rsquo;ont pas normalisé, plus non-normalisé."
+
+#. translators: %s: formatted number of slugs that failed to normalize.
+#: class-tl-normalizer.php:2269
+msgid "%s slug not normalized, failed to normalize."
+msgid_plural "%s slugs not normalized, failed to normalize."
+msgstr[0] "%s identifiant n&rsquo;a pas normalisé, échoué à normaliser."
+msgstr[1] "%s identifiants n&rsquo;ont pas normalisé, échoué à normaliser."
+
+#: class-tln-db_check-list-table.php:43
+msgid "Post, Page"
+msgstr "Article, Page"
+
+#: class-tln-db_check-list-table.php:45
+msgid "Category, Tag"
+msgstr "Catégorie, Étiquette"
+
+#: class-tln-db_check-list-table.php:46
+msgid "User"
+msgstr "Utilisateur"
+
+#: class-tln-db_check-list-table.php:47
+msgid "Options"
+msgstr "Options"
+
+#: class-tln-db_check-list-table.php:48
+msgid "Settings"
+msgstr "Réglages"
+
+#: class-tln-db_check-list-table.php:49
+msgid "Link"
+msgstr "Lien"
+
+#. translators: %s: menu item name
+#: class-tln-db_check-list-table.php:171
+msgid "Edit the menu containing this menu item"
+msgstr "Modifier le menu contenant cette entrée du menu"
+
+#: class-tln-db_check-list-table.php:186
+msgid "Edit this user"
+msgstr "Éditer cet utilisateur"
+
+#: class-tln-db_check-list-table.php:331 class-tln-db_check-list-table.php:431
+msgid "Type"
+msgstr "Type"
+
+#: class-tln-db_check-list-table.php:332
+msgid "Field (1st detected only)"
+msgstr "Champ (1er détecté seulement)"
+
+#: class-tln-db_check-list-table.php:417
+msgid "Normalize"
+msgstr "Normaliser"
+
+#: class-tln-db_check-list-table.php:432
+msgid "Slug"
+msgstr "Identifiant"
+
+#: class-tln-db_check-list-table.php:433
+msgid "Decoded"
+msgstr "Décodé"
+
+#: class-tln-db_check-list-table.php:434
+msgid "If Normalized"
+msgstr "Si normalisé"
+
+#: class-tln-db_check-list-table.php:435
+msgid "Normalized Decoded"
+msgstr "Normalisé décodé"
+
+#: class-tln-db_check-list-table.php:498 class-tln-db_check-list-table.php:515
+msgid "Not normalizable!"
+msgstr "Non-normalisable&nbsp;!"
+
+#: class-tln-db_check-list-table.php:503 class-tln-db_check-list-table.php:520
+msgid "No difference!"
+msgstr "Aucune différence&nbsp;!"
+
+#. translators: %s: file name
+#: tools/gen_combining_class.php:34 tools/gen_tln_ins.php:130
+#: tools/gen_tln_regex_alts.php:135
+msgid "Could not read derived combining class file \"%s\""
+msgstr ""
+"Impossible de lire le fichier dérivé de classe combinante &laquo;&nbsp;"
+"%s&nbsp;&raquo;"
+
+#. translators: %s: file name
+#: tools/gen_tln_ins.php:31 tools/gen_tln_regex_alts.php:31
+msgid "Could not read UCD derived normalization properties file \"%s\""
+msgstr ""
+"Impossible de lire le fichier UCD dérivé de propriétés de normalisation "
+"&laquo;&nbsp;%s&nbsp;&raquo;"
+
+#. translators: %s: file name
+#: tools/gen_tln_ins.php:115 tools/gen_tln_regex_alts.php:120
+msgid ""
+"Missing NO or MAYBE codepoints in UCD derived normalization properties file "
+"\"%s\""
+msgstr ""
+"Il y a les codepoints NO ou MAYBE manquer dans le fichier UCD dérivé de "
+"propriétés de normalisation &laquo;&nbsp;%s&nbsp;&raquo;"
+
+#. Plugin Name of the plugin/theme
+msgid "Normalizer"
+msgstr "Normalizer"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/Zodiac1978/tl-normalizer"
+msgstr "https://github.com/Zodiac1978/tl-normalizer"
+
+#. Description of the plugin/theme
+msgid "Normalizes UTF-8 input to Normalization Form C."
+msgstr "Normalise les données UTF-8 à la forme de normalisation C."
+
+#. Author of the plugin/theme
+msgid "Torsten Landsiedel"
+msgstr "Torsten Landsiedel"
+
+#. Author URI of the plugin/theme
+msgid "http://torstenlandsiedel.de"
+msgstr "http://torstenlandsiedel.de"
+
+#~ msgid ""
+#~ "The plugin \"Normalizer\" has only been tested on PHP Versions %1$s to "
+#~ "%2$s. You have PHP Version %3$s."
+#~ msgstr ""
+#~ "L&rsquo;extension &laquo;&nbsp;Normalizer&nbsp;&raquo; n&rsquo;a été "
+#~ "testée que sur des versions de PHP %1$s à %2$s. Vous avez PHP version "
+#~ "%3$s."
+
+#~ msgid "No Bulk Action selected!"
+#~ msgstr "Aucune Action Groupe sélectionnée&nbsp;!"
+
+#~ msgid ""
+#~ "The following is an indicative list of the first %1$s non-normalized "
+#~ "items of %2$s found."
+#~ msgstr ""
+#~ "Ce qui suit est une liste indicative des %1$s premiers éléments non-"
+#~ "normalisés de %2$s trouvés."
+
+#~ msgid ""
+#~ "The following is an indicative list of the non-normalized items found."
+#~ msgstr ""
+#~ "Ce qui suit est une liste indicative des éléments non-normalisés qui ont "
+#~ "été trouvés."
+
+#~ msgid "The following is a list of the non-normalized slugs found."
+#~ msgstr ""
+#~ "Ce qui suit est une liste des identifiants non-normalisés qui ont été "
+#~ "trouvés."
+
+#~ msgid "Field"
+#~ msgstr "Champ"
+
+#~ msgid "No items selected."
+#~ msgstr "Aucun élément sélectionné."
+
+#~ msgid "Edit"
+#~ msgstr "Modifier"
+
+#~ msgid "Missing parameters. Try refreshing your browser."
+#~ msgstr ""
+#~ "Paramètres manquants. Essayer de recharger la page dans votre navigateur."
+
+#~ msgid "No response! Try refreshing your browser."
+#~ msgstr ""
+#~ "Pas de réponse&nbsp;! Essayer de recharger la page dans votre navigateur."
+
+#~ msgid ""
+#~ "The following is an in-memory, indicative list of the first %d non-"
+#~ "normalized items found. <noscript>It can be browsed <strong>if javascript "
+#~ "is enabled</strong>.</noscript> Refreshing the page or navigating away "
+#~ "will necessitate rescanning."
+#~ msgstr ""
+#~ "Ce qui suit est une liste indicative en mémoire des %d premiers éléments "
+#~ "non-normalisés trouvés. <noscript>Il peut être consulté <strong>si "
+#~ "javascript est activé</strong>.</noscript> Recharger la page ou changer "
+#~ "de page nécessitera parcourir à nouveau la base de données."
+
+#~ msgid ""
+#~ "The following is an in-memory, indicative list of the non-normalized "
+#~ "items found. <noscript>It can be browsed <strong>if javascript is "
+#~ "enabled</strong>.</noscript> Refreshing the page or navigating away will "
+#~ "necessitate rescanning."
+#~ msgstr ""
+#~ "Ce qui suit est une liste indicative en mémoire des éléments non-"
+#~ "normalisés trouvés. <noscript>Il peut être consulté <strong>si javascript "
+#~ "est activé</strong>.</noscript> Recharger la page ou changer de page "
+#~ "nécessitera parcourir à nouveau la base de données."
+
+#~ msgid ""
+#~ "The following is an in-memory list of the first %d non-normalized slugs "
+#~ "found. <noscript>It can be browsed and used to selectively normalize "
+#~ "<strong>if javascript is enabled</strong>.</noscript> Refreshing the page "
+#~ "or navigating away will necessitate rescanning."
+#~ msgstr ""
+#~ "Ce qui suit est une liste en mémoire des %d premiers identifiants non-"
+#~ "normalisés trouvés. <noscript>Il peut être consulté <strong>si javascript "
+#~ "est activé</strong>.</noscript> Recharger la page ou changer de page "
+#~ "nécessitera parcourir à nouveau la base de données."
+
+#~ msgid ""
+#~ "The following is an in-memory list of the non-normalized slugs found. "
+#~ "<noscript>It can be browsed and used to selectively normalize <strong>if "
+#~ "javascript is enabled</strong>.</noscript> Refreshing the page or "
+#~ "navigating away will necessitate rescanning."
+#~ msgstr ""
+#~ "Ce qui suit est une liste en mémoire des identifiants non-normalisés "
+#~ "trouvés. <noscript>Il peut être consulté <strong>si javascript est "
+#~ "activé</strong>.</noscript> Recharger la page ou changer de page "
+#~ "nécessitera parcourir à nouveau la base de données."
+
+#~ msgid "Oops."
+#~ msgstr "Oops."
+
+#, fuzzy
+#~ msgid "Select bulk action"
+#~ msgstr "Sélectionnez l&rsquo;action groupée"
+
+#, fuzzy
+#~ msgid "Bulk Actions"
+#~ msgstr "Actions groupées"
+
+#, fuzzy
+#~ msgid "Show more details"
+#~ msgstr "Afficher plus de détails"
+
+#, fuzzy
+#~ msgid "%1$s %2$d"
+#~ msgstr ""
+#~ "Compatibilité avec WordPress %1$s&nbsp;: %2$d%% (%3$d votes &laquo;&nbsp;"
+#~ "ça marche&nbsp;&raquo; sur un total de %4$d)"
+
+#, fuzzy
+#~ msgid "No comments"
+#~ msgstr "Pas de commentaire"
+
+#, fuzzy
+#~ msgid "No approved comments"
+#~ msgstr "Aucun commentaire approuvé"
+
+#, fuzzy
+#~ msgid "No pending comments"
+#~ msgstr "Aucun commentaire en attente"
+
+#, fuzzy
+#~ msgid "First page"
+#~ msgstr "Première page"
+
+#, fuzzy
+#~ msgid "Previous page"
+#~ msgstr "Page précédente"
+
+#, fuzzy
+#~ msgid "Current Page"
+#~ msgstr "Page actuelle"
+
+#, fuzzy
+#~ msgid "Next page"
+#~ msgstr "Page suivante"
+
+#, fuzzy
+#~ msgid "Last page"
+#~ msgstr "Dernière page"
+
+#, fuzzy
+#~ msgid "Select All"
+#~ msgstr "Tout sélectionner"
+
+#, fuzzy
+#~ msgctxt "paging"
+#~ msgid "%1$s of %2$s"
+#~ msgstr "%1$s sur %2$s"
+
+#~ msgid "AIM"
+#~ msgstr "AIM"
+
+#, fuzzy
+#~ msgctxt "Add new name1"
+#~ msgid "Add New"
+#~ msgstr "Ajouter"

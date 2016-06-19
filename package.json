@@ -1,0 +1,22 @@
+{
+  "name": "Normalizer",
+  "version": "2.0.6",
+  "description": "Normalizes UTF-8 input to Normalization Form C.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Zodiac1978/tl-normalizer"
+  },
+  "author": "Torsten Landsiedel",
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-phpunit": "^0.3.6",
+    "grunt-po2mo": "^0.1.2",
+    "grunt-wp-i18n": "^0.5.4",
+    "grunt-wp-readme-to-markdown": "~2.0.0",
+    "load-grunt-tasks": "^3.5.0"
+  }
+}
