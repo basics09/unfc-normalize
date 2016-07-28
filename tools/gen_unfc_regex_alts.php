@@ -4,8 +4,8 @@
  * from the UCD derived normalization properties file "DerivedNormalizationProps.txt"
  * and the derived combining class file "DerivedCombiningClass.txt".
  *
- * See http://www.unicode.org/Public/8.0.0/ucd/DerivedNormalizationProps.txt
- * See http://www.unicode.org/Public/8.0.0/ucd/extracted/DerivedCombiningClass.txt
+ * See http://www.unicode.org/Public/9.0.0/ucd/DerivedNormalizationProps.txt
+ * See http://www.unicode.org/Public/9.0.0/ucd/extracted/DerivedCombiningClass.txt
  */
 
 $basename = basename( __FILE__ );
@@ -20,7 +20,7 @@ if ( ! function_exists( '__' ) ) {
 
 // Open the properties file.
 
-$filename_props = '/tests/UCD-8.0.0/DerivedNormalizationProps.txt';
+$filename_props = '/tests/UCD-9.0.0/DerivedNormalizationProps.txt';
 $file = dirname( $dirname ) . $filename_props;
 error_log( "$basename: reading file=$file" );
 
@@ -124,7 +124,7 @@ if ( count( $haves ) !== count( $idx_strs ) ) {
 
 // Open the combining file.
 
-$filename_combines ='/tests/UCD-8.0.0/extracted/DerivedCombiningClass.txt';
+$filename_combines ='/tests/UCD-9.0.0/extracted/DerivedCombiningClass.txt';
 $file = dirname( $dirname ) . $filename_combines;
 error_log( "$basename: reading file=$file" );
 
