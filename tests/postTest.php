@@ -2,19 +2,23 @@
 /**
  * Test post filters.
  *
- * @group tln
- * @group tln_post
+ * @group unfc
+ * @group unfc_post
  */
-class Tests_TLN_Post extends WP_UnitTestCase {
+class Tests_UNFC_Post extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'post.php';
@@ -22,8 +26,8 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -34,6 +38,9 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -41,15 +48,15 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_post_post
+	 * @ticket unfc_post_post
      */
 	function test_post() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'post', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'post', $unfc_normalize->added_filters );
 
 		$decomposed_str = "u\xCC\x88"; // u umlaut.
 
@@ -69,11 +76,11 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		// Fetch the post and make sure it matches.
 		$out = get_post( $id );
 
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_title'] ), $out->post_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_title'] ), $out->post_title );
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_content'] ), $out->post_content );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_content'] ), $out->post_content );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_content'] ), $out->post_content );
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
 
 		$post['ID'] = $id;
@@ -86,14 +93,14 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		// Fetch the post and make sure it matches.
 		$out = get_post( $id );
 
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_content'] ), $out->post_content );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_content'] ), $out->post_content );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_content'] ), $out->post_content );
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_title'] ), $out->post_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_title'] ), $out->post_title );
 	}
 
     /**
-	 * @ticket tln_post_meta
+	 * @ticket unfc_post_meta
      */
 	function test_meta() {
 		$this->assertTrue( is_admin() ) ;
@@ -133,8 +140,8 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'post', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'post', $unfc_normalize->added_filters );
 
 		// Add (update auto-draft).
 		$out = edit_post();
@@ -143,23 +150,23 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		// Fetch the post and make sure it matches.
 		$out = get_post( $id );
 
-		$this->assertSame( TLN_Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 
 		global $wp_version;
 		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
-			$this->assertSame( TLN_Normalizer::normalize( $_POST['meta_input']['meta_input_key'] ), $out );
+			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta_input']['meta_input_key'] ), $out );
 			if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['meta_input']['meta_input_key'] ), $out );
 		}
 
 		$out = get_post_meta( $id, 'metakeyinput_key' . $decomposed_str, true );
 
-		$this->assertSame( TLN_Normalizer::normalize( $_POST['metavalue'] ), $out );
+		$this->assertSame( UNFC_Normalizer::normalize( $_POST['metavalue'] ), $out );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['metavalue'] ), $out );
 
-		$out = get_term_by( 'name', TLN_Normalizer::normalize( $tag1 ), 'post_tag' );
+		$out = get_term_by( 'name', UNFC_Normalizer::normalize( $tag1 ), 'post_tag' );
 		if ( class_exists( 'WP_Term' ) ) {
 			$this->assertInstanceOf( 'WP_Term', $out );
 		} else {
@@ -169,7 +176,7 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		$out = wp_get_post_tags( $id );
 		$this->assertTrue( is_array( $out ) );
 		$this->assertTrue( is_object( $out[0] ) );
-		$this->assertSame( TLN_Normalizer::normalize( $tag1 ), $out[0]->name );
+		$this->assertSame( UNFC_Normalizer::normalize( $tag1 ), $out[0]->name );
 
 		// Update.
 
@@ -208,18 +215,18 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
-			$this->assertSame( TLN_Normalizer::normalize( $_POST['meta'][$meta_input_key_id]['value'] ), $out );
+			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta'][$meta_input_key_id]['value'] ), $out );
 			if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['meta'][$meta_input_key_id]['value'] ), $out );
 		}
 
 		$out = get_post_meta( $id, 'metakeyinput_key' . $decomposed_str, true );
 
-		$this->assertSame( TLN_Normalizer::normalize( $_POST['meta'][$metakeyinput_id]['value'] ), $out );
+		$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta'][$metakeyinput_id]['value'] ), $out );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['meta'][$metakeyinput_id]['value'] ), $out );
 	}
 
     /**
-	 * @ticket tln_post_attachment
+	 * @ticket unfc_post_attachment
      */
 	function test_attachment() {
 		$this->assertTrue( is_admin() ) ;
@@ -250,8 +257,8 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'post', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'post', $unfc_normalize->added_filters );
 
 		// Add (update auto-draft).
 		$out = edit_post();
@@ -259,12 +266,12 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 
 		$out = get_post_meta( $id, '_wp_attachment_image_alt', true );
 
-		$this->assertSame( TLN_Normalizer::normalize( $_POST['_wp_attachment_image_alt'] ), $out );
+		$this->assertSame( UNFC_Normalizer::normalize( $_POST['_wp_attachment_image_alt'] ), $out );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['_wp_attachment_image_alt'] ), $out );
 	}
 
     /**
-	 * @ticket tln_post_media
+	 * @ticket unfc_post_media
      */
 	function test_media() {
 		$this->assertTrue( is_admin() ) ;
@@ -303,31 +310,33 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 			'post_mime_type' => 'audio/mpeg',
 		);
 
-		$id3_keys = wp_get_attachment_id3_keys( null, 'edit' );
-		foreach ( $id3_keys as $key => $label ) {
-			$_POST[ 'id3_' . $key ] = $label . $decomposed_str;
-		}
+		if ( function_exists( 'wp_get_attachment_id3_keys' ) ) {
+			$id3_keys = wp_get_attachment_id3_keys( null, 'edit' );
+			foreach ( $id3_keys as $key => $label ) {
+				$_POST[ 'id3_' . $key ] = $label . $decomposed_str;
+			}
 
-		do_action( 'init' );
+			do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'post', $tlnormalizer->added_filters );
+			global $unfc_normalize;
+			$this->assertArrayHasKey( 'post', $unfc_normalize->added_filters );
 
-		// Update.
-		$out = edit_post();
-		$this->assertSame( $id, $out );
+			// Update.
+			$out = edit_post();
+			$this->assertSame( $id, $out );
 
-		$out = get_post_meta( $id, '_wp_attachment_metadata', true );
-		$this->assertInternalType( 'array', $out );
+			$out = get_post_meta( $id, '_wp_attachment_metadata', true );
+			$this->assertInternalType( 'array', $out );
 
-		foreach ( $id3_keys as $key => $label ) {
-			$this->assertSame( TLN_Normalizer::normalize( $_POST[ 'id3_' . $key ] ), $out[ $key ] );
-			if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST[ 'id3_' . $key ] ), $out[ $key ] );
+			foreach ( $id3_keys as $key => $label ) {
+				$this->assertSame( UNFC_Normalizer::normalize( $_POST[ 'id3_' . $key ] ), $out[ $key ] );
+				if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST[ 'id3_' . $key ] ), $out[ $key ] );
+			}
 		}
 	}
 
     /**
-	 * @ticket tln_post_custom
+	 * @ticket unfc_post_custom
      */
 	function test_custom() {
 		$this->assertTrue( is_admin() ) ;
@@ -362,13 +371,13 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 			'query_var'				=> true,
 			'supports'				=> array( 'title', 'editor', 'excerpt', 'thumbnail', 'comments' ),
 			'rewrite'				=> array( 'slug' => 'name1' ),
-			'taxonomies'			=> array( 'tln_name1_tax' ),
+			'taxonomies'			=> array( 'unfc_name1_tax' ),
 			'has_archive'			=> false,
 			'menu_icon'				=> '',
 			'capability_type'		=> 'name1',
 			'map_meta_cap'			=> true,
 		);
-		$ret = register_post_type( 'tln_name1', $def );
+		$ret = register_post_type( 'unfc_name1', $def );
 		$this->assertFalse( is_wp_error( $ret ) );
 
 		$labels = array(
@@ -385,7 +394,7 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 			'search_items' => __( 'Search Name1Taxs', 'wpfm' ),
 		);
 
-		$ret = register_taxonomy( 'tln_name1_tax', array( 'tln_name1' ),
+		$ret = register_taxonomy( 'unfc_name1_tax', array( 'unfc_name1' ),
 			array(
 				'labels' => $labels,
 				'public' => true,
@@ -409,13 +418,13 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 			'post_title' => 'Title' . $decomposed_str,
 			'post_content' => 'Content' . $decomposed_str,
 			'post_excerpt' => 'Excerpt' . $decomposed_str,
-			'post_type' => 'tln_name1',
+			'post_type' => 'unfc_name1',
 		);
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'post', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'post', $unfc_normalize->added_filters );
 
 		$id = wp_insert_post( $post );
 
@@ -425,11 +434,11 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		// Fetch the post and make sure it matches.
 		$out = get_post( $id );
 
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_title'] ), $out->post_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_title'] ), $out->post_title );
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_content'] ), $out->post_content );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_content'] ), $out->post_content );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_content'] ), $out->post_content );
-		$this->assertSame( TLN_Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
+		$this->assertSame( UNFC_Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $post['post_excerpt'] ), $out->post_excerpt );
 
 		// Do custom category while we're here.
@@ -437,7 +446,7 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 		$args = array(
 			'description' => 'Term description ' . $decomposed_str,
 		);
-		$cat = 'tln_name1_tax';
+		$cat = 'unfc_name1_tax';
 
 		global $pagenow;
 		$pagenow = 'edit-tags.php';
@@ -445,7 +454,7 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 
 		do_action( 'init' );
 
-		$this->assertArrayHasKey( 'term', $tlnormalizer->added_filters );
+		$this->assertArrayHasKey( 'term', $unfc_normalize->added_filters );
 
 		$result = wp_insert_term( $name, $cat, $args );
 
@@ -463,9 +472,9 @@ class Tests_TLN_Post extends WP_UnitTestCase {
 			$this->assertTrue( is_object( $out ) );
 		}
 
-		$this->assertSame( TLN_Normalizer::normalize( $name ), $out->name );
+		$this->assertSame( UNFC_Normalizer::normalize( $name ), $out->name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $name ), $out->name );
-		$this->assertSame( TLN_Normalizer::normalize( $args['description'] ), $out->description );
+		$this->assertSame( UNFC_Normalizer::normalize( $args['description'] ), $out->description );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $args['description'] ), $out->description );
 
 		$pagenow = 'post.php';

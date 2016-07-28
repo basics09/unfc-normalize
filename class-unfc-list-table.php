@@ -1,13 +1,13 @@
 <?php
 /**
- * This is WP_List_Table as of WP 4.5.2 renamed to TLN_List_Table.
+ * This is WP_List_Table as of WP 4.6 renamed to UNFC_List_Table.
  * Doing this for back/forward compatibility as WP_List_Table is private.
  * For backward compatibility check for the availibility of WP_Screen::render_screen_reader_content().
- * Parent of TLN_DB_Check_List_Table in "class-tln-db_check-list-table.php".
+ * Parent of UNFC_DB_Check_List_Table in "class-unfc-db_check-list-table.php".
  */
 
 /**
- * Administration API: TLN_List_Table class
+ * Administration API: UNFC_List_Table class
  *
  * @package WordPress
  * @subpackage List_Table
@@ -20,7 +20,7 @@
  * @since 3.1.0
  * @access private
  */
-class TLN_List_Table {
+class UNFC_List_Table {
 	protected $wp_less_than_4_4 = false; // gitlost. Set in __construct().
 
 	/**
@@ -131,10 +131,10 @@ class TLN_List_Table {
 	 *                            in the list table, e.g. 'posts'. Default empty.
 	 *     @type string $singular Singular label for an object being listed, e.g. 'post'.
 	 *                            Default empty
-	 *     @type bool   $ajax     Whether the list table supports AJAX. This includes loading
+	 *     @type bool   $ajax     Whether the list table supports Ajax. This includes loading
 	 *                            and sorting data, for example. If true, the class will call
-	 *                            the {@see _js_vars()} method in the footer to provide variables
-	 *                            to any scripts handling AJAX events. Default false.
+	 *                            the _js_vars() method in the footer to provide variables
+	 *                            to any scripts handling Ajax events. Default false.
 	 *     @type string $screen   String containing the hook name used to determine the current
 	 *                            screen. If left null, the current screen will be automatically set.
 	 *                            Default null.
@@ -176,7 +176,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Make private properties readable for backwards compatibility.
+	 * Make private properties readable for backward compatibility.
 	 *
 	 * @since 4.0.0
 	 * @access public
@@ -191,7 +191,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Make private properties settable for backwards compatibility.
+	 * Make private properties settable for backward compatibility.
 	 *
 	 * @since 4.0.0
 	 * @access public
@@ -207,7 +207,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Make private properties checkable for backwards compatibility.
+	 * Make private properties checkable for backward compatibility.
 	 *
 	 * @since 4.0.0
 	 * @access public
@@ -222,7 +222,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Make private properties un-settable for backwards compatibility.
+	 * Make private properties un-settable for backward compatibility.
 	 *
 	 * @since 4.0.0
 	 * @access public
@@ -236,7 +236,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Make private/protected methods readable for backwards compatibility.
+	 * Make private/protected methods readable for backward compatibility.
 	 *
 	 * @since 4.0.0
 	 * @access public
@@ -260,19 +260,19 @@ class TLN_List_Table {
 	 * @abstract
 	 */
 	public function ajax_user_can() {
-		die( 'function TLN_List_Table::ajax_user_can() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::ajax_user_can() must be over-ridden in a sub-class.' );
 	}
 
 	/**
 	 * Prepares the list of items for displaying.
-	 * @uses TLN_List_Table::set_pagination_args()
+	 * @uses UNFC_List_Table::set_pagination_args()
 	 *
 	 * @since 3.1.0
 	 * @access public
 	 * @abstract
 	 */
 	public function prepare_items() {
-		die( 'function TLN_List_Table::prepare_items() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::prepare_items() must be over-ridden in a sub-class.' );
 	}
 
 	/**
@@ -398,7 +398,7 @@ class TLN_List_Table {
 	public function views() {
 		$views = $this->get_views();
 		/**
-		 * Filter the list of available list table views.
+		 * Filters the list of available list table views.
 		 *
 		 * The dynamic portion of the hook name, `$this->screen->id`, refers
 		 * to the ID of the current screen, usually a string.
@@ -442,13 +442,13 @@ class TLN_List_Table {
 	 * @access protected
 	 *
 	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
-	 *                      This is designated as optional for backwards-compatibility.
+	 *                      This is designated as optional for backward compatibility.
 	 */
 	protected function bulk_actions( $which = '' ) {
 		if ( is_null( $this->_actions ) ) {
 			$no_new_actions = $this->_actions = $this->get_bulk_actions();
 			/**
-			 * Filter the list table Bulk Actions drop-down.
+			 * Filters the list table Bulk Actions drop-down.
 			 *
 			 * The dynamic portion of the hook name, `$this->screen->id`, refers
 			 * to the ID of the current screen, usually a string.
@@ -551,7 +551,7 @@ class TLN_List_Table {
 		global $wpdb, $wp_locale;
 
 		/**
-		 * Filter whether to remove the 'Months' drop-down from the post list table.
+		 * Filters whether to remove the 'Months' drop-down from the post list table.
 		 *
 		 * @since 4.2.0
 		 *
@@ -578,7 +578,7 @@ class TLN_List_Table {
 		", $post_type ) );
 
 		/**
-		 * Filter the 'Months' drop-down results.
+		 * Filters the 'Months' drop-down results.
 		 *
 		 * @since 3.7.0
 		 *
@@ -731,7 +731,7 @@ class TLN_List_Table {
 			$per_page = $default;
 
 		/**
-		 * Filter the number of items to be displayed on each page of the list table.
+		 * Filters the number of items to be displayed on each page of the list table.
 		 *
 		 * The dynamic hook name, $option, refers to the `per_page` option depending
 		 * on the type of list table in use. Possible values include: 'edit_comments_per_page',
@@ -773,15 +773,16 @@ class TLN_List_Table {
 		$output = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
 
 		$current = $this->get_pagenum();
+		$removable_query_args = function_exists( 'wp_removable_query_args' ) ? wp_removable_query_args() : array( 'hotkeys_highlight_last', 'hotkeys_highlight_first' ); // gitlost
 
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 
-		$current_url = remove_query_arg( array( 'hotkeys_highlight_last', 'hotkeys_highlight_first' ), $current_url );
+		$current_url = remove_query_arg( $removable_query_args, $current_url );
 
 		$page_links = array();
 
 		$total_pages_before = '<span class="paging-input">';
-		$total_pages_after  = '</span>';
+		$total_pages_after  = '</span></span>';
 
 		$disable_first = $disable_last = $disable_prev = $disable_next = false;
 
@@ -822,9 +823,9 @@ class TLN_List_Table {
 
 		if ( 'bottom' === $which ) {
 			$html_current_page  = $current;
-			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input">';
+			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
 		} else {
-			$html_current_page = sprintf( "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' />",
+			$html_current_page = sprintf( "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
 				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
 				$current,
 				strlen( $total_pages )
@@ -880,7 +881,7 @@ class TLN_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		die( 'function TLN_List_Table::get_columns() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::get_columns() must be over-ridden in a sub-class.' );
 	}
 
 	/**
@@ -931,7 +932,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Public wrapper for TLN_List_Table::get_default_primary_column_name().
+	 * Public wrapper for UNFC_List_Table::get_default_primary_column_name().
 	 *
 	 * @since 4.4.0
 	 * @access public
@@ -957,11 +958,11 @@ class TLN_List_Table {
 		// If the primary column doesn't exist fall back to the
 		// first non-checkbox column.
 		if ( ! isset( $columns[ $default ] ) ) {
-			$default = TLN_List_Table::get_default_primary_column_name();
+			$default = UNFC_List_Table::get_default_primary_column_name();
 		}
 
 		/**
-		 * Filter the name of the primary column for the current list table.
+		 * Filters the name of the primary column for the current list table.
 		 *
 		 * @since 4.3.0
 		 *
@@ -1003,7 +1004,7 @@ class TLN_List_Table {
 
 		$sortable_columns = $this->get_sortable_columns();
 		/**
-		 * Filter the list table sortable columns for a specific screen.
+		 * Filters the list table sortable columns for a specific screen.
 		 *
 		 * The dynamic portion of the hook name, `$this->screen->id`, refers
 		 * to the ID of the current screen, usually a string.
@@ -1163,7 +1164,7 @@ class TLN_List_Table {
 	}
 
 	/**
-	 * Get a list of CSS classes for the TLN_List_Table table tag.
+	 * Get a list of CSS classes for the UNFC_List_Table table tag.
 	 *
 	 * @since 3.1.0
 	 * @access protected

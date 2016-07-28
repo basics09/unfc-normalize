@@ -2,25 +2,27 @@
 /**
  * Test database check functionality.
  *
- * @group tln
- * @group tln_db_check
+ * @group unfc
+ * @group unfc_db_check
  */
-class Tests_TLN_DB_Check extends WP_UnitTestCase {
+class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4_2 = false;
 	static $is_less_than_wp_4_3 = false;
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = false;
-		$tlnormalizer->dont_filter = true;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = false;
+		$unfc_normalize->dont_filter = true;
+		$unfc_normalize->no_normalizer = true;
 
 		global $wp_version;
 		self::$is_less_than_wp_4_3 = version_compare( $wp_version, '4.3', '<' );
 		self::$is_less_than_wp_4_2 = version_compare( $wp_version, '4.2', '<' );
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 		if ( version_compare( PHP_VERSION, '7', '>=' ) && self::$is_less_than_wp_4_3 ) {
 			error_reporting( error_reporting() ^ 8192 /*E_DEPRECATED*/ );
 		}
@@ -29,14 +31,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$pagenow = 'tools.php';
 		set_current_screen( $pagenow );
 
-		if ( ! function_exists( 'tln_list_pluck' ) ) {
+		if ( ! function_exists( 'unfc_list_pluck' ) ) {
 			require dirname( dirname( __FILE__ ) ) . '/tools/functions.php';
 		}
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -46,13 +48,22 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpSetUpBeforeClass();
 		}
+		if ( self::$is_less_than_wp_4 ) {
+			mbstring_binary_safe_encoding(); // For <= WP 3.9.12 compatibility - remove_accents() uses naked strlen().
+		}
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		remove_filter( 'wp_redirect', array( __CLASS__, 'wp_redirect' ), 10, 2 );
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
+		}
+		if ( self::$is_less_than_wp_4 ) {
+			reset_mbstring_encoding(); // For <= WP 3.9.12 compatibility - remove_accents() uses naked strlen().
 		}
 	}
 
@@ -79,10 +90,18 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_db_check_post
+	 * @ticket unfc_db_check_post
      */
 	function test_db_check_post() {
 		$this->assertTrue( is_admin() );
+
+		global $unfc_normalize;
+		if ( self::$is_less_than_wp_4 ) {
+			// For <= WP 3.9.12 compatibility - filters seem to get left hanging around.
+			foreach( $unfc_normalize->post_filters as $filter ) {
+				remove_filter( $filter, array( $unfc_normalize, 'tl_normalizer' ), $unfc_normalize->priority );
+			}
+		}
 
 		$decomposed_str1 = "o\xcc\x88"; // o umlaut.
 
@@ -103,12 +122,15 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$decomposed_str3 = "\xf0\xaf\xa0\x87"; // CJK COMPATIBILITY IDEOGRAPH-2F807
 
-		$title3 = 'post3-title' . str_repeat( "\xc2\x80", TLN_DB_CHECK_TITLE_MAX_LEN );
+		$title3 = 'post3-title' . str_repeat( "\xc2\x80", UNFC_DB_CHECK_TITLE_MAX_LEN );
 		$content3 = 'post3-content';
-		$excerpt3 = 'post3-excerpt' . ( self::$is_less_than_wp_4_2 ? $decomposed_str1 : $decomposed_str3 ); // Pre-WP 4.2 can't handle 4-byte UTF-8 (MySQL).
+		// Pre-WP 4.2 can't handle 4-byte UTF-8 (MySQL). Also neither can database used in travis for PHP 5.3.29.
+		$dont_use_4byte = self::$is_less_than_wp_4_2 || ( version_compare( PHP_VERSION, '5.3', '>=' ) && version_compare( PHP_VERSION, '5.4', '<' ) );
+		$excerpt3 = 'post3-excerpt' . ( $dont_use_4byte ? $decomposed_str1 : $decomposed_str3 );
 
 		$post3 = $this->factory->post->create_and_get( array( 'post_title' => $title3, 'post_content' => $content3, 'post_excerpt' => $excerpt3, 'post_type' => 'post' ) );
 		$this->assertTrue( is_object( $post3 ) );
+		$this->assertTrue( $post3->post_excerpt === $excerpt3 );
 
 		$title4 = 'post4-title';
 		$content4 = 'post4-content';
@@ -124,14 +146,13 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$post5 = $this->factory->post->create_and_get( array( 'post_title' => $title5, 'post_content' => $content5, 'post_excerpt' => $excerpt5, 'post_type' => 'post' ) );
 
-		global $tlnormalizer;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 3, $ret['num_items'] );
-		$this->assertSame( array( $post1->ID, $post2->ID, $post3->ID ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID, $post2->ID, $post3->ID ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 		// Meta.
 
@@ -152,16 +173,16 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$meta5_id = add_post_meta( $post5->ID, 'meta_key5', 'meta_value5' . $decomposed_str2 );
 
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 4, $ret['num_items'] );
-		$this->assertSame( array( $post1->ID, $post2->ID, $post3->ID, $post5->ID ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID, $post2->ID, $post3->ID, $post5->ID ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_comment
+	 * @ticket unfc_db_check_comment
      */
 	function test_db_check_comment() {
 		$this->assertTrue( is_admin() );
@@ -176,14 +197,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$comment1_2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_author' => 'comment1-author' . $decomposed_str1 ) );
 		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->post_id, 'comment_author' => 'comment2-author', 'comment_content' => 'comment2-content' ) );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 2, $ret['num_items'] );
-		$this->assertSame( array( $comment1_1_id, $comment1_2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $comment1_1_id, $comment1_2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 		// Meta.
 
@@ -194,16 +215,16 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$meta3_id = add_comment_meta( $comment3_id, 'meta_key3', 'meta_value3' );
 
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 3, $ret['num_items'] );
-		$this->assertSame( array( $comment1_1_id, $comment1_2_id, $comment2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $comment1_1_id, $comment1_2_id, $comment2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_user
+	 * @ticket unfc_db_check_user
      */
 	function test_db_check_user() {
 		$this->assertTrue( is_admin() );
@@ -215,21 +236,29 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$user3_id = $this->factory->user->create( array( 'user_login' => 'user3_login', 'display_name' => 'display3' ) );
 		$user4_id = $this->factory->user->create( array( 'user_login' => 'user4_login', 'display_name' => 'display4', 'last_name' => 'last4' . $decomposed_str1 ) );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 2, $ret['num_items'] );
-		$this->assertSame( array( $user1_id, $user4_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $user1_id, $user4_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_term
+	 * @ticket unfc_db_check_term
      */
 	function test_db_check_term() {
 		$this->assertTrue( is_admin() );
+
+		global $unfc_normalize;
+		if ( self::$is_less_than_wp_4 ) {
+			// For <= WP 3.9.12 compatibility - filters seem to get left hanging around.
+			foreach( $unfc_normalize->term_filters as $filter ) {
+				remove_filter( $filter, array( $unfc_normalize, 'tl_normalizer' ), $unfc_normalize->priority );
+			}
+		}
 
 		$decomposed_str1 = "o\xcc\x88"; // o umlaut.
 
@@ -240,14 +269,13 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$term5_id = $this->factory->term->create( array( 'name' => 'term5' . $decomposed_str1, 'taxonomy' => 'category', 'description' => 'desc5' . $decomposed_str1 ) );
 		$term6_id = $this->factory->term->create( array( 'name' => 'term6', 'taxonomy' => 'category', 'description' => 'desc6' ) );
 
-		global $tlnormalizer;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 4, $ret['num_items'] );
-		$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 		global $wpdb;
 		if ( isset( $wpdb->termmeta ) ) { // Check if termmeta.
@@ -257,31 +285,31 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 			add_term_meta( $term6_id, 'meta_key1', $meta_val1 );
 
 			$admin_notices = array();
-			$ret = $tlnormalizer->db_check_items( $admin_notices );
+			$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 			$this->assertTrue( is_array( $ret['items'] ) );
 			$this->assertSame( 1, count( $admin_notices ) );
 			$this->assertSame( 5, $ret['num_items'] );
-			$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id, $term6_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+			$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id, $term6_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 			// For WP < 4.2.
 			$termmeta = $wpdb->termmeta;
 			unset( $wpdb->termmeta );
 
 			$admin_notices = array();
-			$ret = $tlnormalizer->db_check_items( $admin_notices );
+			$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 			$this->assertTrue( is_array( $ret['items'] ) );
 			$this->assertSame( 1, count( $admin_notices ) );
 			$this->assertSame( 4, $ret['num_items'] );
-			$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+			$this->assertSame( array( $term1_id, $term2_id, $term4_id, $term5_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 			$wpdb->termmeta = $termmeta;
 		}
 	}
 
     /**
-	 * @ticket tln_db_check_options
+	 * @ticket unfc_db_check_options
      */
 	function test_db_check_options() {
 		$this->assertTrue( is_admin() );
@@ -297,18 +325,18 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$ids = $wpdb->get_col( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option1','option3') ORDER BY option_id ASC" );
 		$ids = array_map( 'intval', $ids );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 2, $ret['num_items'] );
-		$this->assertSame( $ids, array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( $ids, array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_settings
+	 * @ticket unfc_db_check_settings
      */
 	function test_db_check_settings() {
 		$this->assertTrue( is_admin() );
@@ -325,18 +353,18 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$ids = $wpdb->get_col( "SELECT meta_id FROM {$wpdb->sitemeta} WHERE meta_key IN ('option1','option4') ORDER BY meta_id ASC" );
 		$ids = array_map( 'intval', $ids );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 2, $ret['num_items'] );
-		$this->assertSame( $ids, array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( $ids, array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_link
+	 * @ticket unfc_db_check_link
      */
 	function test_db_check_link() {
 		$this->assertTrue( is_admin() );
@@ -380,30 +408,30 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( is_numeric( $link3_id ) );
 		$this->assertTrue( $link3_id > 0 );
 
-		global $tlnormalizer;
-		unset( $tlnormalizer->db_fields['link'] );
+		global $unfc_normalize;
+		unset( $unfc_normalize->db_fields['link'] );
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 2, $ret['num_items'] );
-		$this->assertSame( array( $link1_id, $link2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $link1_id, $link2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 		remove_filter( 'pre_option_link_manager_enabled', '__return_true', 10 );
 	}
 
     /**
-	 * @ticket tln_db_check_items
+	 * @ticket unfc_db_check_items
      */
 	function test_db_check_items() {
 		$this->assertTrue( is_admin() );
 
 		wp_set_current_user( 1 ); // Need current user for user options.
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 0, $ret['num_items'] );
@@ -450,54 +478,54 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$user2_id = $this->factory->user->create( array( 'user_login' => 'user2_login', 'display_name' => 'display2' . $decomposed_str1 ) );
 		$this->assertTrue( is_int( $user2_id ) );
 
-		$_REQUEST = array( 'tln_type' => 'post:post' );
+		$_REQUEST = array( 'unfc_type' => 'post:post' );
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 3, $ret['num_items'] );
-		$this->assertSame( array( $post1->ID, $post2->ID, $post4->ID ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID, $post2->ID, $post4->ID ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
-		$_REQUEST = array( 'tln_type' => 'post:page' );
+		$_REQUEST = array( 'unfc_type' => 'post:page' );
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 1, $ret['num_items'] );
-		$this->assertSame( array( $page1->ID ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $page1->ID ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
-		$_REQUEST = array( 'tln_type' => 'user' );
+		$_REQUEST = array( 'unfc_type' => 'user' );
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 1, $ret['num_items'] );
-		$this->assertSame( array( $user2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $user2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
-		$_REQUEST = array( 'tln_type' => 'user' );
+		$_REQUEST = array( 'unfc_type' => 'user' );
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 1, $ret['num_items'] );
-		$this->assertSame( array( $user2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $user2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 
 		$_REQUEST = array();
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
 		$this->assertSame( 5, $ret['num_items'] );
-		$this->assertSame( array( $post1->ID, $post2->ID, $post4->ID, $page1->ID, $user2_id ), array_map( 'intval', tln_list_pluck( $ret['items'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID, $post2->ID, $post4->ID, $page1->ID, $user2_id ), array_map( 'intval', unfc_list_pluck( $ret['items'], 'id' ) ) );
 	}
 
     /**
-	 * @ticket tln_db_check_meta
+	 * @ticket unfc_db_check_meta
      */
 	function test_db_check_meta() {
 
@@ -505,20 +533,21 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$post1 = $this->factory->post->create_and_get( array( 'post_title' => 'post1-title', 'post_type' => 'post' ) );
 
-		$meta_value1_1 = 'meta_value1_1'. str_repeat( 'a', 4096 )  . $decomposed_str1;
-		$meta_value1_2 = $decomposed_str1 . 'meta_value1_2' . $decomposed_str1 . str_repeat( 'a', 4096 ) . 'b';
+		$repeat = 16384;
+		$meta_value1_1 = 'meta_value1_1'. str_repeat( 'a', $repeat )  . $decomposed_str1;
+		$meta_value1_2 = $decomposed_str1 . 'meta_value1_2' . $decomposed_str1 . str_repeat( 'a', $repeat ) . 'b';
 
 		// add_post_meta() expects slashed data.
 		$meta1_1_id = add_post_meta( $post1->ID, 'meta_key1', wp_slash( $meta_value1_1 ) );
 		$meta1_2_id = add_post_meta( $post1->ID, 'meta_key1', wp_slash( $meta_value1_2 ) );
 
-		global $tlnormalizer;
-		TLNormalizer::$have_set_group_concat_max_len = false; // Make sure we set this for this session.
+		global $unfc_normalize;
+		UNFC_Normalize::$have_set_group_concat_max_len = false; // Make sure we set this for this session.
 
 		$_REQUEST = array();
 
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
@@ -532,7 +561,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$meta1_4_id = add_post_meta( $post1->ID, 'meta_key1', wp_slash( $meta_value1_4 ) );
 
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
@@ -548,7 +577,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$meta1_7_id = add_post_meta( $post1->ID, 'meta_key1', wp_slash( $meta_value1_7 ) );
 
 		$admin_notices = array();
-		$ret = $tlnormalizer->db_check_items( $admin_notices );
+		$ret = $unfc_normalize->db_check_items( $admin_notices );
 
 		$this->assertTrue( is_array( $ret['items'] ) );
 		$this->assertSame( 1, count( $admin_notices ) );
@@ -557,26 +586,26 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_db_check_admin_menu
+	 * @ticket unfc_db_check_admin_menu
      */
 	function test_db_check_admin_menu() {
 		$this->assertTrue( is_admin() );
 
 		wp_set_current_user( 1 ); // Need manage_options privileges.
 
-		$_REQUEST['page'] = TLN_DB_CHECK_MENU_SLUG;
+		$_REQUEST['page'] = UNFC_DB_CHECK_MENU_SLUG;
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		do_action( 'init' );
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
-		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 		$_REQUEST['action'] = '';
 
 		try {
@@ -585,11 +614,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 			unset( $e );
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
-		$this->assertSame( '_wp_http_referer', $tlnormalizer->db_check_button() );
+		$this->assertSame( '_wp_http_referer', $unfc_normalize->db_check_button() );
 
 		self::clear_func_args();
 
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -598,103 +627,103 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 
-		$this->assertSame( $_REQUEST['tln_db_check_items'], $tlnormalizer->db_check_button() );
+		$this->assertSame( $_REQUEST['unfc_db_check_items'], $unfc_normalize->db_check_button() );
 
 		//do_action( 'admin_init' );
 	}
 
     /**
-	 * @ticket tln_db_check_button
+	 * @ticket unfc_db_check_button
      */
 	function test_db_check_button() {
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$this->assertFalse( $tlnormalizer->db_check_button() );
+		$this->assertFalse( $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
-		$this->assertSame( $_REQUEST['tln_db_check_items'], $tlnormalizer->db_check_button() );
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
+		$this->assertSame( $_REQUEST['unfc_db_check_items'], $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_normalize_all'] = 'tln_db_check_normalize_all';
-		$this->assertSame( $_REQUEST['tln_db_check_normalize_all'], $tlnormalizer->db_check_button() );
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
+		$this->assertSame( $_REQUEST['unfc_db_check_normalize_all'], $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
-		$this->assertSame( $_REQUEST['tln_db_check_slugs'], $tlnormalizer->db_check_button() );
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
+		$this->assertSame( $_REQUEST['unfc_db_check_slugs'], $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['action'] = 'tln_db_check_normalize_slugs';
-		$this->assertSame( $_REQUEST['action'], $tlnormalizer->db_check_button() );
+		$_REQUEST['action'] = 'unfc_db_check_normalize_slugs';
+		$this->assertSame( $_REQUEST['action'], $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['action2'] = 'tln_db_check_normalize_slugs';
-		$this->assertSame( $_REQUEST['action2'], $tlnormalizer->db_check_button() );
+		$_REQUEST['action2'] = 'unfc_db_check_normalize_slugs';
+		$this->assertSame( $_REQUEST['action2'], $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
 		$_REQUEST['screen-options-apply'] = 'Apply';
-		$_REQUEST['wp_screen_options'] = array( 'option' => TLN_DB_CHECK_PER_PAGE );
-		$this->assertSame( TLN_DB_CHECK_PER_PAGE, $tlnormalizer->db_check_button() );
+		$_REQUEST['wp_screen_options'] = array( 'option' => UNFC_DB_CHECK_PER_PAGE );
+		$this->assertSame( UNFC_DB_CHECK_PER_PAGE, $unfc_normalize->db_check_button() );
 
 		$_REQUEST = array();
-		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
-		$this->assertSame( '_wp_http_referer', $tlnormalizer->db_check_button() );
+		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
+		$this->assertSame( '_wp_http_referer', $unfc_normalize->db_check_button() );
 	}
 
     /**
-	 * @ticket tln_db_check_transient
+	 * @ticket unfc_db_check_transient
      */
 	function test_db_check_transient() {
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$this->assertFalse( $tlnormalizer->db_check_transient() );
+		$this->assertFalse( $unfc_normalize->db_check_transient() );
 
 		$items = array();
 		$items[] = array( 'id' => 1, 'title' => 'post-title1', 'type' => 'post', 'subtype' => 'post', 'field' => 'post_content', 'idx' => $item1_idx = count( $items ) );
 
-		$_REQUEST['_wpnonce_items'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-items' );
-		$transient_key = 'tln_db_check_items' . $_REQUEST['_wpnonce_items'];
+		$_REQUEST['_wpnonce_items'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-items' );
+		$transient_key = 'unfc_db_check_items' . $_REQUEST['_wpnonce_items'];
 		set_transient( $transient_key, array( 'num_items' => count( $items ), 'items' => $items ), intval( wp_nonce_tick() ) );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_trans'] = $transient_key;
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient() );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_items' ) );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_items', true /*dont_get*/ ) );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_items', false /*dont_get*/, true /*dont_set*/ ) );
-		$this->assertFalse( $tlnormalizer->db_check_transient( 'tln_db_check_slugs' ) );
+		$_REQUEST['unfc_trans'] = $transient_key;
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient() );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_items' ) );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_items', true /*dont_get*/ ) );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_items', false /*dont_get*/, true /*dont_set*/ ) );
+		$this->assertFalse( $unfc_normalize->db_check_transient( 'unfc_db_check_slugs' ) );
 
 		set_transient( $transient_key, array( 'num_slugs' => count( $items ), 'slugs' => $items ), intval( wp_nonce_tick() ) );
-		$this->assertFalse( $tlnormalizer->db_check_transient( 'tln_db_check_items' ) );
+		$this->assertFalse( $unfc_normalize->db_check_transient( 'unfc_db_check_items' ) );
 
-		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-slugs' );
-		$transient_key = 'tln_db_check_slugs' . $_REQUEST['_wpnonce_slugs'];
+		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-slugs' );
+		$transient_key = 'unfc_db_check_slugs' . $_REQUEST['_wpnonce_slugs'];
 		set_transient( $transient_key, array( 'num_slugs' => count( $items ), 'slugs' => $items ), intval( wp_nonce_tick() ) );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_trans'] = $transient_key;
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient() );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_slugs' ) );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_slugs', true /*dont_get*/ ) );
-		$this->assertSame( $transient_key, $tlnormalizer->db_check_transient( 'tln_db_check_slugs', false /*dont_get*/, true /*dont_set*/ ) );
-		$this->assertFalse( $tlnormalizer->db_check_transient( 'tln_db_check_items' ) );
+		$_REQUEST['unfc_trans'] = $transient_key;
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient() );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_slugs' ) );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_slugs', true /*dont_get*/ ) );
+		$this->assertSame( $transient_key, $unfc_normalize->db_check_transient( 'unfc_db_check_slugs', false /*dont_get*/, true /*dont_set*/ ) );
+		$this->assertFalse( $unfc_normalize->db_check_transient( 'unfc_db_check_items' ) );
 
 		set_transient( $transient_key, array( 'num_items' => count( $items ), 'items' => $items ), intval( wp_nonce_tick() ) );
-		$this->assertFalse( $tlnormalizer->db_check_transient( 'tln_db_check_slugs' ) );
+		$this->assertFalse( $unfc_normalize->db_check_transient( 'unfc_db_check_slugs' ) );
 	}
 
     /**
-	 * @ticket tln_db_check_db_check
+	 * @ticket unfc_db_check_db_check
      */
 	function test_db_check_db_check() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -702,9 +731,9 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		// Permission errors.
 
@@ -718,7 +747,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['message'], 'permission' ) );
+		$this->assertTrue( false !== stripos( $args['message'], 'allowed' ) );
 
 		self::clear_func_args();
 
@@ -729,14 +758,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['message'], 'permission' ) );
+		$this->assertTrue( false !== stripos( $args['message'], 'allowed' ) );
 
 		self::clear_func_args();
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap.
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -752,7 +781,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		// Permission ok, initial load.
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap.
 
@@ -767,9 +796,9 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		do_action( $hook_suffix );
 		$out = ob_get_clean();
 
-		$this->assertTrue( false !== stripos( $out, 'tln_db_check_items' ) );
-		$this->assertTrue( false !== stripos( $out, 'tln_db_check_slugs' ) );
-		$this->assertTrue( false === stripos( $out, 'tln_db_check_normalize_all' ) );
+		$this->assertTrue( false !== stripos( $out, 'unfc_db_check_items' ) );
+		$this->assertTrue( false !== stripos( $out, 'unfc_db_check_slugs' ) );
+		$this->assertTrue( false === stripos( $out, 'unfc_db_check_normalize_all' ) );
 
 		// Scan. 1 item.
 
@@ -786,17 +815,17 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$num_items++;
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
-		$_REQUEST['_wpnonce_items'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-items' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], TLN_DB_CHECK_MENU_SLUG . '-items' ) );
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
+		$_REQUEST['_wpnonce_items'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-items' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], UNFC_DB_CHECK_MENU_SLUG . '-items' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
-		$_REQUEST['tln_type'] = 'post';
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
+		$_REQUEST['unfc_type'] = 'post';
 		$_REQUEST['orderby'] = 'type';
 		$_REQUEST['order'] = 'desc';
 		$_REQUEST['paged'] = '1';
 
-		add_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
+		add_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -819,8 +848,8 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( false !== stripos( $out, 'detected' ) );
 		$this->assertTrue( false !== stripos( $out, '1' ) );
 
-		$tlnormalizer->db_check_num_items = $die['args']['num_items'];
-		$tlnormalizer->db_check_items = $die['args']['items'];
+		$unfc_normalize->db_check_num_items = $die['args']['num_items'];
+		$unfc_normalize->db_check_items = $die['args']['items'];
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -828,9 +857,9 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$out = ob_get_clean();
 
 		$this->assertTrue( false !== stripos( $out, $title1 ) );
-		$this->assertTrue( false !== stripos( $out, TLN_DB_CHECK_ITEMS_LIST_SEL ) );
+		$this->assertTrue( false !== stripos( $out, UNFC_DB_CHECK_ITEMS_LIST_SEL ) );
 
-		remove_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
+		remove_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
 
 		self::clear_func_args();
 
@@ -895,13 +924,13 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( is_numeric( $link1_id ) );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
-		$_REQUEST['_wpnonce_items'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-items' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], TLN_DB_CHECK_MENU_SLUG . '-items' ) );
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
+		$_REQUEST['_wpnonce_items'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-items' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], UNFC_DB_CHECK_MENU_SLUG . '-items' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
-		add_filter( 'tln_list_limit', array( $this, 'tln_list_limit_filter' ) );
+		add_filter( 'unfc_list_limit', array( $this, 'unfc_list_limit_filter' ) );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -913,8 +942,8 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'num_items', $die['args'] );
 		$this->assertSame( $num_items, (int) $die['args']['num_items'] );
 
-		$tlnormalizer->db_check_num_items = $die['args']['num_items'];
-		$tlnormalizer->db_check_items = $die['args']['items'];
+		$unfc_normalize->db_check_num_items = $die['args']['num_items'];
+		$unfc_normalize->db_check_items = $die['args']['items'];
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -923,7 +952,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( false !== stripos( $out, $title1 ) );
 		$this->assertTrue( false === stripos( $out, $title2 ) );
 
-		remove_filter( 'tln_list_limit', array( $this, 'tln_list_limit_filter' ) );
+		remove_filter( 'unfc_list_limit', array( $this, 'unfc_list_limit_filter' ) );
 
 		self::clear_func_args();
 
@@ -937,13 +966,13 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'num_items', $die['args'] );
 		$this->assertSame( $num_items, (int) $die['args']['num_items'] );
 
-		$tlnormalizer->db_check_num_items = $die['args']['num_items'];
-		$tlnormalizer->db_check_items = $die['args']['items'];
+		$unfc_normalize->db_check_num_items = $die['args']['num_items'];
+		$unfc_normalize->db_check_items = $die['args']['items'];
 
-		$transient_key = 'tln_db_check_items' . $_REQUEST['_wpnonce_items'];
+		$transient_key = 'unfc_db_check_items' . $_REQUEST['_wpnonce_items'];
 		set_transient( $transient_key, array( 'num_items' => $die['args']['num_items'], 'items' => $die['args']['items'] ), intval( wp_nonce_tick() ) );
 
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -952,14 +981,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( false !== stripos( $out, $title1 ) );
 		$this->assertTrue( false !== stripos( $out, $title2 ) );
 		$this->assertTrue( false !== stripos( $out, 'option1' ) );
-		$this->assertTrue( false !== stripos( $out, 'tln_trans' ) );
+		$this->assertTrue( false !== stripos( $out, 'unfc_trans' ) );
 
 		self::clear_func_args();
 
 		add_filter( 'pre_option_link_manager_enabled', '__return_true' );
 		$num_items++;
 
-		$_REQUEST['tln_type'] = 'asdf';
+		$_REQUEST['unfc_type'] = 'asdf';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -971,8 +1000,8 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'num_items', $die['args'] );
 		$this->assertSame( $num_items, (int) $die['args']['num_items'] );
 
-		$tlnormalizer->db_check_num_items = $die['args']['num_items'];
-		$tlnormalizer->db_check_items = $die['args']['items'];
+		$unfc_normalize->db_check_num_items = $die['args']['num_items'];
+		$unfc_normalize->db_check_items = $die['args']['items'];
 
 		$_REQUEST['orderby'] = 'field';
 
@@ -986,7 +1015,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		remove_filter( 'pre_option_link_manager_enabled', '__return_true', 10 );
 
 		self::clear_func_args();
-		delete_transient( 'tln_admin_notices' );
+		delete_transient( 'unfc_admin_notices' );
 
 		global $wpdb;
 		$ready = $wpdb->ready;
@@ -995,11 +1024,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$wpdb->last_result = null;
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_items'] = 'tln_db_check_items';
-		$_REQUEST['_wpnonce_items'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-items' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], TLN_DB_CHECK_MENU_SLUG . '-items' ) );
+		$_REQUEST['unfc_db_check_items'] = 'unfc_db_check_items';
+		$_REQUEST['_wpnonce_items'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-items' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_items'], UNFC_DB_CHECK_MENU_SLUG . '-items' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1011,7 +1040,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'num_items', $die['args'] );
 		$this->assertSame( 0, (int) $die['args']['num_items'] );
 		$this->assertSame( 'error', $die['args'][0][0] );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
 
 		$wpdb->ready = $ready;
 		$wpdb->last_result = $last_result;
@@ -1019,26 +1048,26 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 	static $batch_limit = 1;
 
-	function tln_batch_limit_filter( $limit ) {
+	function unfc_batch_limit_filter( $limit ) {
 		return self::$batch_limit;
 	}
 
 	static $list_limit = 1;
 
-	function tln_list_limit_filter( $limit ) {
+	function unfc_list_limit_filter( $limit ) {
 		return self::$list_limit;
 	}
 
     /**
-	 * @ticket tln_db_check_normalize_all
+	 * @ticket unfc_db_check_normalize_all
      */
 	function test_db_check_normalize_all() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -1046,14 +1075,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		// Permission errors.
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_normalize_all'] = 'tln_db_check_normalize_all';
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1196,27 +1225,27 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		// Do normalize.
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$this->assertSame( 1, $out->ID );
 		$this->assertSame( wp_get_current_user()->ID, $out->ID );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		do_action( 'init' );
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_normalize_all'] = 'tln_db_check_normalize_all';
-		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-normalize_all' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], TLN_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
+		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1231,22 +1260,22 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		self::clear_func_args();
 
-		add_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
+		add_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
 		add_filter( 'pre_option_link_manager_enabled', '__return_true' );
 
 		update_post_meta( $page1->ID, '_edit_lock', 0, implode( ':', $lock ) );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_normalize_all'] = 'tln_db_check_normalize_all';
-		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-normalize_all' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], TLN_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
+		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
 
-		$transient_key = 'tln_db_check_items' . $_REQUEST['_wpnonce_normalize_all'];
+		$transient_key = 'unfc_db_check_items' . $_REQUEST['_wpnonce_normalize_all'];
 		set_transient( $transient_key, array( 'num_items' => 0, 'items' => array() ), intval( wp_nonce_tick() ) );
 
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1258,7 +1287,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( $args ) );
 		$this->assertTrue( false !== stripos( $args[0][1], '2' ) );
 
-		remove_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
+		remove_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
 		remove_filter( 'pre_option_link_manager_enabled', '__return_true', 10 );
 
 		global $wpdb;
@@ -1270,13 +1299,13 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		self::clear_func_args();
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_normalize_all'] = 'tln_db_check_normalize_all';
-		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-normalize_all' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], TLN_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
+		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$_REQUEST['tln_type'] = 'post';
+		$_REQUEST['unfc_type'] = 'post';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1286,22 +1315,22 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( 'error', $die['args'][0][0] );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
 
 		$wpdb->ready = $ready;
 		$wpdb->last_result = $last_result;
 	}
 
     /**
-	 * @ticket tln_db_check_slugs
+	 * @ticket unfc_db_check_slugs
      */
 	function test_db_check_slugs() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -1309,14 +1338,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		// Permission errors.
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1332,11 +1361,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		// Nothing.
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
-		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-slugs' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], TLN_DB_CHECK_MENU_SLUG . '-slugs' ) );
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
+		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-slugs' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], UNFC_DB_CHECK_MENU_SLUG . '-slugs' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1373,7 +1402,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( is_object( $post2 ) );
 		$this->assertSame( $post_name2, $post2->post_name ); 
 
-		$title3 = 'post3-title' . str_repeat( "\xc2\x80", TLN_DB_CHECK_TITLE_MAX_LEN );
+		$title3 = 'post3-title' . str_repeat( "\xc2\x80", UNFC_DB_CHECK_TITLE_MAX_LEN );
 		$content3 = 'post3-content';
 		$post_name3 = "post2-name-u%cc%88";
 
@@ -1406,28 +1435,28 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$term3_id = $this->factory->term->create( array( 'name' => 'term3', 'taxonomy' => 'post_tag', 'description' => 'desc3', 'slug' => $term_slug3 ) );
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX and normalize.
 		$this->assertSame( 1, $out->ID );
 		$this->assertSame( wp_get_current_user()->ID, $out->ID );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		do_action( 'init' );
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
-		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-slugs' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], TLN_DB_CHECK_MENU_SLUG . '-slugs' ) );
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
+		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-slugs' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], UNFC_DB_CHECK_MENU_SLUG . '-slugs' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1437,11 +1466,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0]['args'];
 		$this->assertSame( $num_slugs, $args['num_slugs'] );
-		$this->assertSame( array( $post1->ID, $post3->ID, $user1_id, $term1_id, ), array_map( 'intval', tln_list_pluck( $args['slugs'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID, $post3->ID, $user1_id, $term1_id, ), array_map( 'intval', unfc_list_pluck( $args['slugs'], 'id' ) ) );
 
-		$transient_key = 'tln_db_check_slugs' . $_REQUEST['_wpnonce_slugs'];
-		$_REQUEST['tln_trans'] = $transient_key;
-		unset( $_REQUEST['tln_db_check_slugs'] );
+		$transient_key = 'unfc_db_check_slugs' . $_REQUEST['_wpnonce_slugs'];
+		$_REQUEST['unfc_trans'] = $transient_key;
+		unset( $_REQUEST['unfc_db_check_slugs'] );
 
 		self::clear_func_args();
 
@@ -1459,19 +1488,19 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertTrue( false !== stripos( $out, $title1 ) );
 		$this->assertTrue( false === stripos( $out, $title2 ) );
-		$this->assertTrue( false !== stripos( $out, mb_substr( $title3, 0, TLN_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . '...' ) );
+		$this->assertTrue( false !== stripos( $out, mb_substr( $title3, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . '...' ) );
 		$this->assertTrue( false !== stripos( $out, 'user1_login' ) );
 		$this->assertTrue( false !== stripos( $out, 'term1' ) );
-		$this->assertTrue( false !== stripos( $out, TLN_DB_CHECK_SLUGS_LIST_SEL ) );
+		$this->assertTrue( false !== stripos( $out, UNFC_DB_CHECK_SLUGS_LIST_SEL ) );
 
 		self::clear_func_args();
 
-		$_REQUEST['tln_type'] = 'post';
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
+		$_REQUEST['unfc_type'] = 'post';
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
 		$_REQUEST['orderby'] = 'slug';
 
-		add_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
-		add_filter( 'tln_list_limit', array( $this, 'tln_list_limit_filter' ) );
+		add_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
+		add_filter( 'unfc_list_limit', array( $this, 'unfc_list_limit_filter' ) );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1481,10 +1510,10 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0]['args'];
 		$this->assertSame( 2, $args['num_slugs'] );
-		$this->assertSame( array( $post1->ID ), array_map( 'intval', tln_list_pluck( $args['slugs'], 'id' ) ) );
+		$this->assertSame( array( $post1->ID ), array_map( 'intval', unfc_list_pluck( $args['slugs'], 'id' ) ) );
 
-		$tlnormalizer->db_check_num_slugs = $args['num_slugs'];
-		$tlnormalizer->db_check_slugs = $args['slugs'];
+		$unfc_normalize->db_check_num_slugs = $args['num_slugs'];
+		$unfc_normalize->db_check_slugs = $args['slugs'];
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -1493,8 +1522,8 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( false !== stripos( $out, $title1 ) );
 		$this->assertTrue( false === stripos( $out, $title2 ) );
 
-		remove_filter( 'tln_batch_limit', array( $this, 'tln_batch_limit_filter' ) );
-		remove_filter( 'tln_list_limit', array( $this, 'tln_list_limit_filter' ) );
+		remove_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
+		remove_filter( 'unfc_list_limit', array( $this, 'unfc_list_limit_filter' ) );
 
 		global $wpdb;
 		$ready = $wpdb->ready;
@@ -1505,11 +1534,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		self::clear_func_args();
 
 		$_REQUEST = array();
-		$_REQUEST['tln_db_check_slugs'] = 'tln_db_check_slugs';
-		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( TLN_DB_CHECK_MENU_SLUG . '-slugs' );
-		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], TLN_DB_CHECK_MENU_SLUG . '-slugs' ) );
+		$_REQUEST['unfc_db_check_slugs'] = 'unfc_db_check_slugs';
+		$_REQUEST['_wpnonce_slugs'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-slugs' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_slugs'], UNFC_DB_CHECK_MENU_SLUG . '-slugs' ) );
 
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1519,22 +1548,22 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( 'error', $die['args'][0][0] );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ), $die['args'][0][1] );
 
 		$wpdb->ready = $ready;
 		$wpdb->last_result = $last_result;
 	}
 
     /**
-	 * @ticket tln_db_check_normalize_slugs
+	 * @ticket unfc_db_check_normalize_slugs
      */
 	function test_db_check_normalize_slugs() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -1542,14 +1571,14 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		// Permission errors.
 
 		$_REQUEST = array();
-		$_REQUEST['action'] = 'tln_db_check_normalize_slugs';
+		$_REQUEST['action'] = 'unfc_db_check_normalize_slugs';
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1651,15 +1680,15 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$items[] = array( 'id' => $term3_id, 'title' => 'term3', 'type' => 'term', 'subtype' => 'post_tag', 'slug' => $term_slug3, 'idx' => $term3_idx = count( $items ) );
 
 		$_REQUEST = array();
-		$_REQUEST['action'] = 'tln_db_check_normalize_slugs';
-		$bulk_action = 'bulk-' . TLN_DB_CHECK_MENU_SLUG;
+		$_REQUEST['action'] = 'unfc_db_check_normalize_slugs';
+		$bulk_action = 'bulk-' . UNFC_DB_CHECK_MENU_SLUG;
 		$_REQUEST['_wpnonce'] = wp_create_nonce( $bulk_action );
 		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce'], $bulk_action ) );
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$transient_key = 'tln_db_check_slugs' . $_REQUEST['_wpnonce'];
+		$transient_key = 'unfc_db_check_slugs' . $_REQUEST['_wpnonce'];
 		set_transient( $transient_key, array( 'num_slugs' => count( $items ), 'slugs' => $items ), intval( wp_nonce_tick() ) );
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1670,7 +1699,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( 'warning', $die['args'][0][0] );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_SELECT_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_SELECT_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
@@ -1686,7 +1715,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( count( $items ) - count( $_REQUEST['item'] ), $die['args']['num_slugs'] );
-		$this->assertNotContains( $title1, tln_list_pluck( $die['args']['slugs'], 'title' ) ); // Can't use id as could be same between types.
+		$this->assertNotContains( $title1, unfc_list_pluck( $die['args']['slugs'], 'title' ) ); // Can't use id as could be same between types.
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -1723,7 +1752,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( 2, $die['args']['num_slugs'] );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_SYNC_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_SYNC_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
@@ -1754,7 +1783,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_PARAM_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_PARAM_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
@@ -1768,7 +1797,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_PARAM_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_PARAM_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
@@ -1799,11 +1828,11 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_SYNC_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_SYNC_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
-		unset( $_REQUEST['tln_trans'] );
+		unset( $_REQUEST['unfc_trans'] );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1813,19 +1842,19 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
 	}
 
     /**
-	 * @ticket tln_db_check_screen_options
+	 * @ticket unfc_db_check_screen_options
      */
 	function test_db_check_screen_options() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -1833,20 +1862,20 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		$out = wp_set_current_user( 1 );
 
 		$_REQUEST['screen-options-apply'] = 'Apply';
-		$_REQUEST['wp_screen_options'] = array( 'option' => TLN_DB_CHECK_PER_PAGE, 'value' => '42' );
+		$_REQUEST['wp_screen_options'] = array( 'option' => UNFC_DB_CHECK_PER_PAGE, 'value' => '42' );
 		$_REQUEST['screenoptionnonce'] = wp_create_nonce( 'screen-options-nonce' );
 		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['screenoptionnonce'], 'screen-options-nonce' ) );
 
-		$transient_key = 'tln_db_check_items' . $_REQUEST['screenoptionnonce'];
+		$transient_key = 'unfc_db_check_items' . $_REQUEST['screenoptionnonce'];
 		set_transient( $transient_key, array( 'num_items' => 0, 'items' => array() ), intval( wp_nonce_tick() ) );
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1856,12 +1885,12 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 
-		$out = get_user_meta( 1, TLN_DB_CHECK_PER_PAGE );
+		$out = get_user_meta( 1, UNFC_DB_CHECK_PER_PAGE );
 		$this->assertSame( array( '42' ), $out );
 
 		self::clear_func_args();
 
-		unset( $_REQUEST['tln_trans'] );
+		unset( $_REQUEST['unfc_trans'] );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1871,19 +1900,19 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
 	}
 
     /**
-	 * @ticket tln_db_check_referer
+	 * @ticket unfc_db_check_referer
      */
 	function test_db_check_referer() {
 		$this->assertTrue( is_admin() );
 
-		global $tlnormalizer;
+		global $unfc_normalize;
 
 		$_REQUEST = array();
-		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
@@ -1891,21 +1920,21 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		do_action( 'admin_menu' );
 
-		$hook_suffix = 'admin_page_' . TLN_DB_CHECK_MENU_SLUG;
+		$hook_suffix = 'admin_page_' . UNFC_DB_CHECK_MENU_SLUG;
 
-		$this->assertSame( $hook_suffix, $tlnormalizer->db_check_hook_suffix );
+		$this->assertSame( $hook_suffix, $unfc_normalize->db_check_hook_suffix );
 
 		$out = wp_set_current_user( 1 );
 
-		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . TLN_DB_CHECK_MENU_SLUG;
+		$_REQUEST['_wp_http_referer'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
 		$_REQUEST['action'] = $_REQUEST['action2'] = '-1';
-		$bulk_action = 'bulk-' . TLN_DB_CHECK_MENU_SLUG;
+		$bulk_action = 'bulk-' . UNFC_DB_CHECK_MENU_SLUG;
 		$_REQUEST['_wpnonce'] = wp_create_nonce( $bulk_action );
 		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce'], $bulk_action ) );
 
-		$transient_key = 'tln_db_check_items' . $_REQUEST['_wpnonce'];
+		$transient_key = 'unfc_db_check_items' . $_REQUEST['_wpnonce'];
 		set_transient( $transient_key, array( 'num_items' => 0, 'items' => array() ), intval( wp_nonce_tick() ) );
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1934,7 +1963,7 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		self::clear_func_args();
 
 		$_REQUEST['action'] = $_REQUEST['action2'] = '-1';
-		unset( $_REQUEST['tln_trans'] );
+		unset( $_REQUEST['unfc_trans'] );
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1944,12 +1973,12 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$die = self::$func_args['wp_die'][0];
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ), $die['args'][0][1] );
 
 		self::clear_func_args();
 
 		unset( $_REQUEST['_wp_http_referer'] );
-		$_REQUEST['tln_trans'] = $transient_key;
+		$_REQUEST['unfc_trans'] = $transient_key;
 
 		try {
 			do_action( 'load-' . $hook_suffix );
@@ -1970,20 +1999,20 @@ class Tests_TLN_DB_Check extends WP_UnitTestCase {
 		}
 
 		$this->assertSame( 0, count( self::$func_args['wp_die'] ) );
-		$admin_notices = get_transient( 'tln_admin_notices' );
+		$admin_notices = get_transient( 'unfc_admin_notices' );
 		$this->assertSame( 1, count( $admin_notices ) );
-		$this->assertSame( $tlnormalizer->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ), $admin_notices[0][1] );
+		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ), $admin_notices[0][1] );
 	}
 
     /**
-	 * @ticket tln_db_check_percent_decode
+	 * @ticket unfc_db_check_percent_decode
 	 * @dataProvider data_percent_decode
      */
 	function test_db_check_percent_decode( $encoded, $decoded ) {
 
-		$out = TLNormalizer::percent_decode( $encoded );
+		$out = UNFC_Normalize::percent_decode( $encoded );
 		$this->assertSame( $decoded, $out );
-		$out = TLNormalizer::percent_encode( $out );
+		$out = UNFC_Normalize::percent_encode( $out );
 		$this->assertSame( $encoded, $out );
 	}
 

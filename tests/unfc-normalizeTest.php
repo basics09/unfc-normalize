@@ -1,25 +1,29 @@
 <?php
 /**
- * Test general tl-normalize functionality.
+ * Test general unfc-normalize functionality.
  *
- * @group tln
- * @group tln_tl_normalize
+ * @group unfc
+ * @group unfc_normalize
  */
-class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
+class Tests_UNFC_Normalize extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = false;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = false;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -30,6 +34,9 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -37,7 +44,7 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket tln_extra_filters
+	 * @ticket unfc_extra_filters
 	 */
 	function test_extra_filters() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
@@ -47,30 +54,30 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 		set_current_screen( $pagenow );
 		$_REQUEST['action'] = 'replyto-comment';
 
-		add_filter( 'tln_extra_filters', array( $this, 'tln_extra_filters_filter' ) );
+		add_filter( 'unfc_extra_filters', array( $this, 'unfc_extra_filters_filter' ) );
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'extra_filters', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'extra_filters', $unfc_normalize->added_filters );
 
-		add_filter( 'tln_extra_filter', array( $this, 'tln_extra_filter' ) );
+		add_filter( 'unfc_extra_filter', array( $this, 'unfc_extra_filter' ) );
 
-		apply_filters( 'tln_extra_filter', 'Content' . $decomposed_str );
+		apply_filters( 'unfc_extra_filter', 'Content' . $decomposed_str );
 	}
 
-	function tln_extra_filters_filter( $extra_filters ) {
-		$extra_filters[] = 'tln_extra_filter';
+	function unfc_extra_filters_filter( $extra_filters ) {
+		$extra_filters[] = 'unfc_extra_filter';
 		return $extra_filters;
 	}
 
-	function tln_extra_filter( $content ) {
-		$this->assertTrue( TLN_Normalizer::isNormalized( $content ) );
+	function unfc_extra_filter( $content ) {
+		$this->assertTrue( UNFC_Normalizer::isNormalized( $content ) );
 		if ( class_exists( 'Normalizer' ) ) $this->assertTrue( Normalizer::isNormalized( $content ) );
 	}
 
 	/**
-	 * @ticket tln_print_scripts
+	 * @ticket unfc_print_scripts
 	 */
 	function test_print_scripts() {
 		global $pagenow;
@@ -92,8 +99,8 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 
 		$this->assertTrue( false !== strpos( $out, 'unorm.js' ) );
 		$this->assertTrue( false !== strpos( $out, 'rangyinputs-jquery' ) );
-		$this->assertTrue( false !== strpos( $out, 'tl-normalize' ) );
-		$this->assertTrue( false !== strpos( $out, 'tl_normalize.' ) );
+		$this->assertTrue( false !== strpos( $out, 'unfc-normalize' ) );
+		$this->assertTrue( false !== strpos( $out, 'unfc_normalize.' ) );
 
 		$wp_scripts = $old_wp_scripts;
 
@@ -113,42 +120,42 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 
 		$this->assertTrue( false !== strpos( $out, 'unorm.js' ) );
 		$this->assertTrue( false !== strpos( $out, 'rangyinputs-jquery' ) );
-		$this->assertTrue( false !== strpos( $out, 'tl-normalize' ) );
-		$this->assertTrue( false !== strpos( $out, 'tl_normalize.' ) );
+		$this->assertTrue( false !== strpos( $out, 'unfc-normalize' ) );
+		$this->assertTrue( false !== strpos( $out, 'unfc_normalize.' ) );
 	}
 
 	/**
-	 * @ticket tln_tl_normalizer
+	 * @ticket unfc_unfc_normalize
 	 */
-	function test_tl_normalizer() {
+	function test_unfc_normalize() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
 		$composed_str = "\xc3\xbc";
 
 		$content = 'Content' . $decomposed_str;
 		$expected = 'Content' . $composed_str;
 
-		$tln = new TLNormalizer();
-		$this->assertFalse( TLNormalizer::$not_compat );
-		$this->assertFalse( $tln->dont_js );
-		$this->assertFalse( $tln->dont_paste );
-		$this->assertFalse( $tln->dont_filter );
-		$this->assertFalse( $tln->no_normalizer );
+		$unfc = new UNFC_Normalize();
+		$this->assertFalse( UNFC_Normalize::$not_compat );
+		$this->assertFalse( $unfc->dont_js );
+		$this->assertFalse( $unfc->dont_paste );
+		$this->assertFalse( $unfc->dont_filter );
+		$this->assertFalse( $unfc->no_normalizer );
 
-		$out = $tln->tl_normalizer( $content );
+		$out = $unfc->normalize( $content );
 		$this->assertSame( $expected, $out );
 
-		$out = $tln->tl_normalizer( array( $content ) );
+		$out = $unfc->normalize( array( $content ) );
 		$this->assertSame( array( $expected ), $out );
 
-		$out = $tln->tl_normalizer( true );
+		$out = $unfc->normalize( true );
 		$this->assertTrue( $out );
 
-		$out = $tln->tl_normalizer( 1.5 );
+		$out = $unfc->normalize( 1.5 );
 		$this->assertSame( 1.5, $out );
 	}
 
 	/**
-	 * @ticket tln_compat
+	 * @ticket unfc_compat
 	 */
 	function test_compat() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
@@ -158,48 +165,48 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 
 		$wp_filter = array();
 
-		TLNormalizer::$dirname = null;
-		TLNormalizer::$plugin_basename = null;
+		UNFC_Normalize::$dirname = null;
+		UNFC_Normalize::$plugin_basename = null;
 
 		global $pagenow;
 		$pagenow = 'tools.php';
 		set_current_screen( $pagenow );
-		$_REQUEST['page'] = TLN_DB_CHECK_MENU_SLUG;
+		$_REQUEST['page'] = UNFC_DB_CHECK_MENU_SLUG;
 
-		$tln = new TLNormalizer();
+		$unfc = new UNFC_Normalize();
 
-		$tln->activation_check();
+		$unfc->activation_check();
 
-		$this->assertTrue( $tln->check_version() );
-		$this->assertSame( 10, has_filter( 'admin_init', array( $tln, 'admin_init' ) ) );
-		$this->assertSame( 10, has_filter( 'init', array( $tln, 'init' ) ) );
+		$this->assertTrue( $unfc->check_version() );
+		$this->assertSame( 10, has_filter( 'admin_init', array( $unfc, 'admin_init' ) ) );
+		$this->assertSame( 10, has_filter( 'init', array( $unfc, 'init' ) ) );
 
 		do_action( 'init' );
 
-		TLNormalizer::$doing_ajax = true;
+		UNFC_Normalize::$doing_ajax = true;
 
 		do_action( 'admin_init' );
 
-		$this->assertSame( 10, has_filter( 'wp_ajax_tln_db_check_list_bulk', array( $tln, 'wp_ajax_tln_db_check_list_bulk' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_tln_db_check_list_page', array( $tln, 'wp_ajax_tln_db_check_list_page' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_tln_db_check_list_sort', array( $tln, 'wp_ajax_tln_db_check_list_sort' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_tln_db_check_list_screen_options', array( $tln, 'wp_ajax_tln_db_check_list_screen_options' ) ) );
+		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_bulk', array( $unfc, 'wp_ajax_unfc_db_check_list_bulk' ) ) );
+		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_page', array( $unfc, 'wp_ajax_unfc_db_check_list_page' ) ) );
+		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_sort', array( $unfc, 'wp_ajax_unfc_db_check_list_sort' ) ) );
+		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_screen_options', array( $unfc, 'wp_ajax_unfc_db_check_list_screen_options' ) ) );
 
-		TLNormalizer::$doing_ajax = null;
+		UNFC_Normalize::$doing_ajax = null;
 
-		TLNormalizer::$not_compat = true;
-		TLNormalizer::$plugin_basename = WP_PLUGIN_DIR . '/normalizer/tl-normalize.php';
+		UNFC_Normalize::$not_compat = true;
+		UNFC_Normalize::$plugin_basename = WP_PLUGIN_DIR . '/normalizer/unfc-normalize.php';
 
 		$wp_filter = array();
 
-		$tln = new TLNormalizer();
+		$unfc = new UNFC_Normalize();
 
-		$this->assertFalse( $tln->check_version() );
-		$this->assertSame( 10, has_filter( 'admin_init', array( $tln, 'admin_init' ) ) );
-		$this->assertFalse( has_filter( 'init', array( $tln, 'init' ) ) );
+		$this->assertFalse( $unfc->check_version() );
+		$this->assertSame( 10, has_filter( 'admin_init', array( $unfc, 'admin_init' ) ) );
+		$this->assertFalse( has_filter( 'init', array( $unfc, 'init' ) ) );
 
 		$old_plugins = $current = get_site_option( 'active_sitewide_plugins', array() );
-		$current[TLNormalizer::$plugin_basename] = time();
+		$current[UNFC_Normalize::$plugin_basename] = time();
 		$_GET['activate'] = true;
 		update_site_option( 'active_sitewide_plugins', $current );
 
@@ -208,7 +215,7 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 		do_action( 'admin_init' );
 
 		$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-		$this->assertSame( 10, has_filter( $admin_notices_filter, array( $tln, 'disabled_notice' ) ) );
+		$this->assertSame( 10, has_filter( $admin_notices_filter, array( $unfc, 'disabled_notice' ) ) );
 		$this->assertFalse( isset( $_GET['activate'] ) );
 
 		ob_start();
@@ -219,26 +226,26 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 		add_filter( 'wp_die_handler', array( $this, 'get_wp_die_handler' ), 10 );
 		$out = '';
 		try {
-			$tln->activation_check();
+			$unfc->activation_check();
 		} catch ( WPDieException $e ) {
 			$out = $e->getMessage();
 			unset( $e );
 		}
 		$this->assertTrue( false !== stripos( $out, 'activated' ) );
 
-		TLNormalizer::$not_compat = false;
+		UNFC_Normalize::$not_compat = false;
 		global $wp_version;
 		$old_wp_version = $wp_version;
 		$wp_version = '3.9';
 
 		$wp_filter = array();
 
-		$tln = new TLNormalizer();
-		$this->assertFalse( TLNormalizer::tested_wp_version() );
+		$unfc = new UNFC_Normalize();
+		$this->assertFalse( UNFC_Normalize::tested_wp_version() );
 
-		$tln->activation_check();
+		$unfc->activation_check();
 		$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-		$this->assertSame( 10, has_filter( $admin_notices_filter, array( 'TLNormalizer', 'untested_notice' ) ) );
+		$this->assertSame( 10, has_filter( $admin_notices_filter, array( 'UNFC_Normalize', 'untested_notice' ) ) );
 
 		ob_start();
 		do_action( $admin_notices_filter );
@@ -250,10 +257,10 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 		$old_blog_charset = get_option( 'blog_charset' );
 		update_option( 'blog_charset', 'latin1' );
 
-		$tln = new TLNormalizer();
+		$unfc = new UNFC_Normalize();
 
-		$this->assertSame( 10, has_filter( 'admin_init', array( $tln, 'admin_init' ) ) );
-		$this->assertFalse( has_filter( 'init', array( $tln, 'init' ) ) );
+		$this->assertSame( 10, has_filter( 'admin_init', array( $unfc, 'admin_init' ) ) );
+		$this->assertFalse( has_filter( 'init', array( $unfc, 'init' ) ) );
 
 		// Restore.
 		$wp_filter = $old_wp_filter;
@@ -262,7 +269,7 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket tln_get_base
+	 * @ticket unfc_get_base
 	 * @dataProvider data_get_base
 	 */
 	function test_get_base( $page, $action, $expected ) {
@@ -281,8 +288,8 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 			unset( $_REQUEST['action'] );
 		}
 
-		global $tlnormalizer;
-		$out = $tlnormalizer->get_base();
+		global $unfc_normalize;
+		$out = $unfc_normalize->get_base();
 
 		$this->assertSame( $expected, $out );
 	}
@@ -334,24 +341,24 @@ class Tests_TLN_TL_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket tln_tl_normalize_php
+	 * @ticket unfc_unfc_normalize_php
 	 */
-	function test_tl_normalize_php() {
+	function test_unfc_normalize_php() {
 		global $pagenow;
 		$pagenow = 'index.php';
 		set_current_screen( $pagenow );
 
 		$this->assertTrue( is_admin() ) ;
 
-		global $tlnormalizer;
-		$old_tlnormalizer = $tlnormalizer;
+		global $unfc_normalize;
+		$old_unfc_normalize = $unfc_normalize;
 
-		$file = dirname( dirname( __FILE__ ) ) . '/' . 'tl-normalize.php';
+		$file = dirname( dirname( __FILE__ ) ) . '/' . 'unfc-normalize.php';
 		require $file;
 
-		$tlnormalizer = $old_tlnormalizer; // Restore first before asserting so as not to mess up other tests on failure.
+		$unfc_normalize = $old_unfc_normalize; // Restore first before asserting so as not to mess up other tests on failure.
 
-		$this->assertSame( 10, has_filter( 'activate_' . plugin_basename( $file ), array( 'TLNormalizer', 'activation_check' ) ) );
+		$this->assertSame( 10, has_filter( 'activate_' . plugin_basename( $file ), array( 'UNFC_Normalize', 'activation_check' ) ) );
 		//$this->assertTrue( is_textdomain_loaded( 'normalizer' ) ); Doesn't load as running in development directory.
 	}
 }

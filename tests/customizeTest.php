@@ -2,19 +2,23 @@
 /**
  * Test customize filters.
  *
- * @group tln
- * @group tln_customize
+ * @group unfc
+ * @group unfc_customize
  */
-class Tests_TLN_Customize extends WP_UnitTestCase {
+class Tests_UNFC_Customize extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'customize.php';
@@ -22,8 +26,8 @@ class Tests_TLN_Customize extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -34,6 +38,9 @@ class Tests_TLN_Customize extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -41,15 +48,15 @@ class Tests_TLN_Customize extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_customize_customize
+	 * @ticket unfc_customize_customize
      */
 	function test_customize() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		// $this->assertArrayHasKey( 'customize', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		// $this->assertArrayHasKey( 'customize', $unfc_normalize->added_filters );
 
 		// TODO: anything?
 
@@ -60,11 +67,11 @@ class Tests_TLN_Customize extends WP_UnitTestCase {
 
 		do_action( 'init' );
 
-		$this->assertArrayHasKey( 'menus', $tlnormalizer->added_filters );
-		$this->assertArrayHasKey( 'options', $tlnormalizer->added_filters );
-		$this->assertArrayHasKey( 'permalink', $tlnormalizer->added_filters );
-		$this->assertArrayHasKey( 'settings', $tlnormalizer->added_filters );
-		$this->assertArrayHasKey( 'widget', $tlnormalizer->added_filters );
+		$this->assertArrayHasKey( 'menus', $unfc_normalize->added_filters );
+		$this->assertArrayHasKey( 'options', $unfc_normalize->added_filters );
+		$this->assertArrayHasKey( 'permalink', $unfc_normalize->added_filters );
+		$this->assertArrayHasKey( 'settings', $unfc_normalize->added_filters );
+		$this->assertArrayHasKey( 'widget', $unfc_normalize->added_filters );
 
 		// TODO: Specific tests.
 	}

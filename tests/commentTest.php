@@ -2,19 +2,23 @@
 /**
  * Test comment filters.
  *
- * @group tln
- * @group tln_comment
+ * @group unfc
+ * @group unfc_comment
  */
-class Tests_TLN_Comment extends WP_UnitTestCase {
+class Tests_UNFC_Comment extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'comment.php';
@@ -22,8 +26,8 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -34,6 +38,9 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -41,15 +48,15 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_comment_comment
+	 * @ticket unfc_comment_comment
      */
 	function test_comment() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'comment', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'comment', $unfc_normalize->added_filters );
 
 		$decomposed_str = "o\xcc\x88"; // o umlaut.
 
@@ -68,7 +75,7 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 		} else {
 			$this->assertTrue( is_object( $comment ) );
 		}
-		$this->assertSame( TLN_Normalizer::normalize( $updated_comment_text ), $comment->comment_content );
+		$this->assertSame( UNFC_Normalizer::normalize( $updated_comment_text ), $comment->comment_content );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $updated_comment_text ), $comment->comment_content );
 
 		$comment_id2 = $this->factory->comment->create( array( 'comment_post_ID' => $post->post_id ) );
@@ -83,9 +90,9 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 		} else {
 			$this->assertTrue( is_object( $comment ) );
 		}
-		$this->assertSame( TLN_Normalizer::normalize( $comment_author ), $comment->comment_author );
+		$this->assertSame( UNFC_Normalizer::normalize( $comment_author ), $comment->comment_author );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $comment_author ), $comment->comment_author );
-		$this->assertSame( TLN_Normalizer::normalize( $comment_author_url ), $comment->comment_author_url );
+		$this->assertSame( UNFC_Normalizer::normalize( $comment_author_url ), $comment->comment_author_url );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $comment_author_url ), $comment->comment_author_url );
 
 		// Appears to be no filter available for 'comment_meta'.
@@ -98,10 +105,10 @@ class Tests_TLN_Comment extends WP_UnitTestCase {
 		$update = wp_update_comment( array( 'comment_ID' => $comment_id2, 'comment_meta' => array( $meta_key1 => $meta_val1, $meta_key2 => $meta_val1 ) ) );
 
 		$out = get_comment_meta( $comment_id2, $meta_key1 );
-		$this->assertSame( TLN_Normalizer::normalize( $meta_val1 ), $meta_val1 );
+		$this->assertSame( UNFC_Normalizer::normalize( $meta_val1 ), $meta_val1 );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $meta_val1 ), $meta_val1 );
 		$out = get_comment_meta( $comment_id2, $meta_key2 );
-		$this->assertSame( TLN_Normalizer::normalize( $meta_val2 ), $meta_val2 );
+		$this->assertSame( UNFC_Normalizer::normalize( $meta_val2 ), $meta_val2 );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $meta_val2 ), $meta_val2 );
 		*/
 	}

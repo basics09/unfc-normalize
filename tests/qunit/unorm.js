@@ -13,7 +13,7 @@ jQuery( function() {
 
 		for ( i = 0; i < strs.length; i++ ) {
 			str = strs[i];
-			result = tln_unorm.nfc( str );
+			result = unfc_unorm.nfc( str );
 			equal( result, str.normalize(), 'i=' + i );
 		}
 	});

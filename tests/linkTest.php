@@ -2,19 +2,23 @@
 /**
  * Test link filters.
  *
- * @group tln
- * @group tln_link
+ * @group unfc
+ * @group unfc_link
  */
-class Tests_TLN_Link extends WP_UnitTestCase {
+class Tests_UNFC_Link extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'link.php';
@@ -24,8 +28,8 @@ class Tests_TLN_Link extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -36,6 +40,9 @@ class Tests_TLN_Link extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -43,15 +50,15 @@ class Tests_TLN_Link extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_link_link
+	 * @ticket unfc_link_link
      */
 	function test_link() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'link', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'link', $unfc_normalize->added_filters );
 
 		$decomposed_str = "o\xcc\x88"; // o umlaut.
 
@@ -71,17 +78,17 @@ class Tests_TLN_Link extends WP_UnitTestCase {
 		$out = get_link_to_edit( $link_id );
 		$this->assertTrue( is_object( $out ) );
 
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_url'] ), $out->link_url );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_url'] ), $out->link_url );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_url'] ), $out->link_url );
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_name'] ), $out->link_name );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_name'] ), $out->link_name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_name'] ), $out->link_name );
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_image'] ), $out->link_image );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_image'] ), $out->link_image );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_description'] ), $out->link_description );
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_notes'] ), $out->link_notes );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_notes'] ), $out->link_notes );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_notes'] ), $out->link_notes );
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_rss'] ), $out->link_rss );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_rss'] ), $out->link_rss );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_rss'] ), $out->link_rss );
-		$this->assertSame( TLN_Normalizer::normalize( $data['link_name'] ), $out->link_name );
+		$this->assertSame( UNFC_Normalizer::normalize( $data['link_name'] ), $out->link_name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $data['link_name'] ), $out->link_name );
 	}
 }

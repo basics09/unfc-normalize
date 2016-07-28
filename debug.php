@@ -6,20 +6,20 @@
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! defined( 'TLN_DEBUG' ) ) define( 'TLN_DEBUG', defined( 'WP_DEBUG' ) ? WP_DEBUG : false );
+if ( ! defined( 'UNFC_DEBUG' ) ) define( 'UNFC_DEBUG', defined( 'WP_DEBUG' ) ? WP_DEBUG : false );
 
-if ( TLN_DEBUG ) :
+if ( UNFC_DEBUG ) :
 
-if ( ! defined( 'TLN_DEBUG_PRINT_LIMIT' ) ) define( 'TLN_DEBUG_PRINT_LIMIT', 256 );
+if ( ! defined( 'UNFC_DEBUG_PRINT_LIMIT' ) ) define( 'UNFC_DEBUG_PRINT_LIMIT', 256 );
 
 if ( ! defined( 'WP_CONTENT_DIR' ) ) define( 'WP_CONTENT_DIR', '' );
 
 /**
  * Error log helper. Prints arguments, prefixing file, line and function called from.
  */
-function tln_error_log() {
+function unfc_error_log() {
 	$func_get_args = func_get_args();
-	$ret = tln_debug_trace( debug_backtrace(), $func_get_args );
+	$ret = unfc_debug_trace( debug_backtrace(), $func_get_args );
 	$ret[0] = 'ERROR: ' . $ret[0] . "\n\t";
 	$ret = implode( '', $ret );
 	error_log( $ret );
@@ -27,12 +27,12 @@ function tln_error_log() {
 }
 
 /**
- * Debug log helper. Same as tln_error_log() except it prints nothing unless TLN_DEBUG set, and doesn't prefix with "ERROR:".
+ * Debug log helper. Same as unfc_error_log() except it prints nothing unless UNFC_DEBUG set, and doesn't prefix with "ERROR:".
  */
-function tln_debug_log() {
-	if ( ! TLN_DEBUG ) return '';
+function unfc_debug_log() {
+	if ( ! UNFC_DEBUG ) return '';
 	$func_get_args = func_get_args();
-	$ret = tln_debug_trace( debug_backtrace(), $func_get_args );
+	$ret = unfc_debug_trace( debug_backtrace(), $func_get_args );
 	$ret[0] = $ret[0] . "\n\t";
 	$ret = implode( '', $ret );
 	error_log( $ret );
@@ -40,17 +40,17 @@ function tln_debug_log() {
 }
 
 /**
- * Common routine for tln_error_log() and tln_debug_log().
+ * Common routine for unfc_error_log() and unfc_debug_log().
  */
-function tln_debug_trace( $trace, $func_get_args ) {
+function unfc_debug_trace( $trace, $func_get_args ) {
 	$file = str_replace( array( WP_CONTENT_DIR, ABSPATH ), array( '../..', '../../../' ), isset( $trace[0]['file'] ) ? $trace[0]['file'] : '' ); // Assuming in wp-content/themes/mytheme.
 	$line = isset( $trace[0]['line'] ) ? $trace[0]['line'] : '';
 	$function_args = '';
 	if ( ( $function = isset( $trace[1]['function'] ) ? $trace[1]['function'] : '' ) && ! empty( $trace[1]['args'] ) ) {
-		$function_args = array_reduce( $trace[1]['args'], 'tln_debug_trace_array_reduce_cb' );
+		$function_args = array_reduce( $trace[1]['args'], 'unfc_debug_trace_array_reduce_cb' );
 	}
 
-	$ret[] = $file . ':' . $line . ' ' . $function . '(' . tln_print_r( $function_args ) . ') '; // Limit $function_args length.
+	$ret[] = $file . ':' . $line . ' ' . $function . '(' . unfc_print_r( $function_args ) . ') '; // Limit $function_args length.
 
 	foreach ( $func_get_args as $func_get_arg ) $ret[] = is_array( $func_get_arg ) || is_object( $func_get_arg ) ? print_r( $func_get_arg, true ) : $func_get_arg;
 
@@ -58,9 +58,9 @@ function tln_debug_trace( $trace, $func_get_args ) {
 }
 
 /**
- * Callback for array_reduce() in tln_debug_trace().
+ * Callback for array_reduce() in unfc_debug_trace().
  */
-function tln_debug_trace_array_reduce_cb( $carry, $item ) {
+function unfc_debug_trace_array_reduce_cb( $carry, $item ) {
 	return ( $carry === null ? '' : $carry . ', ' )
 			. ( is_array( $item ) ? 'Array' : ( is_object( $item ) ? 'Object' : ( is_null( $item ) ? 'null' : str_replace( "\n", '', print_r( $item, true ) ) ) ) );
 }
@@ -68,8 +68,8 @@ function tln_debug_trace_array_reduce_cb( $carry, $item ) {
 /**
  * Backtrace formatter for debugging.
  */
-function tln_backtrace( $offset = 0, $length = null ) {
-	if ( ! TLN_DEBUG ) return '';
+function unfc_backtrace( $offset = 0, $length = null ) {
+	if ( ! UNFC_DEBUG ) return '';
 	$ret = array();
 	$backs = debug_backtrace();
 	$i = count( $backs );
@@ -89,38 +89,38 @@ function tln_backtrace( $offset = 0, $length = null ) {
 /**
  * Wrapper around PHP print_r() to limit length dumped.
  */
-function tln_print_r( $var ) {
+function unfc_print_r( $var ) {
 	if ( is_array( $var ) ) {
-		return print_r( array_map( 'tln_print_r', $var ), true );
+		return print_r( array_map( 'unfc_print_r', $var ), true );
 	}
-	return tln_print_r_limit_cb( print_r( $var, true ) );
+	return unfc_print_r_limit_cb( print_r( $var, true ) );
 }
 
 /**
- * Callback for tln_print_r().
+ * Callback for unfc_print_r().
  */
-function tln_print_r_limit_cb( $str ) {
-	if ( strlen( $str ) > TLN_DEBUG_PRINT_LIMIT ) {
-		return substr( $str, 0, TLN_DEBUG_PRINT_LIMIT ) . '...';
+function unfc_print_r_limit_cb( $str ) {
+	if ( strlen( $str ) > UNFC_DEBUG_PRINT_LIMIT ) {
+		return substr( $str, 0, UNFC_DEBUG_PRINT_LIMIT ) . '...';
 	}
 	return $str;
 }
 
 /**
- * Hex dump version of tln_print_r().
+ * Hex dump version of unfc_print_r().
  */
-function tln_print_r_hex( $var ) {
+function unfc_print_r_hex( $var ) {
 	if ( is_array( $var ) ) {
-		return print_r( array_map( 'tln_print_r_hex', $var ), true );
+		return print_r( array_map( 'unfc_print_r_hex', $var ), true );
 	}
-	return tln_print_r_limit_cb( tln_bin2hex( $var ) );
+	return unfc_print_r_limit_cb( unfc_bin2hex( $var ) );
 }
 
 /**
  * Dump a variable as a string.
  */
-function tln_dump( $var, $format = false ) {
-	if ( ! TLN_DEBUG ) return '';
+function unfc_dump( $var, $format = false ) {
+	if ( ! UNFC_DEBUG ) return '';
 	ob_start();
 	debug_zval_dump( $var );
 	$ret = ob_get_clean();
@@ -134,7 +134,7 @@ function tln_dump( $var, $format = false ) {
 /**
  * Hex dump a variable.
  */
-function tln_bin2hex( $var ) {
+function unfc_bin2hex( $var ) {
 	$ret = '';
 	if ( ! isset( $var ) ) {
 		$ret .= '(unset)';
@@ -143,7 +143,7 @@ function tln_bin2hex( $var ) {
 	} elseif ( is_array( $var ) || is_object( $var ) ) {
 		$ret .= '(' . gettype( $var ) . ')';
 		foreach ( (array) $var as $k => $v ) {
-			$ret .= ';' . $k . '=' . tln_bin2hex( $v );
+			$ret .= ';' . $k . '=' . unfc_bin2hex( $v );
 		}
 	} elseif ( is_string( $var ) ) {
 		$ret .= bin2hex( $var );
@@ -165,7 +165,7 @@ function tln_bin2hex( $var ) {
  * Format bytes in human-friendly manner.
  * From http://stackoverflow.com/a/2510459
  */
-function tln_format_bytes( $bytes, $precision = 2 ) { 
+function unfc_format_bytes( $bytes, $precision = 2 ) { 
     $units = array( 'B', 'KB', 'MB', 'GB', 'TB' ); 
 
     $bytes = max( $bytes, 0 ); 
@@ -181,14 +181,14 @@ function tln_format_bytes( $bytes, $precision = 2 ) {
 
 else :
 
-function tln_error_log() { return ''; }
-function tln_debug_log() { return ''; }
-function tln_backtrace( $offset = 0, $length = null ) { return ''; }
-function tln_print_r( $var ) { return ''; }
-function tln_print_r_limit_cb( $str ) { return ''; }
-function tln_print_r_hex( $var ) { return ''; }
-function tln_dump( $var, $format = false ) { return ''; }
-function tln_bin2hex( $var ) { return ''; }
-function tln_format_bytes( $bytes, $precision = 2 ) { return ''; }
+function unfc_error_log() { return ''; }
+function unfc_debug_log() { return ''; }
+function unfc_backtrace( $offset = 0, $length = null ) { return ''; }
+function unfc_print_r( $var ) { return ''; }
+function unfc_print_r_limit_cb( $str ) { return ''; }
+function unfc_print_r_hex( $var ) { return ''; }
+function unfc_dump( $var, $format = false ) { return ''; }
+function unfc_bin2hex( $var ) { return ''; }
+function unfc_format_bytes( $bytes, $precision = 2 ) { return ''; }
 
 endif;

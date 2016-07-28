@@ -3,51 +3,54 @@
  * Lists.
  */
 
-require dirname( __FILE__ ) . '/class-tln-list-table.php'; // Our (almost-)clone of WP_List_Table.
+require dirname( __FILE__ ) . '/class-unfc-list-table.php'; // Our (almost-)clone of WP_List_Table.
 
 /**
  * Shared parent functionality for lists.
  */
-class TLN_DB_Check_List_Table extends TLN_List_Table {
+class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 
-	static $tlnormalizer = null; // Handy pointer to global $tlnormalizer (main plugin class instance).
+	static $unfc_normalize = null; // Handy pointer to global $unfc_normalize (main plugin class instance).
 
 	var $all_items = null; // Reference to all the items (as opposed to per-page $items); points to either $db_check_items or $db_check_slugs. Set by children.
 
 	var $standard_types = array(); // Map of standard types to names. Populated in __construct().
+	var $blog_charset = null; // Needed for htmlspecialchars(). Set in __construct().
 
 	var $suptypes = array(); // Map of "supertypes" to types. Ie. 'post' and 'term' types which can have types 'attachment', 'category' etc.
 	var $types = array(); // Map of types to names. Populated with types and custom ones in add_type().
 
-	var $type = ''; // Set if queried for type (via 'tln_type').
-	var $tln_type = ''; // The _REQUEST['tln_type'] sanitized - either "$type" or "$type:$subtype".
+	var $type = ''; // Set if queried for type (via 'unfc_type').
+	var $unfc_type = ''; // The _REQUEST['unfc_type'] sanitized - either "$type" or "$type:$subtype".
 
-	var $query_vars = array( 'page' => TLN_DB_CHECK_MENU_SLUG ); // Added to with query vars. Used for printing hidden inputs for table form.
+	var $query_vars = array( 'page' => UNFC_DB_CHECK_MENU_SLUG ); // Added to with query vars. Used for printing hidden inputs for table form.
 
 	public function __construct( $args = array() ) {
 		parent::__construct( array(
 				'ajax' => true,
-				'screen' => TLN_DB_CHECK_MENU_SLUG,
+				'screen' => UNFC_DB_CHECK_MENU_SLUG,
 			) 
 		);
-		if ( ! $this->wp_less_than_4_4 ) { // Added to TLN_List_Table for backward-compat.
+		if ( ! $this->wp_less_than_4_4 ) { // Added to UNFC_List_Table for backward-compat.
 			$this->screen->set_screen_reader_content();
 		}
 
-		global $tlnormalizer;
-		self::$tlnormalizer = $tlnormalizer;
+		global $unfc_normalize;
+		self::$unfc_normalize = $unfc_normalize;
 
 		$this->items = array(); // Defined in parent. The slice of all items in a page.
 
 		$this->standard_types = array(
-			'post' => __( 'Post, Page', 'normalizer' ),
-			'comment' => __( 'Comment' /*Use WP string*/ ),
-			'term' => __( 'Category, Tag', 'normalizer' ),
-			'user' => __( 'User', 'normalizer' ),
-			'options' => __( 'Options', 'normalizer' ),
-			'settings' => __( 'Settings', 'normalizer' ),
-			'link' => __( 'Link', 'normalizer' ),
+			'post' => __( 'Post, Page', 'unfc_normalize' ),
+			'comment' => __( 'Comment', 'unfc_normalize' ),
+			'term' => __( 'Category, Tag', 'unfc_normalize' ),
+			'user' => __( 'User', 'unfc_normalize' ),
+			'options' => __( 'Options', 'unfc_normalize' ),
+			'settings' => __( 'Settings', 'unfc_normalize' ),
+			'link' => __( 'Link', 'unfc_normalize' ),
 		);
+
+		$this->blog_charset = get_option( 'blog_charset' );
 	}
 
 	// Overridden methods.
@@ -61,11 +64,11 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 			$this->add_type( $item['type'], $item['subtype'] );
 		}
 
-		$this->type = $subtype = $this->tln_type = '';
-		if ( ! empty( $_REQUEST['tln_type'] ) && is_string( $_REQUEST['tln_type'] ) ) {
-			list( $this->type, $subtype ) = self::$tlnormalizer->parse_type( $_REQUEST['tln_type'] );
+		$this->type = $subtype = $this->unfc_type = '';
+		if ( ! empty( $_REQUEST['unfc_type'] ) && is_string( $_REQUEST['unfc_type'] ) ) {
+			list( $this->type, $subtype ) = self::$unfc_normalize->parse_type( $_REQUEST['unfc_type'] );
 			if ( $this->type ) {
-				$this->query_vars['tln_type'] = $this->tln_type = "{$this->type}:{$subtype}";
+				$this->query_vars['unfc_type'] = $this->unfc_type = "{$this->type}:{$subtype}";
 				$this->add_type( $this->type, $subtype );
 			}
 		}
@@ -77,19 +80,19 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 			if ( ! isset( $sortable_columns[ $orderby ] ) ) {
 				$orderby = 'title';
 			}
-			$this->query_vars['orderby'] = $_GET['orderby'] = $orderby; // TLN_List_Table uses $_GET.
+			$this->query_vars['orderby'] = $_GET['orderby'] = $orderby; // UNFC_List_Table uses $_GET.
 		}
 		$order = 'asc';
 		if ( isset( $_REQUEST['order'] ) && is_string( $_REQUEST['order'] ) ) {
 			$order = 'desc' === strtolower( $_REQUEST['order'] ) ? 'desc' : 'asc';
-			$this->query_vars['order'] = $_GET['order'] = $order; // TLN_List_Table uses $_GET.
+			$this->query_vars['order'] = $_GET['order'] = $order; // UNFC_List_Table uses $_GET.
 		}
 
 		$this->sort( $orderby, $order );
 
 		$total_items = count( $this->all_items );
 
-		$per_page = $this->get_items_per_page( TLN_DB_CHECK_PER_PAGE );
+		$per_page = $this->get_items_per_page( UNFC_DB_CHECK_PER_PAGE );
 		$total_pages = intval( ceil( $total_items / $per_page ) );
 
 		$this->set_pagination_args( array(
@@ -103,7 +106,7 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 		$offset = absint( ( $pagenum - 1 ) * $per_page );
 		$this->items = array_slice( $this->all_items, $offset, $per_page );
 
-		// Set up REQUEST_URI for use by TLN_List_Table.
+		// Set up REQUEST_URI for use by UNFC_List_Table.
 		if ( isset( $_REQUEST['_wp_http_referer'] ) && is_string( $_REQUEST['_wp_http_referer'] ) ) {
 			$request_uri = stripslashes( $_REQUEST['_wp_http_referer'] );
 		} else {
@@ -168,22 +171,22 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 				if ( $menu_id ) {
 					$url = admin_url( 'nav-menus.php?action=edit&menu=' . $menu_id );
 					/* translators: %s: menu item name */
-					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit the menu containing this menu item', 'normalizer' ) ) );
+					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit the menu containing this menu item', 'unfc_normalize' ) ) );
 				}
 			} else {
 				$url = get_edit_post_link( $item['id'] );
 				if ( $url ) {
 					/* translators: %s: post title */
-					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)' /*Use WP string*/ ), $item['title'] ) ) );
+					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc_normalize' ), $item['title'] ) ) );
 				}
 			}
 		} elseif ( 'comment' === $item['type'] ) {
 			$url = admin_url( 'comment.php?action=editcomment&c=' . $item['id'] );
-			$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this comment' /*Use WP string*/ ) ) );
+			$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this comment', 'unfc_normalize' ) ) );
 		} elseif ( 'user' === $item['type'] ) {
 			$url = get_edit_user_link( $item['id'] );
 			if ( $url ) {
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this user', 'normalizer' ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this user', 'unfc_normalize' ) ) );
 			}
 		} elseif ( 'term' === $item['type'] ) {
 			if ( 'nav_menu' === $item['subtype'] ) {
@@ -193,7 +196,7 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 			}
 			if ( $url ) {
 				/* translators: %s: taxonomy term name */
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)' /*Use WP string*/ ), $item['title'] ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc_normalize' ), $item['title'] ) ) );
 			}
 		} elseif ( 'options' === $item['type'] ) {
 			$url = ''; // TODO: Map standard options to a url.
@@ -203,15 +206,15 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 			$url = get_edit_bookmark_link( $item['id'] );
 			if ( $url ) {
 				/* translators: %s: link name */
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;' /*Use WP string*/ ), $item['title'] ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'unfc_normalize' ), $item['title'] ) ) );
 			}
 		} else { // Shouldn't happen.
 			$url = '';
 		}
 		if ( $url ) {
-			printf( '<a class="row-title" href="%s"%s>%s</a>', esc_url( $url ), $aria_label_html, htmlspecialchars( $item['title'], ENT_NOQUOTES ) );
+			printf( '<a class="row-title" href="%s"%s>%s</a>', esc_url( $url ), $aria_label_html, htmlspecialchars( $item['title'], ENT_NOQUOTES, $this->blog_charset ) );
 		} else {
-			echo htmlspecialchars( $item['title'], ENT_NOQUOTES );
+			echo htmlspecialchars( $item['title'], ENT_NOQUOTES, $this->blog_charset );
 		}
 	}
 
@@ -234,7 +237,7 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 	 * Output "Type" column.
 	 */
 	function column_type( $item ) {
-		echo htmlspecialchars( $this->types[ $item['subtype'] ], ENT_NOQUOTES ); // Note: signed-up member of the Extraordinarily Severe Campaign Against Pointless Encoding.
+		echo htmlspecialchars( $this->types[ $item['subtype'] ], ENT_NOQUOTES, $this->blog_charset ); // Note: signed-up member of the Extraordinarily Severe Campaign Against Pointless Encoding.
 	}
 
 	/**
@@ -304,16 +307,16 @@ class TLN_DB_Check_List_Table extends TLN_List_Table {
 
 /**
  * Normalizer Items List Table class.
- * List of non-normalized items, up to TLN_DB_CHECK_LIST_LIMIT.
+ * List of non-normalized items, up to UNFC_DB_CHECK_LIST_LIMIT.
  */
-class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
+class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
 	public function __construct() {
 		parent::__construct();
-		$this->all_items = &self::$tlnormalizer->db_check_items; // Will be sorted so use reference to avoid copy.
-		if ( self::$tlnormalizer->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			self::$tlnormalizer->load_tln_normalizer_class();
+		$this->all_items = &self::$unfc_normalize->db_check_items; // Will be sorted so use reference to avoid copy.
+		if ( self::$unfc_normalize->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
+			self::$unfc_normalize->load_unfc_normalizer_class();
 		}
-		if ( ! self::$tlnormalizer->dont_js ) {
+		if ( ! self::$unfc_normalize->dont_js ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_print_footer_scripts' ) );
 		}
 	}
@@ -327,9 +330,9 @@ class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
 	public function get_columns() {
 		$columns = array();
 
-		$columns['title'] = __( 'Title' /*Use WP string*/ );
-		$columns['type'] = __( 'Type', 'normalizer' );
-		$columns['field'] = __( 'Field (1st detected only)', 'normalizer' );
+		$columns['title'] = __( 'Title', 'unfc_normalize' );
+		$columns['type'] = __( 'Type', 'unfc_normalize' );
+		$columns['field'] = __( 'Field (1st detected only)', 'unfc_normalize' );
 
 		return $columns;
 	}
@@ -356,7 +359,7 @@ class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
 	 * Output "Field" column.
 	 */
 	function column_field( $item ) {
-		echo htmlspecialchars( $item['field'], ENT_NOQUOTES );
+		echo htmlspecialchars( $item['field'], ENT_NOQUOTES, $this->blog_charset );
 	}
 
 	/**
@@ -370,8 +373,8 @@ class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
 	 * Print query vars as hiddens (for table form).
 	 */
 	function hiddens() {
-		if ( isset( $_REQUEST['tln_trans'] ) && is_string( $_REQUEST['tln_trans'] ) && 0 === strpos( $_REQUEST['tln_trans'], 'tln_db_check_items' ) ) {
-			$this->query_vars['tln_trans'] = $_REQUEST['tln_trans'];
+		if ( isset( $_REQUEST['unfc_trans'] ) && is_string( $_REQUEST['unfc_trans'] ) && 0 === strpos( $_REQUEST['unfc_trans'], 'unfc_db_check_items' ) ) {
+			$this->query_vars['unfc_trans'] = $_REQUEST['unfc_trans'];
 		}
 		parent::hiddens();
 	}
@@ -383,7 +386,7 @@ class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
 		?>
 		<script type="text/javascript">
 			jQuery( function ( $ ) { // On jQuery ready.
-				tl_normalize.db_check_list( <?php echo json_encode( TLN_DB_CHECK_ITEMS_LIST_SEL ); ?> );
+				unfc_normalize.db_check_list( <?php echo json_encode( UNFC_DB_CHECK_ITEMS_LIST_SEL ); ?> );
 			} );
 		</script>
 		<?php
@@ -392,16 +395,16 @@ class TLN_DB_Check_Items_List_Table extends TLN_DB_Check_List_Table {
 
 /**
  * Normalizer Slugs List Table class.
- * List of non-normalized percent-encoded slugs, up to TLN_DB_CHECK_LIST_LIMIT.
+ * List of non-normalized percent-encoded slugs, up to UNFC_DB_CHECK_LIST_LIMIT.
  */
-class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
+class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 
 	var $idx = 0; // Index into all items array - set in overridden display_rows() method.
 
 	public function __construct() {
 		parent::__construct();
-		$this->all_items = &self::$tlnormalizer->db_check_slugs; // Will be sorted so use reference to avoid copy.
-		if ( ! self::$tlnormalizer->dont_js ) {
+		$this->all_items = &self::$unfc_normalize->db_check_slugs; // Will be sorted so use reference to avoid copy.
+		if ( ! self::$unfc_normalize->dont_js ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_print_footer_scripts' ) );
 		}
 	}
@@ -414,7 +417,7 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	 */
 	protected function get_bulk_actions() {
 		$actions = array(
-			'tln_db_check_normalize_slugs' => __( 'Normalize', 'normalizer' ),
+			'unfc_db_check_normalize_slugs' => __( 'Normalize', 'unfc_normalize' ),
 		);
 		return $actions;
 	}
@@ -427,12 +430,12 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 		$columns = array();
 
 		$columns['cb'] = '<input type="checkbox" />';
-		$columns['title'] = __( 'Title' /*Use WP string*/ );
-		$columns['type'] = __( 'Type', 'normalizer' );
-		$columns['slug'] = __( 'Slug', 'normalizer' );
-		$columns['decoded'] = __( 'Decoded', 'normalizer' );
-		$columns['normalized'] = __( 'If Normalized', 'normalizer' );
-		$columns['normalized_decoded'] = __( 'Normalized Decoded', 'normalizer' );
+		$columns['title'] = __( 'Title', 'unfc_normalize' );
+		$columns['type'] = __( 'Type', 'unfc_normalize' );
+		$columns['slug'] = __( 'Slug', 'unfc_normalize' );
+		$columns['decoded'] = __( 'Decoded', 'unfc_normalize' );
+		$columns['normalized'] = __( 'If Normalized', 'unfc_normalize' );
+		$columns['normalized_decoded'] = __( 'Normalized Decoded', 'unfc_normalize' );
 
 		return $columns;
 	}
@@ -459,8 +462,8 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	protected function column_cb( $item ) {
 		$value = $item['id'] . ':' . $item['type'] . ':' . $item['idx'];
 		?>
-		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>"><?php printf( __( 'Select %s' /*Use WP string*/ ), $item['title'] ); ?></label>
-		<input class="hide-if-no-js" id="cb-select-<?php echo $item['id']; ?>" type="checkbox" name="item[]" value="<?php echo esc_attr( $value ); ?>" />
+		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>"><?php printf( __( 'Select %s', 'unfc_normalize' ), $item['title'] ); ?></label>
+		<input id="cb-select-<?php echo $item['id']; ?>" type="checkbox" name="item[]" value="<?php echo esc_attr( $value ); ?>" />
 		<?php
 	}
 
@@ -470,7 +473,7 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	 * Output "Slug" column.
 	 */
 	function column_slug( $item ) {
-		echo htmlspecialchars( $item['slug'], ENT_NOQUOTES );
+		echo htmlspecialchars( $item['slug'], ENT_NOQUOTES, $this->blog_charset );
 	}
 
 	/**
@@ -484,23 +487,23 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	 * Output "Decoded" column.
 	 */
 	function column_decoded( $item ) {
-		echo htmlspecialchars( rawurldecode( $item['slug'] ), ENT_NOQUOTES ); // Note using real rawurldecode() not our subset version TLNormalizer::percent_decode().
+		echo htmlspecialchars( rawurldecode( $item['slug'] ), ENT_NOQUOTES, $this->blog_charset ); // Note using real rawurldecode() not our subset version UNFC_Normalize::percent_decode().
 	}
 
 	/**
 	 * Output "If Normalized" column.
 	 */
 	function column_normalized( $item ) {
-		$decoded = TLNormalizer::percent_decode( $item['slug'] );
-		if ( ! ( self::$tlnormalizer->no_normalizer ? tl_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
-			$normalized = self::$tlnormalizer->no_normalizer ? tl_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
+		$decoded = UNFC_Normalize::percent_decode( $item['slug'] );
+		if ( ! ( self::$unfc_normalize->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
+			$normalized = self::$unfc_normalize->no_normalizer ? unfc_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
 			if ( false === $normalized ) {
-				_e( 'Not normalizable!', 'normalizer' );
+				_e( 'Not normalizable!', 'unfc_normalize' );
 			} else {
-				echo htmlspecialchars( TLNormalizer::percent_encode( $normalized ), ENT_NOQUOTES );
+				echo htmlspecialchars( UNFC_Normalize::percent_encode( $normalized ), ENT_NOQUOTES, $this->blog_charset );
 			}
 		} else {
-			_e( 'No difference!', 'normalizer' );
+			_e( 'No difference!', 'unfc_normalize' );
 		}
 	}
 
@@ -508,16 +511,16 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	 * Output "Normalized Decoded" column.
 	 */
 	function column_normalized_decoded( $item ) {
-		$decoded = TLNormalizer::percent_decode( $item['slug'] );
-		if ( ! ( self::$tlnormalizer->no_normalizer ? tl_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
-			$normalized = self::$tlnormalizer->no_normalizer ? tl_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
+		$decoded = UNFC_Normalize::percent_decode( $item['slug'] );
+		if ( ! ( self::$unfc_normalize->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
+			$normalized = self::$unfc_normalize->no_normalizer ? unfc_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
 			if ( false === $normalized ) {
-				_e( 'Not normalizable!', 'normalizer' );
+				_e( 'Not normalizable!', 'unfc_normalize' );
 			} else {
-				echo htmlspecialchars( rawurldecode( TLNormalizer::percent_encode( $normalized ) ), ENT_NOQUOTES ); // Re-encode and rawurldecode to give accurate representation.
+				echo htmlspecialchars( rawurldecode( UNFC_Normalize::percent_encode( $normalized ) ), ENT_NOQUOTES, $this->blog_charset ); // Re-encode & rawurldecode to give accurate representation.
 			}
 		} else {
-			_e( 'No difference!', 'normalizer' );
+			_e( 'No difference!', 'unfc_normalize' );
 		}
 	}
 
@@ -525,8 +528,8 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 	 * Print query vars as hiddens (for table form).
 	 */
 	function hiddens() {
-		if ( isset( $_REQUEST['tln_trans'] ) && is_string( $_REQUEST['tln_trans'] ) && 0 === strpos( $_REQUEST['tln_trans'], 'tln_db_check_slugs' ) ) {
-			$this->query_vars['tln_trans'] = $_REQUEST['tln_trans'];
+		if ( isset( $_REQUEST['unfc_trans'] ) && is_string( $_REQUEST['unfc_trans'] ) && 0 === strpos( $_REQUEST['unfc_trans'], 'unfc_db_check_slugs' ) ) {
+			$this->query_vars['unfc_trans'] = $_REQUEST['unfc_trans'];
 		}
 		parent::hiddens();
 	}
@@ -538,7 +541,7 @@ class TLN_DB_Check_Slugs_List_Table extends TLN_DB_Check_List_Table {
 		?>
 		<script type="text/javascript">
 			jQuery( function ( $ ) { // On jQuery ready.
-				tl_normalize.db_check_list( <?php echo json_encode( TLN_DB_CHECK_SLUGS_LIST_SEL ); ?> );
+				unfc_normalize.db_check_list( <?php echo json_encode( UNFC_DB_CHECK_SLUGS_LIST_SEL ); ?> );
 			} );
 		</script>
 		<?php

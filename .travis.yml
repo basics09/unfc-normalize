@@ -8,19 +8,30 @@ sudo: false
 php:
 - 7
 - 5.2
+- 5.3
+- 5.4
+- 5.5
 - 5.6
 
 env:
 - WP_VERSION=latest
-- WP_VERSION=4.2.8
-- WP_VERSION=4.1.11
+- WP_VERSION=4.4.4
+- WP_VERSION=4.3.5
+- WP_VERSION=4.2.9
+- WP_VERSION=4.1.12
+- WP_VERSION=4.0.12
+- WP_VERSION=3.9.13
 
 matrix:
   exclude:
     - php: 7
-      env: WP_VERSION=4.2.8
+      env: WP_VERSION=4.2.9
     - php: 7
-      env: WP_VERSION=4.1.11
+      env: WP_VERSION=4.1.12
+    - php: 7
+      env: WP_VERSION=4.0.12
+    - php: 7
+      env: WP_VERSION=3.9.13
 
 install:
 - npm install grunt-cli

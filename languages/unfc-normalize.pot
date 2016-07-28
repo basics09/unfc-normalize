@@ -1,10 +1,10 @@
-# Copyright (C) 2016 Torsten Landsiedel
+# Copyright (C) 2016 gitlost
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Normalizer 2.0.7\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/tl-normalize\n"
-"POT-Creation-Date: 2016-06-19 20:48:43+00:00\n"
+"Project-Id-Version: UTF-8 NFC Nörmalize 0.9.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
+"POT-Creation-Date: 2016-07-28 23:08:28+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,334 +24,380 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: class-tl-normalizer.php:217
-msgid ""
-"The plugin \"Normalizer\" is not compatible with your system and can't be "
-"activated."
+#: class-unfc-db_check-list-table.php:44
+msgid "Post, Page"
 msgstr ""
 
-#: class-tl-normalizer.php:271
+#: class-unfc-db_check-list-table.php:45
+msgid "Comment"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:46
+msgid "Category, Tag"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:47
+msgid "User"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:48
+msgid "Options"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:49
+msgid "Settings"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:50
+msgid "Link"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:174
+#. translators: %s: menu item name
+msgid "Edit the menu containing this menu item"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:180
+#: class-unfc-db_check-list-table.php:199
+#. translators: %s: post title
+#. translators: %s: taxonomy term name
+msgid "&#8220;%s&#8221; (Edit)"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:185
+msgid "Edit this comment"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:189
+msgid "Edit this user"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:209
+#. translators: %s: link name
+msgid "Edit &#8220;%s&#8221;"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:333
+#: class-unfc-db_check-list-table.php:433
+msgid "Title"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:334
+#: class-unfc-db_check-list-table.php:434
+msgid "Type"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:335
+msgid "Field (1st detected only)"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:420
+msgid "Normalize"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:435
+msgid "Slug"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:436
+msgid "Decoded"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:437
+msgid "If Normalized"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:438
+msgid "Normalized Decoded"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:465
+msgid "Select %s"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:501
+#: class-unfc-db_check-list-table.php:518
+msgid "Not normalizable!"
+msgstr ""
+
+#: class-unfc-db_check-list-table.php:506
+#: class-unfc-db_check-list-table.php:523
+msgid "No difference!"
+msgstr ""
+
+#: class-unfc-normalize.php:217
+msgid ""
+"The plugin \"UTF-8 Normalization Form C Normalize\" is not compatible with "
+"your system and can't be activated."
+msgstr ""
+
+#: class-unfc-normalize.php:271
 msgid "Plugin deactivated!"
 msgstr ""
 
-#: class-tl-normalizer.php:272
+#: class-unfc-normalize.php:272
 msgid ""
-"The plugin \"Normalizer\" is not compatible with your system and has been "
-"deactivated."
+"The plugin \"UTF-8 Normalization Form C Normalize\" is not compatible with "
+"your system and has been deactivated."
 msgstr ""
 
-#: class-tl-normalizer.php:295
+#: class-unfc-normalize.php:295
 msgid "Warning: untested!"
 msgstr ""
 
-#: class-tl-normalizer.php:301
+#: class-unfc-normalize.php:301
 #. translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress
 #. version tested; %3$s: user's current WordPress version.
 msgid ""
-"The plugin \"Normalizer\" has only been tested on WordPress Versions %1$s "
-"to %2$s. You have WordPress Version %3$s."
+"The plugin \"UTF-8 Normalization Form C Normalize\" has only been tested on "
+"WordPress Versions %1$s to %2$s. You have WordPress Version %3$s."
 msgstr ""
 
-#: class-tl-normalizer.php:816
+#: class-unfc-normalize.php:816
 msgid "Please wait..."
 msgstr ""
 
-#: class-tl-normalizer.php:947 class-tl-normalizer.php:1171
+#: class-unfc-normalize.php:947 class-unfc-normalize.php:1171
 msgid "Nörmalizer Database Check"
 msgstr ""
 
-#: class-tl-normalizer.php:947
+#: class-unfc-normalize.php:947
 msgid "Nörmalizer Db Check"
 msgstr ""
 
-#: class-tl-normalizer.php:1230
+#: class-unfc-normalize.php:961 class-unfc-normalize.php:1164
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: class-unfc-normalize.php:1230
 msgid "Rescan the Database"
 msgstr ""
 
-#: class-tl-normalizer.php:1232
+#: class-unfc-normalize.php:1232
 msgid "Scan the Database"
 msgstr ""
 
-#: class-tl-normalizer.php:1240
+#: class-unfc-normalize.php:1240
 msgid "You can scan the database for non-normalized data (nothing will be updated):"
 msgstr ""
 
-#: class-tl-normalizer.php:1245
+#: class-unfc-normalize.php:1245
 msgid ""
 "Scanning the database can take a long time depending on the amount and type "
 "of data you have."
 msgstr ""
 
-#: class-tl-normalizer.php:1262
+#: class-unfc-normalize.php:1262
 msgid ""
 "You can normalize the non-normalized data found in the database. The "
 "database <strong>will be updated</strong>."
 msgstr ""
 
-#: class-tl-normalizer.php:1265
+#: class-unfc-normalize.php:1265
 msgid ""
 "<strong>Important:</strong> before updating, please <a "
 "href=\"https://codex.wordpress.org/WordPress_Backups\">back up your "
 "database</a>."
 msgstr ""
 
-#: class-tl-normalizer.php:1267
+#: class-unfc-normalize.php:1267
 msgid "Normalize All"
 msgstr ""
 
-#: class-tl-normalizer.php:1269
+#: class-unfc-normalize.php:1269
 msgid ""
 "Normalizing can take a long time depending on the amount and type of data "
 "you have."
 msgstr ""
 
-#: class-tl-normalizer.php:1285
+#: class-unfc-normalize.php:1285
 #. translators: %1$s: formatted maximum number of non-normalized items listed;
 #. %2$s: formatted total number of non-normalized items found.
 msgid "First %1$s Non-Normalized Items of %2$s Found"
 msgstr ""
 
-#: class-tl-normalizer.php:1289
+#: class-unfc-normalize.php:1289
 msgid "Non-Normalized Items"
 msgstr ""
 
-#: class-tl-normalizer.php:1315
+#: class-unfc-normalize.php:1315
 msgid "Rescan Slugs"
 msgstr ""
 
-#: class-tl-normalizer.php:1317
+#: class-unfc-normalize.php:1317
 msgid "Scan Slugs"
 msgstr ""
 
-#: class-tl-normalizer.php:1325
+#: class-unfc-normalize.php:1325
 msgid ""
 "You can scan the database for slugs that could be percent-encoded from "
 "non-normalized data (nothing will be updated):"
 msgstr ""
 
-#: class-tl-normalizer.php:1328
+#: class-unfc-normalize.php:1328
 msgid "A list of posts and/or terms with suspect slugs will be displayed."
 msgstr ""
 
-#: class-tl-normalizer.php:1333
+#: class-unfc-normalize.php:1333
 msgid ""
 "Scanning the slugs can take a long time depending on the amount and type of "
 "data you have."
 msgstr ""
 
-#: class-tl-normalizer.php:1349
+#: class-unfc-normalize.php:1349
 #. translators: %1$s: formatted maximum number of non-normalized slugs listed;
 #. %2$s: formatted total number of non-normalized slugs found.
 msgid "First %1$s Non-Normalized Slugs of %2$s Found"
 msgstr ""
 
-#: class-tl-normalizer.php:1353
+#: class-unfc-normalize.php:1353
 msgid "Non-Normalized Slugs"
 msgstr ""
 
-#: class-tl-normalizer.php:1524
+#: class-unfc-normalize.php:1524
 msgid "Database error."
 msgstr ""
 
-#: class-tl-normalizer.php:1525
+#: class-unfc-normalize.php:1525
 msgid "Meta data error."
 msgstr ""
 
-#: class-tl-normalizer.php:1526
+#: class-unfc-normalize.php:1526
 msgid "Parameters error."
 msgstr ""
 
-#: class-tl-normalizer.php:1527
+#: class-unfc-normalize.php:1527
 msgid "Transient has expired. Please re-scan."
 msgstr ""
 
-#: class-tl-normalizer.php:1528
+#: class-unfc-normalize.php:1528
 msgid "Data out of sync!"
 msgstr ""
 
-#: class-tl-normalizer.php:1529
+#: class-unfc-normalize.php:1529
 msgid "No items selected!"
 msgstr ""
 
-#: class-tl-normalizer.php:1601 class-tl-normalizer.php:2031
+#: class-unfc-normalize.php:1604 class-unfc-normalize.php:2040
 msgid "..."
 msgstr ""
 
-#: class-tl-normalizer.php:1638
+#: class-unfc-normalize.php:1641
 #. translators: %s: formatted number of items detected.
 msgid "%s non-normalized item detected."
 msgid_plural "%s non-normalized items detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:1641
+#: class-unfc-normalize.php:1644
 msgid "<strong>No</strong> non-normalized data detected!"
 msgstr ""
 
-#: class-tl-normalizer.php:1816
+#: class-unfc-normalize.php:1822
 #. translators: %s: formatted number of items normalized.
 msgid "%s item normalized."
 msgid_plural "%s items normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:1818 class-tl-normalizer.php:2245
+#: class-unfc-normalize.php:1824 class-unfc-normalize.php:2254
 msgid "Nothing updated!"
 msgstr ""
 
-#: class-tl-normalizer.php:1823
+#: class-unfc-normalize.php:1829
 #. translators: %s: formatted number of items locked.
 msgid "%s item not normalized, somebody is editing it."
 msgid_plural "%s items not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:1829
+#: class-unfc-normalize.php:1835
 #. translators: %s: formatted number of items that failed to normalize.
 msgid "%s item not normalized, failed to normalize."
 msgid_plural "%s items not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2065
+#: class-unfc-normalize.php:2074
 #. translators: %s: formatted number of percent-encoded items detected.
 msgid "%s non-normalized percent-encoded slug detected."
 msgid_plural "%s non-normalized percent-encoded slugs detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2069
+#: class-unfc-normalize.php:2078
 msgid "<strong>No</strong> non-normalized percent-encoded slugs detected!"
 msgstr ""
 
-#: class-tl-normalizer.php:2243
+#: class-unfc-normalize.php:2252
 #. translators: %s: formatted number of slugs normalized.
 msgid "%s slug normalized."
 msgid_plural "%s slugs normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2250
+#: class-unfc-normalize.php:2259
 #. translators: %s: formatted number of items locked.
 msgid "%s slug not normalized, somebody is editing it."
 msgid_plural "%s slugs not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2256
+#: class-unfc-normalize.php:2265
 #. translators: %s: formatted number of slugs not found.
 msgid "%s slug not normalized, no longer exists."
 msgid_plural "%s slugs not normalized, no longer exist."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2262
+#: class-unfc-normalize.php:2271
 #. translators: %s: formatted number of slugs not non-normalized.
 msgid "%s slug not normalized, no longer non-normalized."
 msgid_plural "%s slugs not normalized, no longer non-normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tl-normalizer.php:2268
+#: class-unfc-normalize.php:2277
 #. translators: %s: formatted number of slugs that failed to normalize.
 msgid "%s slug not normalized, failed to normalize."
 msgid_plural "%s slugs not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
-#: class-tln-db_check-list-table.php:43
-msgid "Post, Page"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:45
-msgid "Category, Tag"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:46
-msgid "User"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:47
-msgid "Options"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:48
-msgid "Settings"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:49
-msgid "Link"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:171
-#. translators: %s: menu item name
-msgid "Edit the menu containing this menu item"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:186
-msgid "Edit this user"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:331 class-tln-db_check-list-table.php:431
-msgid "Type"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:332
-msgid "Field (1st detected only)"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:417
-msgid "Normalize"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:432
-msgid "Slug"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:433
-msgid "Decoded"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:434
-msgid "If Normalized"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:435
-msgid "Normalized Decoded"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:498 class-tln-db_check-list-table.php:515
-msgid "Not normalizable!"
-msgstr ""
-
-#: class-tln-db_check-list-table.php:503 class-tln-db_check-list-table.php:520
-msgid "No difference!"
-msgstr ""
-
-#: tools/gen_combining_class.php:34 tools/gen_tln_ins.php:130
-#: tools/gen_tln_regex_alts.php:135
+#: tools/gen_combining_class.php:36 tools/gen_unfc_ins.php:132
+#: tools/gen_unfc_regex_alts.php:135
 #. translators: %s: file name
 msgid "Could not read derived combining class file \"%s\""
 msgstr ""
 
-#: tools/gen_tln_ins.php:31 tools/gen_tln_regex_alts.php:31
+#: tools/gen_mnme_regex.php:31 tools/gen_unidata.php:74
+#. translators: %s: file name
+msgid "Could not read unicode data file \"%s\""
+msgstr ""
+
+#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:31
 #. translators: %s: file name
 msgid "Could not read UCD derived normalization properties file \"%s\""
 msgstr ""
 
-#: tools/gen_tln_ins.php:115 tools/gen_tln_regex_alts.php:120
+#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:120
 #. translators: %s: file name
 msgid ""
 "Missing NO or MAYBE codepoints in UCD derived normalization properties file "
 "\"%s\""
 msgstr ""
 
+#: tools/gen_unidata.php:32
+#. translators: %s: file name
+msgid "Could not read composition exclusions file \"%s\""
+msgstr ""
+
 #. Plugin Name of the plugin/theme
-msgid "Normalizer"
+msgid "UTF-8 NFC Nörmalize"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://github.com/Zodiac1978/tl-normalizer"
+msgid "https://github.com/gitlost/unfc-normalize"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -359,9 +405,9 @@ msgid "Normalizes UTF-8 input to Normalization Form C."
 msgstr ""
 
 #. Author of the plugin/theme
-msgid "Torsten Landsiedel"
+msgid "gitlost"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "http://torstenlandsiedel.de"
+msgid "https://profiles.wordpress.org/gitlost"
 msgstr ""

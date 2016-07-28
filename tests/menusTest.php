@@ -2,19 +2,23 @@
 /**
  * Test menus filters.
  *
- * @group tln
- * @group tln_menus
+ * @group unfc
+ * @group unfc_menus
  */
-class Tests_TLN_Menus extends WP_UnitTestCase {
+class Tests_UNFC_Menus extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'nav-menus.php';
@@ -22,8 +26,8 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -34,6 +38,9 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -41,15 +48,15 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_menus_menus
+	 * @ticket unfc_menus_menus
      */
 	function test_menus() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'menus', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'menus', $unfc_normalize->added_filters );
 
 		$decomposed_str = "u\xCC\x88"; // u umlaut.
 
@@ -70,9 +77,9 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 			$this->assertTrue( is_object( $out ) );
 		}
 
-		$this->assertSame( TLN_Normalizer::normalize( $menu_data['menu-name'] ), $out->name );
+		$this->assertSame( UNFC_Normalizer::normalize( $menu_data['menu-name'] ), $out->name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $menu_data['menu-name'] ), $out->name );
-		$this->assertSame( TLN_Normalizer::normalize( $menu_data['description'] ), $out->description );
+		$this->assertSame( UNFC_Normalizer::normalize( $menu_data['description'] ), $out->description );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $menu_data['description'] ), $out->description );
 
 		$menu_date['menu-name'] = wp_slash( 'menus name2 ' . $decomposed_str );
@@ -88,9 +95,9 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 			$this->assertTrue( is_object( $menu ) );
 		}
 
-		$this->assertSame( TLN_Normalizer::normalize( $menu_data['menu-name'] ), $menu->name );
+		$this->assertSame( UNFC_Normalizer::normalize( $menu_data['menu-name'] ), $menu->name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $menu_data['menu-name'] ), $menu->name );
-		$this->assertSame( TLN_Normalizer::normalize( $menu_data['description'] ), $menu->description );
+		$this->assertSame( UNFC_Normalizer::normalize( $menu_data['description'] ), $menu->description );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $menu_data['description'] ), $menu->description );
 
 		$item_data = array(
@@ -110,15 +117,15 @@ class Tests_TLN_Menus extends WP_UnitTestCase {
 		$this->assertTrue( is_array( $items ) );
 		$this->assertSame( 1, count( $items ) );
 		$item = $items[0];
-		$this->assertSame( TLN_Normalizer::normalize( $item_data['menu-item-title'] ), $item->post_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $item_data['menu-item-title'] ), $item->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $item_data['menu-item-title'] ), $item->post_title );
-		$this->assertSame( TLN_Normalizer::normalize( esc_url_raw( $item_data['menu-item-url'] ) ), $item->url );
+		$this->assertSame( UNFC_Normalizer::normalize( esc_url_raw( $item_data['menu-item-url'] ) ), $item->url );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( esc_url_raw( $item_data['menu-item-url'] ) ), $item->url );
-		$this->assertSame( TLN_Normalizer::normalize( $item_data['menu-item-description'] ), $item->post_content );
+		$this->assertSame( UNFC_Normalizer::normalize( $item_data['menu-item-description'] ), $item->post_content );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $item_data['menu-item-description'] ), $item->post_content );
-		$this->assertSame( TLN_Normalizer::normalize( $item_data['menu-item-description'] ), $item->description ); // In 2 places.
+		$this->assertSame( UNFC_Normalizer::normalize( $item_data['menu-item-description'] ), $item->description ); // In 2 places.
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $item_data['menu-item-description'] ), $item->description );
-		$this->assertSame( TLN_Normalizer::normalize( $item_data['menu-item-attr-title'] ), $item->attr_title );
+		$this->assertSame( UNFC_Normalizer::normalize( $item_data['menu-item-attr-title'] ), $item->attr_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $item_data['menu-item-attr-title'] ), $item->attr_title );
 		// classes and xfn stripped to ASCII.
 		$this->assertSame( preg_replace( '/[^\x00-\x7f]/', '', $item_data['menu-item-classes'] ), implode( ' ', $item->classes ) );

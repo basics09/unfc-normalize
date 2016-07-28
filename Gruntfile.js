@@ -33,7 +33,7 @@ module.exports = function( grunt ) { //The wrapper function
 				options: {
 					'screenshot_url': 'https://ps.w.org/{plugin}/assets/{screenshot}.png',
 					'post_convert': function ( readme ) {
-						readme = '[![Build Status](https://travis-ci.org/gitlost/tl-normalizer.png?branch=master)](https://travis-ci.org/gitlost/tl-normalizer)\n' + readme;
+						readme = '[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)\n' + readme;
 						return readme;
 					}
 				}
@@ -45,9 +45,9 @@ module.exports = function( grunt ) { //The wrapper function
 				options: {
 					cwd: '',                          // Directory of files to internationalize.
 					domainPath: '/languages',         // Where to save the POT file.
-					exclude: [ 'perf/', 'tests/', 'class-tln-list-table.php' ],   // List of files or directories to ignore.
+					exclude: [ 'perf/', 'tests/', 'class-unfc-list-table.php' ],   // List of files or directories to ignore.
 					include: [],                      // List of files or directories to include.
-					mainFile: 'tl-normalize.php',     // Main project file.
+					mainFile: 'unfc-normalize.php',     // Main project file.
 					potComments: '',                  // The copyright at the beginning of the POT file.
 					potFilename: '',                  // Name of the POT file.
 					potHeaders: {

@@ -1,6 +1,11 @@
 // Array.prototype.reduceRight polyfill for IE8
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight
 
+// This version added April 4, 2014 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight$compare?to=543427&from=510831
+// based on previous version March 9, 2013 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight$compare?to=364123&from=343617
+// I.e. after August 20, 2010 so according to MDN licensing https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses is in the public domain.
+// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
+
 // Production steps of ECMA-262, Edition 5, 15.4.4.22
 // Reference: http://es5.github.io/#x15.4.4.22
 if ('function' !== typeof Array.prototype.reduceRight) {

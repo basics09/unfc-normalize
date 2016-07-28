@@ -9,7 +9,7 @@
  * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
  * $Date: 2008-06-05 16:44:17 +0200 (Thu, 05 Jun 2008) $
  * $Rev: 13309 $
- * gitlost renamed to tln_unorm to avoid conflicts.
+ * gitlost renamed to unfc_unorm to avoid conflicts.
  * https://github.com/walling/unorm
  */
 
@@ -374,7 +374,7 @@ UChar.udata={
 };
 
    /***** Module to export */
-   var tln_unorm = { // gitlost
+   var unfc_unorm = { // gitlost
       nfc: nfc,
       nfd: nfd,
       nfkc: nfkc,
@@ -385,17 +385,17 @@ UChar.udata={
 
    // CommonJS
    if (typeof module === "object") {
-      module.exports = tln_unorm; // gitlost
+      module.exports = unfc_unorm; // gitlost
 
    // AMD
    } else if (typeof define === "function" && define.amd) {
-      define("tln_unorm", function () { // gitlost
-         return tln_unorm; // gitlost
+      define("unfc_unorm", function () { // gitlost
+         return unfc_unorm; // gitlost
       });
 
    // Global
    } else {
-      root.tln_unorm = tln_unorm; // gitlost
+      root.unfc_unorm = unfc_unorm; // gitlost
    }
 
    /***** Export as shim for String::normalize method *****/
@@ -419,7 +419,7 @@ UChar.udata={
 
       *NOTE* The normalize function is intentionally generic; it does not require that its this value be a String object. Therefore it can be transferred to other kinds of objects for use as a method.
    */
-    tln_unorm.shimApplied = false; // gitlost
+    unfc_unorm.shimApplied = false; // gitlost
 
    if (!String.prototype.normalize) {
       String.prototype.normalize = function(form) {
@@ -427,18 +427,18 @@ UChar.udata={
          form =  form === undefined ? "NFC" : form;
 
          if (form === "NFC") {
-            return tln_unorm.nfc(str); // gitlost
+            return unfc_unorm.nfc(str); // gitlost
          } else if (form === "NFD") {
-            return tln_unorm.nfd(str); // gitlost
+            return unfc_unorm.nfd(str); // gitlost
          } else if (form === "NFKC") {
-            return tln_unorm.nfkc(str); // gitlost
+            return unfc_unorm.nfkc(str); // gitlost
          } else if (form === "NFKD") {
-            return tln_unorm.nfkd(str); // gitlost
+            return unfc_unorm.nfkd(str); // gitlost
          } else {
             throw new RangeError("Invalid normalization form: " + form);
          }
       };
 
-      tln_unorm.shimApplied = true; // gitlost
+      unfc_unorm.shimApplied = true; // gitlost
    }
 }(this));

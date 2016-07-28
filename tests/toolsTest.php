@@ -3,15 +3,15 @@
 /**
  * Test tools.
  *
- * @group tln
- * @group tln_tools
+ * @group unfc
+ * @group unfc_tools
  */
-class Tests_TLN_Tools extends WP_UnitTestCase {
+class Tests_UNFC_Tools extends WP_UnitTestCase {
 
 	public static function wpSetUpBeforeClass() {
 		$dirname = dirname( dirname( __FILE__ ) );
 		require_once $dirname . '/tools/functions.php';
-		require_once $dirname . '/Symfony/tln_regex_alts.php';
+		require_once $dirname . '/Symfony/unfc_regex_alts.php';
 	}
 
 	function setUp() {
@@ -22,7 +22,7 @@ class Tests_TLN_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket tln_utf8_regex_alts
+	 * @ticket unfc_utf8_regex_alts
 	 */
     function test_utf8_regex_alts() {
 
@@ -68,69 +68,73 @@ class Tests_TLN_Tools extends WP_UnitTestCase {
 		foreach ( $arr as $item ) {
 			list( $c1, $c2, $expected ) = $item;
 			$ranges = array();
-			tln_utf8_4range( $ranges, $c1, $c2 );
-			$actual = tln_utf8_regex_alts( $ranges );
+			unfc_utf8_4range( $ranges, $c1, $c2 );
+			$actual = unfc_utf8_regex_alts( $ranges );
 			$this->assertSame( $expected, $actual );
 		}
     }
 
 	/**
-	 * @ticket tln_u_equivalence
+	 * @ticket unfc_u_equivalence
 	 */
     function test_u_equivalence() {
-		global $tln_nfc_noes, $tln_nfc_noes_maybes_reorders;
-		$this->assertTrue( is_array( $tln_nfc_noes ) );
+		global $unfc_nfc_noes, $unfc_nfc_noes_maybes_reorders;
+		$this->assertTrue( is_array( $unfc_nfc_noes ) );
 
-		foreach ( $tln_nfc_noes as $no ) {
-			$chr = tln_utf8_chr( $no );
-			$this->assertSame( 1, preg_match( TLN_REGEX_NFC_NOES, $chr ) );
-			$this->assertSame( 1, preg_match( TLN_REGEX_NFC_NOES_U, $chr ) );
+		foreach ( $unfc_nfc_noes as $no ) {
+			$chr = unfc_utf8_chr( $no );
+			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES, $chr ) );
+			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_U, $chr ) );
 		}
-		foreach ( $tln_nfc_noes_maybes_reorders as $nmr ) {
-			$chr = tln_utf8_chr( $nmr );
-			$this->assertSame( 1, preg_match( TLN_REGEX_NFC_NOES_MAYBES_REORDERS, $chr ) );
-			$this->assertSame( 1, preg_match( TLN_REGEX_NFC_NOES_MAYBES_REORDERS_U, $chr ) );
+		foreach ( $unfc_nfc_noes_maybes_reorders as $nmr ) {
+			$chr = unfc_utf8_chr( $nmr );
+			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $chr ) );
+			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_MAYBES_REORDERS_U, $chr ) );
 		}
 	}
 
 	/**
-	 * @ticket tln_utf8_chr
+	 * @ticket unfc_utf8_chr
 	 */
     function test_utf8_chr() {
-		$this->assertSame( "\x00", tln_utf8_chr( 0 ) );
-		$this->assertSame( "\x01", tln_utf8_chr( 1 ) );
-		$this->assertSame( "\xf4\x8f\xbf\xbe", tln_utf8_chr( 0x10fffe ) );
-		$this->assertSame( "\xf4\x8f\xbf\xbf", tln_utf8_chr( 0x10ffff ) );
-		$this->assertSame( "\xf4\x8f\xbf\xbf", tln_utf8_chr( 0x120000 ) );
+		$this->assertSame( "\x00", unfc_utf8_chr( 0 ) );
+		$this->assertSame( "\x01", unfc_utf8_chr( 1 ) );
+		$this->assertSame( "\xf4\x8f\xbf\xbe", unfc_utf8_chr( 0x10fffe ) );
+		$this->assertSame( "\xf4\x8f\xbf\xbf", unfc_utf8_chr( 0x10ffff ) );
+		$this->assertSame( "\xf4\x8f\xbf\xbf", unfc_utf8_chr( 0x120000 ) );
 	}
 
 	/**
-	 * @ticket tln_utf8_rand_ratio_str
+	 * @ticket unfc_utf8_rand_ratio_str
 	 */
     function test_utf8_rand_ratio_str() {
-		global $tlnormalizer;
-		$tlnormalizer->load_tln_normalizer_class();
+		global $unfc_normalize;
+		$unfc_normalize->load_unfc_normalizer_class();
 
-		$out = tln_utf8_rand_ratio_str( 100, 1 );
-		$this->assertFalse( 1 === preg_match( TLN_REGEX_IS_VALID_UTF8, $out ) );
+		for ( $i = 0; $i < 1000; $i++ ) {
+			$out = unfc_utf8_rand_ratio_str( 100, 0.01 );
+			$this->assertFalse( unfc_is_valid_utf8( $out ) );
+		}
 
-		global $tln_nfc_noes_maybes_reorders;
-		$out = tln_utf8_rand_ratio_str( 100, 1, $tln_nfc_noes_maybes_reorders );
-		$this->assertTrue( 1 === preg_match( TLN_REGEX_IS_VALID_UTF8, $out ) );
+		global $unfc_nfc_noes_maybes_reorders;
+		for ( $i = 0; $i < 1000; $i++ ) {
+			$out = unfc_utf8_rand_ratio_str( 100, 1, $unfc_nfc_noes_maybes_reorders );
+			$this->assertTrue( unfc_is_valid_utf8( $out ) );
+		}
 	}
 
 	/**
-	 * @ticket tln_utf8_rand_chr
+	 * @ticket unfc_utf8_rand_chr
 	 */
     function test_utf8_rand_chr() {
 		$ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
-		$out = tln_utf8_rand_str();
-        $this->assertTrue( ! isset( $out[ strspn( $out, $ASCII ) ] ) ); // Theoretically this could be false.
+		$out = unfc_utf8_rand_str();
+        $this->assertTrue( ! isset( $out[ strspn( $out, $ASCII ) ] ) );
 	}
 
 	/**
-	 * @ticket tln_list_pluck
+	 * @ticket unfc_list_pluck
 	 */
     function test_list_pluck() {
 		$obj1 = new stdclass;
@@ -142,7 +146,7 @@ class Tests_TLN_Tools extends WP_UnitTestCase {
 		$obj4->id = 4;
 
 		$list = array( $obj1, $obj2, $obj3, $obj4 );
-		$out = tln_list_pluck( $list, 'id' );
+		$out = unfc_list_pluck( $list, 'id' );
 		$this->assertSame( array( 0 => 1, 1 => 2, 3 => 4 ), $out );
 	}
 }

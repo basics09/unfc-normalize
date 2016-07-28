@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-// gitlost removed namespace stuff, renamed to TLN_Normalizer to avoid conflicts, allowed to be included more than once.
-// gitlost use single-byte preg_XXX()'s, and generated regex alternatives and preg_match_all(), added full isNormalized() check for NFC with fall back to normalize().
+// gitlost removed namespace stuff, renamed to UNFC_Normalizer to avoid conflicts.
+// gitlost use unfc_is_valid_utf8(), and generated regex alternatives and preg_match_all(), added full isNormalized() check for NFC with fall back to normalize().
 // https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer
 
 // namespace Symfony\Polyfill\Intl\Normalizer; // gitlost
@@ -18,7 +18,7 @@
 /**
  * Normalizer is a PHP fallback implementation of the Normalizer class provided by the intl extension.
  *
- * It has been validated with Unicode 8.0.0 Normalization Conformance Test. // gitlost
+ * It has been validated with Unicode 9.0.0 Normalization Conformance Test. // gitlost
  * See http://www.unicode.org/reports/tr15/ for detailed info about Unicode normalizations.
  *
  * @author Nicolas Grekas <p@tchwork.com>
@@ -26,28 +26,63 @@
  * @internal
  */
 // gitlost begin
-// See https://www.w3.org/International/questions/qa-forms-utf-8
-define( 'TLN_REGEX_IS_VALID_UTF8',
-			'/\A(?:
-			  [\x00-\x7f]                                     # ASCII
-			| [\xc2-\xdf][\x80-\xbf]                          # non-overlong 2-byte
-			| \xe0[\xa0-\xbf][\x80-\xbf]                      # excluding overlongs
-			| [\xe1-\xec\xee\xef][\x80-\xbf][\x80-\xbf]       # straight 3-byte
-			| \xed[\x80-\x9f][\x80-\xbf]                      # excluding surrogates
-			| \xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]           # planes 1-3
-			| [\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]    # planes 4-15
-			| \xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf]           # plane 16
-			)*+\z/x'
+// To test UTF-8 validity, use UTF-8 mode if available and RFC 3629 compliant, or htmlspecialchars() if RFC 3629 compliant, or as a last resort one of the following regexs.
+define( 'UNFC_REGEX_IS_INVALID_UTF8',
+	'/
+	  (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) )
+	| (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) )
+	| (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | . (?: [^\x80-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) | \z ) )
+	| [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
+	| [\xc0\xc1\xf5-\xff]
+	/sx'
 );
-
-if ( ! defined( 'TLN_REGEX_ALTS_NFC_NOES' ) ) {
-	require dirname( __FILE__ ) . '/tln_regex_alts.php';
+define( 'UNFC_REGEX_IS_INVALID_UTF8_SKIP', // Using (*SKIP) verbs doubles the speed, but verbs only available for PCRE >= 7.3.
+	'/
+	  (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) )
+	| (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) )
+	| (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) | \z ) )
+	| [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
+	| [\xc0\xc1\xf5-\xff]
+	/sx'
+);
+// UTF-8 mode was not PCRE RFC 3629 compliant until PCRE 7.3, and then there was a compliance regression for PCRE 8.32 due to an over-enthusiastic interpretation of non-characters.
+// See https://tools.ietf.org/html/rfc3629
+// See http://vcs.pcre.org/pcre/code/tags/pcre-8.32/pcre_valid_utf8.c?r1=1032&r2=1098 for the regression.
+// See http://www.unicode.org/versions/corrigendum9.html for the clarification.
+// If UTF-8 mode is not RFC 3629 compliant or is unavailable...
+if ( version_compare( substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) ), '7.3', '<' )
+		|| version_compare( substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) ), '8.32', '=' )
+		|| false === @preg_match( '//u', '' ) ) {
+	// If before htmlspecialchars() RFC 3629 compliance...
+	if ( version_compare( PHP_VERSION, '5.3.4', '<' ) ) {
+		// If verbs unavailable...
+		if ( version_compare( substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) ), '7.3', '<' ) ) {
+			function unfc_is_valid_utf8( $str ) {
+				return 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ); // Very slow for PHP < 7.
+			}
+		} else {
+			function unfc_is_valid_utf8( $str ) {
+				return 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ); // Very slow for PHP < 7.
+			}
+		}
+	} else {
+		function unfc_is_valid_utf8( $str ) {
+			// See https://core.trac.wordpress.org/ticket/29717#comment:11
+			return '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' );
+		}
+	}
+} else {
+	function unfc_is_valid_utf8( $str ) {
+		return 1 === preg_match( '//u', $str ); // Original Normalizer validity check.
+	}
 }
-
-// (Possibly) unstable code point(s) (or end of string) proceeded by a stable code point (or start of string). See http://unicode.org/reports/tr15/#Stable_Code_Points
-define( 'TLN_REGEX_NFC_SUBNORMALIZE', '/(?:\A|[\x00-\x7f]|(?:[\xc2-\xdf]|(?:[\xe0-\xef]|[\xf0-\xf4].).).)(?:(?:' . TLN_REGEX_ALTS_NFC_NOES_MAYBES_REORDERS . ')++|\z)/' );
+if ( ! defined( 'UNFC_REGEX_ALTS_NFC_NOES' ) ) {
+	require dirname( __FILE__ ) . '/unfc_regex_alts.php';
+}
+// (Possibly) unstable code point(s) (or end of string) preceded by a stable code point (or start of string). See http://unicode.org/reports/tr15/#Stable_Code_Points
+define( 'UNFC_REGEX_NFC_SUBNORMALIZE', '/(?:\A|[\x00-\x7f]|(?:[\xc2-\xdf]|(?:[\xe0-\xef]|[\xf0-\xf4].).).)(?:(?:' . UNFC_REGEX_ALTS_NFC_NOES_MAYBES_REORDERS . ')++|\z)/' );
 // gitlost end
-class TLN_Normalizer // gitlost
+class UNFC_Normalizer // gitlost
 {
     const NONE = 1;
     const FORM_D = 2;
@@ -78,10 +113,10 @@ class TLN_Normalizer // gitlost
         }
 		// gitlost begin
         if (self::NFC === $form) {
-			if (1 !== preg_match(TLN_REGEX_IS_VALID_UTF8, $s)) {
+			if (!unfc_is_valid_utf8($s)) {
 				return false;
 			}
-			if (1 !== preg_match(TLN_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
+			if (1 !== preg_match(UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
 				return true;
 			}
 
@@ -103,7 +138,7 @@ class TLN_Normalizer // gitlost
 			}
 
 			// Using this method is faster where percentage of normalization candidates < 30%, and significantly faster for < 5%. It's slower where percentage > 40%.
-			$normalize = preg_replace_callback(TLN_REGEX_NFC_SUBNORMALIZE, 'TLN_Normalizer::subnormalize', $s);
+			$normalize = preg_replace_callback(UNFC_REGEX_NFC_SUBNORMALIZE, 'UNFC_Normalizer::subnormalize', $s);
 
 			if (self::$mb_overload_string) {
 				mb_internal_encoding($mbEncoding);
@@ -137,7 +172,7 @@ class TLN_Normalizer // gitlost
 		}
 
         switch ($form) {
-            case self::NONE: return 1 === preg_match(TLN_REGEX_IS_VALID_UTF8, $s .= '') ? $s : false; // Note must still check validity.
+            case self::NONE: return unfc_is_valid_utf8($s .= '') ? $s : false; // Note must still check validity.
             case self::NFC: $C = true; $K = false; break;
             case self::NFD: $C = false; $K = false; break;
             case self::NFKC: $C = true; $K = true; break;
@@ -145,7 +180,7 @@ class TLN_Normalizer // gitlost
             default: return false;
         }
 
-		if (1 !== preg_match(TLN_REGEX_IS_VALID_UTF8, $s .= '')) {
+		if (!unfc_is_valid_utf8($s .= '')) {
             return false;
         }
 		// gitlost end

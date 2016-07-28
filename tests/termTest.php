@@ -2,19 +2,23 @@
 /**
  * Test term filters.
  *
- * @group tln
- * @group tln_term
+ * @group unfc
+ * @group unfc_term
  */
-class Tests_TLN_Term extends WP_UnitTestCase {
+class Tests_UNFC_Term extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
+	static $is_less_than_wp_4 = false;
 
 	public static function wpSetUpBeforeClass() {
-		global $tlnormalizer;
-		self::$normalizer_state = array( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer );
-		$tlnormalizer->dont_js = true;
-		$tlnormalizer->dont_filter = false;
-		$tlnormalizer->no_normalizer = true;
+		global $unfc_normalize;
+		self::$normalizer_state = array( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer );
+		$unfc_normalize->dont_js = true;
+		$unfc_normalize->dont_filter = false;
+		$unfc_normalize->no_normalizer = true;
+
+		global $wp_version;
+		self::$is_less_than_wp_4 = version_compare( $wp_version, '4', '<' );
 
 		global $pagenow;
 		$pagenow = 'edit-tags.php';
@@ -22,8 +26,8 @@ class Tests_TLN_Term extends WP_UnitTestCase {
 	}
 
 	public static function wpTearDownAfterClass() {
-		global $tlnormalizer;
-		list( $tlnormalizer->dont_js, $tlnormalizer->dont_filter, $tlnormalizer->no_normalizer ) = self::$normalizer_state;
+		global $unfc_normalize;
+		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
 	}
 
 	function setUp() {
@@ -34,6 +38,9 @@ class Tests_TLN_Term extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
+		if ( self::$is_less_than_wp_4 && $this->caught_deprecated && 'define()' === $this->caught_deprecated[0] ) {
+			array_shift( $this->caught_deprecated );
+		}
 		parent::tearDown();
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -41,15 +48,15 @@ class Tests_TLN_Term extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket tln_term_term
+	 * @ticket unfc_term_term
      */
 	function test_term() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
 
-		global $tlnormalizer;
-		$this->assertArrayHasKey( 'term', $tlnormalizer->added_filters );
+		global $unfc_normalize;
+		$this->assertArrayHasKey( 'term', $unfc_normalize->added_filters );
 
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
 
@@ -75,9 +82,9 @@ class Tests_TLN_Term extends WP_UnitTestCase {
 			$this->assertTrue( is_object( $out ) );
 		}
 
-		$this->assertSame( TLN_Normalizer::normalize( $name1 ), $out->name );
+		$this->assertSame( UNFC_Normalizer::normalize( $name1 ), $out->name );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $name1 ), $out->name );
-		$this->assertSame( TLN_Normalizer::normalize( $args['description'] ), $out->description );
+		$this->assertSame( UNFC_Normalizer::normalize( $args['description'] ), $out->description );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $args['description'] ), $out->description );
 	}
 }

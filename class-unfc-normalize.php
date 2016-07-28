@@ -3,24 +3,24 @@
  * Main plugin functionality.
  */
 
-define( 'TLN_DB_CHECK_MENU_SLUG', 'normalizer-db_check' ); // Tools menu slug for database check.
-define( 'TLN_DB_CHECK_PER_PAGE', 'normalizer_db_check_per_page' ); // Number of items per page for database check listing.
-define( 'TLN_DB_CHECK_ITEM_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when scanning.
-define( 'TLN_DB_CHECK_NORMALIZE_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when normalizing.
-define( 'TLN_DB_CHECK_LIST_LIMIT', 1000 ); // Initial default number of items to display in listing.
-define( 'TLN_DB_CHECK_TITLE_MAX_LEN', 100 ); // Truncate titles if greater than this length (in UTF-8 chars).
-define( 'TLN_DB_CHECK_ITEMS_LIST_SEL', '#tln_db_check_items_list' ); // Selector for items listing.
-define( 'TLN_DB_CHECK_SLUGS_LIST_SEL', '#tln_db_check_slugs_list' ); // Selector for percent-encoded slugs listing.
+define( 'UNFC_DB_CHECK_MENU_SLUG', 'unfc-normalize-db_check' ); // Tools menu slug for database check.
+define( 'UNFC_DB_CHECK_PER_PAGE', 'unfc_normalize_db_check_per_page' ); // User option - number of items per page for database check listing.
+define( 'UNFC_DB_CHECK_ITEM_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when scanning.
+define( 'UNFC_DB_CHECK_NORMALIZE_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when normalizing.
+define( 'UNFC_DB_CHECK_LIST_LIMIT', 1000 ); // Initial default number of items to display in listing.
+define( 'UNFC_DB_CHECK_TITLE_MAX_LEN', 100 ); // Truncate titles if greater than this length (in UTF-8 chars).
+define( 'UNFC_DB_CHECK_ITEMS_LIST_SEL', '#unfc_db_check_items_list' ); // Selector for items listing.
+define( 'UNFC_DB_CHECK_SLUGS_LIST_SEL', '#unfc_db_check_slugs_list' ); // Selector for percent-encoded slugs listing.
 
 // Error codes used for standard error messages in db_check_error_msg().
-define( 'TLN_DB_CHECK_DB_ERROR', 1 );
-define( 'TLN_DB_CHECK_META_ERROR', 2 );
-define( 'TLN_DB_CHECK_PARAM_ERROR', 3 );
-define( 'TLN_DB_CHECK_TRANS_ERROR', 4 );
-define( 'TLN_DB_CHECK_SYNC_ERROR', 5 );
-define( 'TLN_DB_CHECK_SELECT_ERROR', 6 );
+define( 'UNFC_DB_CHECK_DB_ERROR', 1 );
+define( 'UNFC_DB_CHECK_META_ERROR', 2 );
+define( 'UNFC_DB_CHECK_PARAM_ERROR', 3 );
+define( 'UNFC_DB_CHECK_TRANS_ERROR', 4 );
+define( 'UNFC_DB_CHECK_SYNC_ERROR', 5 );
+define( 'UNFC_DB_CHECK_SELECT_ERROR', 6 );
 
-class TLNormalizer {
+class UNFC_Normalize {
 
 	// Handy in themselves and to have for testing (can switch on/off). Set in __construct().
 	static $dirname = null; // dirname( __FILE__ ).
@@ -214,7 +214,7 @@ class TLNormalizer {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( self::$plugin_basename );
-			wp_die( __( 'The plugin "Normalizer" is not compatible with your system and can\'t be activated.', 'normalizer' ) );
+			wp_die( __( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and can\'t be activated.', 'unfc_normalize' ) );
 		} else {
 			if ( ! self::tested_wp_version() ) {
 				$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
@@ -236,10 +236,10 @@ class TLNormalizer {
 	function admin_init() {
 		if ( $this->check_version() && $this->is_blog_utf8() ) {
 			if ( self::$doing_ajax ) {
-				add_action( 'wp_ajax_tln_db_check_list_bulk', array( $this, 'wp_ajax_tln_db_check_list_bulk' ) );
-				add_action( 'wp_ajax_tln_db_check_list_page', array( $this, 'wp_ajax_tln_db_check_list_page' ) );
-				add_action( 'wp_ajax_tln_db_check_list_sort', array( $this, 'wp_ajax_tln_db_check_list_sort' ) );
-				add_action( 'wp_ajax_tln_db_check_list_screen_options', array( $this, 'wp_ajax_tln_db_check_list_screen_options' ) );
+				add_action( 'wp_ajax_unfc_db_check_list_bulk', array( $this, 'wp_ajax_unfc_db_check_list_bulk' ) );
+				add_action( 'wp_ajax_unfc_db_check_list_page', array( $this, 'wp_ajax_unfc_db_check_list_page' ) );
+				add_action( 'wp_ajax_unfc_db_check_list_sort', array( $this, 'wp_ajax_unfc_db_check_list_sort' ) );
+				add_action( 'wp_ajax_unfc_db_check_list_screen_options', array( $this, 'wp_ajax_unfc_db_check_list_screen_options' ) );
 			}
 		}
 	}
@@ -268,8 +268,8 @@ class TLNormalizer {
 	 */
 	function disabled_notice() {
 		$error_message  = '<div id="message" class="updated is-dismissible">';
-		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'normalizer' ) . '</strong> ';
-		$error_message .= esc_html__( 'The plugin "Normalizer" is not compatible with your system and has been deactivated.', 'normalizer' );
+		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'unfc_normalize' ) . '</strong> ';
+		$error_message .= esc_html__( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and has been deactivated.', 'unfc_normalize' );
 		$error_message .= '</p></div>';
 		echo $error_message;
 	}
@@ -292,14 +292,14 @@ class TLNormalizer {
 		?>
 		<div class="notice notice-warning is-dismissible">
 			<p>
-				<strong><?php _e( 'Warning: untested!', 'normalizer' ); ?></strong>
+				<strong><?php _e( 'Warning: untested!', 'unfc_normalize' ); ?></strong>
 			</p>
 			<?php if ( $untested_wp ) { ?>
 				<p>
 					<?php printf(
 						/* translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress version tested; %3$s: user's current WordPress version. */
-						__( 'The plugin "Normalizer" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'normalizer' ),
-						TLN_WP_AT_LEAST_VERSION, TLN_WP_UP_TO_VERSION, $wp_version
+						__( 'The plugin "UTF-8 Normalization Form C Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc_normalize' ),
+						UNFC_WP_AT_LEAST_VERSION, UNFC_WP_UP_TO_VERSION, $wp_version
 					); ?>
 				</p>
 			<?php } ?>
@@ -312,14 +312,14 @@ class TLNormalizer {
 	 */
 	static function tested_wp_version() {
 		global $wp_version;
-		return version_compare( $wp_version, TLN_WP_AT_LEAST_VERSION, '>=' ) && version_compare( $wp_version, TLN_WP_UP_TO_VERSION, '<=' );
+		return version_compare( $wp_version, UNFC_WP_AT_LEAST_VERSION, '>=' ) && version_compare( $wp_version, UNFC_WP_UP_TO_VERSION, '<=' );
 	}
 
 	/**
 	 * Called on 'init' action.
 	 */
 	function init() {
-		tln_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
+		unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
 
 		$this->base = '';
 		// TODO: Reset $this->added_filters ??
@@ -337,7 +337,7 @@ class TLNormalizer {
 					$this->added_filters['post'] = true;
 
 					foreach( $this->post_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 
 					// Meta data needs its own filter as has its own meta_id => key/value array format.
@@ -375,7 +375,7 @@ class TLNormalizer {
 					$this->added_filters['comment'] = true;
 
 					foreach( $this->comment_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 
 					// No filter for 'comment_meta' on wp_insert/update_comment(), but comment meta seems to be just internal '_wp_XXX' data anyway.
@@ -387,7 +387,7 @@ class TLNormalizer {
 					$this->added_filters['user'] = true;
 
 					foreach( $this->user_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 
 					global $wp_version;
@@ -405,7 +405,7 @@ class TLNormalizer {
 					$this->added_filters['term'] = true;
 
 					foreach( $this->term_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 
 					// Term meta data seems to be programmatic only currently.
@@ -441,7 +441,7 @@ class TLNormalizer {
 					$this->added_filters['settings'] = true;
 
 					foreach( $this->settings_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 				}
 
@@ -450,7 +450,7 @@ class TLNormalizer {
 					$this->added_filters['menus'] = true;
 
 					foreach( $this->menus_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 
 					// sanitize_html_class() strips down to ASCII so not needed for classes (and xfn).
@@ -464,7 +464,7 @@ class TLNormalizer {
 					$this->added_filters['widget'] = true;
 
 					foreach( $this->widget_filters as $filter ) { // No-op.
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority ); // @codeCoverageIgnore
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority ); // @codeCoverageIgnore
 					}
 					add_filter( 'widget_update_callback', array( $this, 'widget_update_callback' ), $this->priority, 4 );
 				}
@@ -474,7 +474,7 @@ class TLNormalizer {
 					$this->added_filters['permalink'] = true;
 
 					foreach( $this->permalink_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 				}
 
@@ -483,7 +483,7 @@ class TLNormalizer {
 					// $this->added_filters['customize'] = true; // Nothing at the mo.
 
 					foreach( $this->customize_filters as $filter ) { // No-op.
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority ); // @codeCoverageIgnore
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority ); // @codeCoverageIgnore
 					}
 				}
 
@@ -492,7 +492,7 @@ class TLNormalizer {
 					 $this->added_filters['link'] = true;
 
 					foreach( $this->link_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 				}
 
@@ -500,19 +500,19 @@ class TLNormalizer {
 
 				// Allow easy add of extra filters. (If directly added then Normalizer polyfill may not load.)
 				$extra_filters = array();
-				$extra_filters = apply_filters( 'tln_extra_filters', $extra_filters );
+				$extra_filters = apply_filters( 'unfc_extra_filters', $extra_filters );
 				if ( $extra_filters ) {
 					$this->added_filters['extra_filters'] = true;
 
 					foreach( $extra_filters as $filter ) {
-						add_filter( $filter, array( $this, 'tl_normalizer' ), $this->priority );
+						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
 					}
 				}
 
 				if ( $this->added_filters ) {
 					if ( $this->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
 
-						$this->load_tln_normalizer_class();
+						$this->load_unfc_normalizer_class();
 					}
 				}
 			}
@@ -528,50 +528,50 @@ class TLNormalizer {
 			}
 		}
 
-		tln_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
+		unfc_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
 	}
 
 	/**
 	 * De filter.
 	 */
-	function tl_normalizer( $content ) {
+	function normalize( $content ) {
 
 		if ( ! empty( $content ) ) {
 
 			if ( is_string( $content ) ) {
 
 				if ( $this->no_normalizer ) { // For testing when have PHP Normalizer installed.
-					if ( ! tl_normalizer_is_normalized( $content ) ) {
-						$normalized = tl_normalizer_normalize( $content );
+					if ( ! unfc_normalizer_is_normalized( $content ) ) {
+						$normalized = unfc_normalizer_normalize( $content );
 
-						tln_debug_log( $normalized === $content ? "no_normalizer same"
-																: ( "no_normalizer differ\n   content=" . tln_print_r_hex( $content ) . "\nnormalized=" . tln_print_r_hex( $normalized ) ) );
+						unfc_debug_log( $normalized === $content ? "no_normalizer same"
+																: ( "no_normalizer differ\n   content=" . unfc_print_r_hex( $content ) . "\nnormalized=" . unfc_print_r_hex( $normalized ) ) );
 
 						if ( false !== $normalized ) { // Not validating so don't set on error.
 							$content = $normalized;
 						}
 					} else {
-						tln_debug_log( "no_normalizer is_normalized content=" . tln_print_r_hex( $content ) );
+						unfc_debug_log( "no_normalizer is_normalized content=" . unfc_print_r_hex( $content ) );
 					}
 				} else {
 					if ( ! normalizer_is_normalized( $content ) ) {
 						$normalized = normalizer_normalize( $content );
 
-						tln_debug_log( $normalized === $content ? "normalizer same"
-																: ( "normalizer differ\n   content=" . tln_print_r_hex( $content ) . "\nnormalized=" . tln_print_r_hex( $normalized ) ) );
+						unfc_debug_log( $normalized === $content ? "normalizer same"
+																: ( "normalizer differ\n   content=" . unfc_print_r_hex( $content ) . "\nnormalized=" . unfc_print_r_hex( $normalized ) ) );
 
 						if ( false !== $normalized ) { // Not validating so don't set on error.
 							$content = $normalized;
 						}
 					} else {
-						tln_debug_log( "normalizer is_normalized content=" . tln_print_r_hex( $content ) );
+						unfc_debug_log( "normalizer is_normalized content=" . unfc_print_r_hex( $content ) );
 					}
 				}
 
 			} elseif ( is_array( $content ) ) { // Allow for arrays.
 				foreach ( $content as $key => $value ) {
 					if ( ! empty( $value ) && ( is_string( $value ) || is_array( $value ) ) ) {
-						$content[ $key ] = $this->tl_normalizer( $value ); // Recurse.
+						$content[ $key ] = $this->normalize( $value ); // Recurse.
 					}
 				}
 			}
@@ -581,36 +581,36 @@ class TLNormalizer {
 	}
 
 	/**
-	 * Load the TLN_Normalizer class.
+	 * Load the UNFC_Normalizer class.
 	 */
-	function load_tln_normalizer_class() {
+	function load_unfc_normalizer_class() {
 
-		if ( ! class_exists( 'TLN_Normalizer' ) ) {
+		if ( ! class_exists( 'UNFC_Normalizer' ) ) {
 			// Load the (modified version of the) Symfony polyfill https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer
 			require self::$dirname . '/Symfony/Normalizer.php';
 		}
 
 		if ( ! function_exists( 'normalizer_is_normalized' ) ) {
 
-			function normalizer_is_normalized( $s, $form = TLN_Normalizer::NFC ) {
-				return TLN_Normalizer::isNormalized( $s, $form );
+			function normalizer_is_normalized( $s, $form = UNFC_Normalizer::NFC ) {
+				return UNFC_Normalizer::isNormalized( $s, $form );
 			}
 
-			function normalizer_normalize( $s, $form = TLN_Normalizer::NFC ) {
-				return TLN_Normalizer::normalize( $s, $form );
+			function normalizer_normalize( $s, $form = UNFC_Normalizer::NFC ) {
+				return UNFC_Normalizer::normalize( $s, $form );
 			}
 		}
 
 		if ( $this->no_normalizer ) { // For testing when have PHP Normalizer installed.
 
-			if ( ! function_exists( 'tl_normalizer_is_normalized' ) ) {
+			if ( ! function_exists( 'unfc_normalizer_is_normalized' ) ) {
 
-				function tl_normalizer_is_normalized( $s, $form = TLN_Normalizer::NFC ) {
-					return TLN_Normalizer::isNormalized( $s, $form );
+				function unfc_normalizer_is_normalized( $s, $form = UNFC_Normalizer::NFC ) {
+					return UNFC_Normalizer::isNormalized( $s, $form );
 				}
 
-				function tl_normalizer_normalize( $s, $form = TLN_Normalizer::NFC ) {
-					return TLN_Normalizer::normalize( $s, $form );
+				function unfc_normalizer_normalize( $s, $form = UNFC_Normalizer::NFC ) {
+					return UNFC_Normalizer::normalize( $s, $form );
 				}
 			}
 		}
@@ -624,7 +624,7 @@ class TLNormalizer {
 		if ( is_array( $arr ) ) {
 
 			// Allow exclusion of keys.
-			$exclude_keys = array_flip( apply_filters( 'tln_exclude_post_meta_keys', array(), $arr, 'pre_post_meta' /*context*/ ) );
+			$exclude_keys = array_flip( apply_filters( 'unfc_exclude_post_meta_keys', array(), $arr, 'pre_post_meta' /*context*/ ) );
 
 			foreach ( $arr as $meta_id => $entry ) {
 				if ( isset( $entry['key'] ) && is_string( $entry['key'] ) && ! empty( $entry['value'] ) ) {
@@ -632,7 +632,7 @@ class TLNormalizer {
 					$value = $entry['value']; // Will be slashed (single/double quote, backslash & nul) but doesn't affect normalization so don't bother unslashing/reslashing.
 
 					if ( '' !== $key && '_' !== $key[0] && ! isset( $exclude_keys[ $key ] ) ) {
-						$arr[ $meta_id ] = array( 'key' => $key, 'value' => $this->tl_normalizer( $value ) );
+						$arr[ $meta_id ] = array( 'key' => $key, 'value' => $this->normalize( $value ) );
 					}
 				}
 			}
@@ -648,7 +648,7 @@ class TLNormalizer {
 	function add_sanitize_metas( $arr ) {
 
 		// Allow exclusion of keys.
-		$exclude_keys = array_flip( apply_filters( 'tln_exclude_post_meta_keys', array(), $arr, 'add_sanitize_metas' /*context*/ ) );
+		$exclude_keys = array_flip( apply_filters( 'unfc_exclude_post_meta_keys', array(), $arr, 'add_sanitize_metas' /*context*/ ) );
 
 		foreach ( $arr as $entry ) {
 			if ( isset( $entry['key'] ) && is_string( $entry['key'] ) && ! empty( $entry['value'] ) ) {
@@ -669,11 +669,11 @@ class TLNormalizer {
 	function wp_update_attachment_metadata( $data, $post_id ) {
 
 		// Allow exclusion of keys.
-		$exclude_keys = array_flip( apply_filters( 'tln_exclude_attachment_meta_keys', array(), $data, $post_id ) );
+		$exclude_keys = array_flip( apply_filters( 'unfc_exclude_attachment_meta_keys', array(), $data, $post_id ) );
 
 		foreach ( $data as $key => $value ) {
 			if ( ! empty( $value ) && '' !== $key && '_' !== $key[0] && ! isset( $exclude_keys[ $key ] ) ) {
-				$data[ $key ] = $this->tl_normalizer( $value );
+				$data[ $key ] = $this->normalize( $value );
 			}
 		}
 
@@ -689,12 +689,12 @@ class TLNormalizer {
 				if ( is_array( $terms ) ) {
 					foreach ( $terms as $idx => $term ) {
 						if ( ! empty( $term ) && is_string( $term ) && ! ctype_digit( $term ) ) { // Exclude ids.
-							$arr[ $taxonomy ][ $idx ] = $this->tl_normalizer( $term );
+							$arr[ $taxonomy ][ $idx ] = $this->normalize( $term );
 						}
 					}
 				} else { // For WP < 4.2.
 					if ( ! empty( $terms ) && is_string( $terms ) && ! ctype_digit( $terms ) ) { // Exclude ids.
-						$arr[ $taxonomy ] = $this->tl_normalizer( $terms );
+						$arr[ $taxonomy ] = $this->normalize( $terms );
 					}
 				}
 			}
@@ -710,12 +710,12 @@ class TLNormalizer {
 
 		// Allow exclusion of keys.
 		$exclude_keys = array( 'nickname', 'first_name', 'last_name', 'description' ); // These are already covered by the 'pre_user_XXX' filters.
-		$exclude_keys = array_flip( apply_filters( 'tln_exclude_user_meta_keys', $exclude_keys, $meta, $user, $update ) );
+		$exclude_keys = array_flip( apply_filters( 'unfc_exclude_user_meta_keys', $exclude_keys, $meta, $user, $update ) );
 
 		foreach ( $meta as $key => $value ) {
 			if ( ! empty( $value ) && '' !== $key && '_' !== $key[0] && ! isset( $exclude_keys[ $key ] ) ) {
 				if ( ( is_string( $value ) && 'false' !== $value && 'true' !== $value ) || is_array( $value ) ) { // Exclude boolean strings.
-					$meta[ $key ] = $this->tl_normalizer( $value );
+					$meta[ $key ] = $this->normalize( $value );
 				}
 			}
 		}
@@ -738,10 +738,10 @@ class TLNormalizer {
 	function pre_update_option( $value, $option, $old_value ) {
 		if ( ! empty( $value ) ) {
 			// Allow exclusion of options.
-			$exclude_options = array_flip( apply_filters( 'tln_exclude_options', array(), $value, $option, $old_value ) );
+			$exclude_options = array_flip( apply_filters( 'unfc_exclude_options', array(), $value, $option, $old_value ) );
 
 			if ( ! isset( $exclude_options[ $option ] ) ) {
-				$value = $this->tl_normalizer( $value );
+				$value = $this->normalize( $value );
 			}
 		}
 
@@ -758,10 +758,10 @@ class TLNormalizer {
 
 	/**
 	 * Called on 'sanitize_option_$option' filter.
-	 * For date/time format ajax preview. Just passthru to tl_normalizer().
+	 * For date/time format ajax preview. Just passthru to normalize().
 	 */
 	function sanitize_option_option( $value, $option, $original_value = null /*For WP < 4.3 compat*/ ) {
-		return $this->tl_normalizer( $value );
+		return $this->normalize( $value );
 	}
 
 	/**
@@ -770,11 +770,11 @@ class TLNormalizer {
 	function widget_update_callback( $instance, $new_instance, $old_instance, $this_widget ) {
 
 		// Allow exclusion of keys.
-		$exclude_keys = array_flip( apply_filters( 'tln_exclude_widget_instance_keys', array(), $instance, $new_instance, $old_instance, $this_widget ) );
+		$exclude_keys = array_flip( apply_filters( 'unfc_exclude_widget_instance_keys', array(), $instance, $new_instance, $old_instance, $this_widget ) );
 
 		foreach ( $instance as $key => $value ) {
 			if ( ! empty( $value ) && ! isset( $exclude_keys[ $key ] ) ) {
-				$instance[ $key ] = $this->tl_normalizer( $value );
+				$instance[ $key ] = $this->normalize( $value );
 			}
 		}
 
@@ -783,10 +783,10 @@ class TLNormalizer {
 
 	/**
 	 * Called on 'sanitize_{$meta_type}_meta_{$meta_key}' filter.
-	 * Just a passthru to tl_normalizer() for the mo.
+	 * Just a passthru to normalize() for the mo.
 	 */
 	function sanitize_meta( $meta_value, $meta_key, $meta_type ) {
-		return $this->tl_normalizer( $meta_value );
+		return $this->normalize( $meta_value );
 	}
 
 	/**
@@ -797,33 +797,33 @@ class TLNormalizer {
 		$rangyinputs_suffix = defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG ? '-src' : '';
 
 		// Load IE8 Array.prototype.reduceRight polyfill for unorm.
-		wp_enqueue_script( 'tln-ie8', plugins_url( "js/ie8{$suffix}.js", __FILE__ ), array(), TLN_VERSION );
+		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", __FILE__ ), array(), UNFC_VERSION );
 
 		global $wp_scripts; // For < 4.2 compat, don't use wp_script_add_data().
-		$wp_scripts->add_data( 'tln-ie8', 'conditional', 'lt IE 9' );
+		$wp_scripts->add_data( 'unfc-ie8', 'conditional', 'lt IE 9' );
 
 		// Load the javascript normalize polyfill https://github.com/walling/unorm
-		wp_enqueue_script( 'tln-unorm', plugins_url( "unorm/lib/unorm.js", __FILE__ ), array( 'tln-ie8' ), '1.4.1' ); // Note unorm doesn't come with minified so don't use.
+		wp_enqueue_script( 'unfc-unorm', plugins_url( "unorm/lib/unorm.js", __FILE__ ), array( 'unfc-ie8' ), '1.4.1' ); // Note unorm doesn't come with minified so don't use.
 
 		// Load the getSelection/setSelection jquery plugin https://github.com/timdown/rangyinputs
-		wp_enqueue_script( 'tln-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", __FILE__ ), array( 'jquery' ), '1.2.0' );
+		wp_enqueue_script( 'unfc-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", __FILE__ ), array( 'jquery' ), '1.2.0' );
 
 		// Our script. Normalizes on paste in tinymce and in admin input/textareas and in some media stuff and in front-end input/textareas.
-		wp_enqueue_script( 'tl-normalize', plugins_url( "js/tl-normalize{$suffix}.js", __FILE__ ), array( 'jquery', 'tln-rangyinputs', 'tln-unorm' ), TLN_VERSION );
+		wp_enqueue_script( 'unfc-normalize', plugins_url( "js/unfc-normalize{$suffix}.js", __FILE__ ), array( 'jquery', 'unfc-rangyinputs', 'unfc-unorm' ), UNFC_VERSION );
 
 		// Our parameters.
 		$params = array(
-			'please_wait_msg' => '<div class="notice notice-warning inline"><p>' . __( 'Please wait...', 'normalizer' )
+			'please_wait_msg' => '<div class="notice notice-warning inline"><p>' . __( 'Please wait...', 'unfc_normalize' )
 									. '<span class="spinner is-active" style="float:none;margin-top:0;"></span></p></div>',
-			'no_items_selected_msg' => '<div class="notice notice-warning is-dismissible inline"><p>' . $this->db_check_error_msg( TLN_DB_CHECK_SELECT_ERROR ) . '</p></div>',
+			'no_items_selected_msg' => '<div class="notice notice-warning is-dismissible inline"><p>' . $this->db_check_error_msg( UNFC_DB_CHECK_SELECT_ERROR ) . '</p></div>',
 			'is' => array( // Gets around stringification of direct localize elements.
 				'script_debug' => defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG,
 				'dont_paste' => $this->dont_paste,
 				'db_check_loaded' => $this->db_check_loaded,
 			),
 		);
-		$params = apply_filters( 'tln_params', $params );
-		wp_localize_script( 'tl-normalize', 'tln_params', $params );
+		$params = apply_filters( 'unfc_params', $params );
+		wp_localize_script( 'unfc-normalize', 'unfc_params', $params );
 
 		// Glue.
 		add_action( is_admin() ? 'admin_print_footer_scripts' : 'wp_print_footer_scripts', array( $this, 'print_footer_scripts' ) );
@@ -837,24 +837,24 @@ class TLNormalizer {
 		?>
 <script type="text/javascript">
 /*jslint ass: true, nomen: true, plusplus: true, regexp: true, vars: true, white: true, indent: 4 */
-/*global jQuery, tl_normalize */
+/*global jQuery, unfc_normalize */
 
 ( function ( $ ) {
 	'use strict';
 
 	// TinyMCE editor init.
-	tl_normalize.tinymce_editor_init();
+	unfc_normalize.tinymce_editor_init();
 
 	// jQuery ready.
 	$( function () {
 
 <?php if ( $is_admin ) : ?>
 
-		tl_normalize.admin_ready();
+		unfc_normalize.admin_ready();
 
 <?php else : /*Front end*/ ?>
 
-		tl_normalize.front_end_ready();
+		unfc_normalize.front_end_ready();
 
 <?php endif; ?>
 
@@ -863,7 +863,7 @@ class TLNormalizer {
 <?php if ( $is_admin ) : ?>
 
 	// Customizer - do outside jQuery ready otherwise will miss 'ready' event.
-	tl_normalize.customizer_ready();
+	unfc_normalize.customizer_ready();
 
 <?php endif; ?>
 
@@ -877,7 +877,7 @@ class TLNormalizer {
 	 */
 	function get_base() {
 		global $pagenow;
-		tln_debug_log( "pagenow=", $pagenow, ", action=", isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : "(none)" );
+		unfc_debug_log( "pagenow=", $pagenow, ", action=", isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : "(none)" );
 
 		$base = $pagenow;
 		$action = isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) ? stripslashes( $_REQUEST['action'] ) : '';
@@ -919,7 +919,7 @@ class TLNormalizer {
 			$base = substr( $base, 5 );
 		}
 
-		if ( 'attachment' === $base || 'media' === $base || 'meta' === $base || 'save' === $base ) {
+		if ( 'async-upload' === $base || 'attachment' === $base || 'media' === $base || 'meta' === $base || 'save' === $base ) {
 			$base = 'post';
 		}
 
@@ -944,7 +944,7 @@ class TLNormalizer {
 	function admin_menu() {
 		// Add the database check to the tools menu.
 		$this->db_check_hook_suffix = add_management_page( /*Teehee*/
-			__( "No\xcc\x88rmalizer Database Check", /*Teehee*/ 'normalizer' ), __( "No\xcc\x88rmalizer Db Check", 'normalizer' ), $this->db_check_cap, TLN_DB_CHECK_MENU_SLUG,
+			__( "No\xcc\x88rmalizer Database Check", /*Teehee*/ 'unfc_normalize' ), __( "No\xcc\x88rmalizer Db Check", 'unfc_normalize' ), $this->db_check_cap, UNFC_DB_CHECK_MENU_SLUG,
 			array( $this, 'db_check' )
 		);
 		if ( $this->db_check_hook_suffix ) {
@@ -953,12 +953,12 @@ class TLNormalizer {
 	}
 
 	/**
-	 * Called on 'load-tools_page_TLN_DB_CHECK_MENU_SLUG' action.
+	 * Called on 'load-tools_page_UNFC_DB_CHECK_MENU_SLUG' action.
 	 */
 	function load_db_check() {
-		tln_debug_log( "REQUEST=", $_REQUEST );
+		unfc_debug_log( "REQUEST=", $_REQUEST );
 		if ( ! current_user_can( $this->db_check_cap ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.' /*Use WP string*/ ) );
+			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc_normalize' ) );
 		}
 
 		$this->db_check_loaded = true;
@@ -968,10 +968,10 @@ class TLNormalizer {
 
 		$button = $this->db_check_button(); // Form button or list action.
 
-		if ( 'tln_db_check_items' === $button ) {
+		if ( 'unfc_db_check_items' === $button ) {
 			// Scan for non-normalized data.
 
-			check_admin_referer( TLN_DB_CHECK_MENU_SLUG . '-items', '_wpnonce_items' );
+			check_admin_referer( UNFC_DB_CHECK_MENU_SLUG . '-items', '_wpnonce_items' );
 
 			$redirect = $this->db_check_base_redirect();
 			$admin_notices = array();
@@ -981,27 +981,27 @@ class TLNormalizer {
 			if ( $ret['num_items'] > 0 ) {
 				$transient_key = $button . $_REQUEST['_wpnonce_items'];
 				set_transient( $transient_key, $ret, intval( wp_nonce_tick() ) );
-				$redirect = add_query_arg( array( 'tln_trans' => $transient_key ), $redirect );
+				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', array_merge( $ret, $admin_notices ) );
 			}
 			exit;
 
-		} elseif ( 'tln_db_check_normalize_all' === $button ) {
+		} elseif ( 'unfc_db_check_normalize_all' === $button ) {
 			// Normalize non-normalized data.
 
-			check_admin_referer( TLN_DB_CHECK_MENU_SLUG . '-normalize_all', '_wpnonce_normalize_all' );
+			check_admin_referer( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all', '_wpnonce_normalize_all' );
 
 			$redirect = $this->db_check_base_redirect();
 			$admin_notices = array();
 
 			// Delete scan transient if any.
-			$transient_key = $this->db_check_transient( 'tln_db_check_items', false /*dont_get*/, true /*dont_set*/ );
+			$transient_key = $this->db_check_transient( 'unfc_db_check_items', false /*dont_get*/, true /*dont_set*/ );
 			if ( $transient_key ) {
 				delete_transient( $transient_key );
 			}
@@ -1011,15 +1011,15 @@ class TLNormalizer {
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', $admin_notices );
 			}
 			exit;
 
-		} elseif ( 'tln_db_check_slugs' === $button ) {
+		} elseif ( 'unfc_db_check_slugs' === $button ) {
 			// Scan for percent-encoded slugs.
 
-			check_admin_referer( TLN_DB_CHECK_MENU_SLUG . '-slugs', '_wpnonce_slugs' );
+			check_admin_referer( UNFC_DB_CHECK_MENU_SLUG . '-slugs', '_wpnonce_slugs' );
 
 			$redirect = $this->db_check_base_redirect();
 			$admin_notices = array();
@@ -1029,35 +1029,35 @@ class TLNormalizer {
 			if ( $ret['num_slugs'] > 0 ) {
 				$transient_key = $button . $_REQUEST['_wpnonce_slugs'];
 				set_transient( $transient_key, $ret, intval( wp_nonce_tick() ) );
-				$redirect = add_query_arg( array( 'tln_trans' => $transient_key ), $redirect );
+				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', array_merge( $ret, $admin_notices ) );
 			}
 			exit;
 
-		} elseif ( 'tln_db_check_normalize_slugs' === $button ) {
+		} elseif ( 'unfc_db_check_normalize_slugs' === $button ) {
 			// Bulk normalize percent-encoded slugs.
 
-			check_admin_referer( 'bulk-' . TLN_DB_CHECK_MENU_SLUG, '_wpnonce' );
+			check_admin_referer( 'bulk-' . UNFC_DB_CHECK_MENU_SLUG, '_wpnonce' );
 
 			$redirect = $this->db_check_base_redirect();
 			$ret = $admin_notices = array();
 
 			// Should have percent-encoded transient.
 			// If the transient has expired, don't reconstruct as this could take ages but ask for a re-scan.
-			$transient_key = $this->db_check_transient( 'tln_db_check_slugs' );
+			$transient_key = $this->db_check_transient( 'unfc_db_check_slugs' );
 			if ( ! $transient_key ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) );
 			} else {
-				$redirect = add_query_arg( array( 'tln_trans' => $transient_key ), $redirect );
+				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 
 				if ( ! isset( $_REQUEST['item'] ) || ! is_array( $_REQUEST['item'] ) ) {
-					$admin_notices[] = array( 'warning', $this->db_check_error_msg( TLN_DB_CHECK_SELECT_ERROR ) ); // Treat no items selected as warning.
+					$admin_notices[] = array( 'warning', $this->db_check_error_msg( UNFC_DB_CHECK_SELECT_ERROR ) ); // Treat no items selected as warning.
 				} else  {
 					$checkeds = array_map( 'stripslashes', $_REQUEST['item'] );
 
@@ -1073,12 +1073,12 @@ class TLNormalizer {
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', array_merge( $ret, $admin_notices ) );
 			}
 			exit;
 
-		} elseif ( TLN_DB_CHECK_PER_PAGE === $button ) {
+		} elseif ( UNFC_DB_CHECK_PER_PAGE === $button ) {
 			// Per-page screen option.
 
 			check_admin_referer( 'screen-options-nonce', 'screenoptionnonce' );
@@ -1089,16 +1089,16 @@ class TLNormalizer {
 			// Should have some sort of transient set. (See above re transient transience.)
 			$transient_key = $this->db_check_transient( false /*start_with*/, false /*dont_get*/, true /*dont_set*/ );
 			if ( ! $transient_key ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) );
 			} else {
-				$redirect = add_query_arg( array( 'tln_trans' => $transient_key ), $redirect );
+				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 
 				if ( isset( $_REQUEST['wp_screen_options']['value'] ) && is_string( $_REQUEST['wp_screen_options']['value'] ) && ctype_digit( $_REQUEST['wp_screen_options']['value'] ) ) {
 					$per_page = intval( $_REQUEST['wp_screen_options']['value'] );
 					if ( $per_page > 0 && $per_page < 999 ) {
 						$user = wp_get_current_user();
 						if ( ! empty( $user->ID ) ) {
-							update_user_meta( $user->ID, TLN_DB_CHECK_PER_PAGE, $per_page );
+							update_user_meta( $user->ID, UNFC_DB_CHECK_PER_PAGE, $per_page );
 						}
 					}
 				}
@@ -1107,7 +1107,7 @@ class TLNormalizer {
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', $admin_notices );
 			}
 			exit;
@@ -1115,7 +1115,7 @@ class TLNormalizer {
 		} elseif ( '_wp_http_referer' === $button ) {
 			// List form sent with no button or action selected. Redirect to clean url.
 
-			check_admin_referer( 'bulk-' . TLN_DB_CHECK_MENU_SLUG, '_wpnonce' );
+			check_admin_referer( 'bulk-' . UNFC_DB_CHECK_MENU_SLUG, '_wpnonce' );
 
 			$redirect = $this->db_check_base_redirect();
 			$admin_notices = array();
@@ -1123,15 +1123,15 @@ class TLNormalizer {
 			// Should have some sort of transient set. (See above re transient transience.)
 			$transient_key = $this->db_check_transient( false /*start_with*/, false /*dont_get*/, true /*dont_set*/ );
 			if ( ! $transient_key ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) );
 			} else {
-				$redirect = add_query_arg( array( 'tln_trans' => $transient_key ), $redirect );
+				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
 			$this->db_check_add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
-			if ( defined( 'TLN_TESTING' ) && TLN_TESTING ) { // Allow for testing.
+			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
 				wp_die( $redirect, 'wp_redirect', $admin_notices );
 			}
 			exit;
@@ -1142,12 +1142,12 @@ class TLNormalizer {
 			// If have valid transient.
 			if ( $this->db_check_transient() ) {
 				if ( $this->db_check_num_items || $this->db_check_num_slugs ) { // If have listing.
-					add_screen_option( 'per_page', array( 'default' => 20, 'option' => TLN_DB_CHECK_PER_PAGE ) ); // This needs to happen before admin-header is loaded.
+					add_screen_option( 'per_page', array( 'default' => 20, 'option' => UNFC_DB_CHECK_PER_PAGE ) ); // This needs to happen before admin-header is loaded.
 				}
 			} else {
 				// If have invalid transient...
 				if ( $this->db_check_transient( false /*start_with*/, false /*dont_get*/, true /*dont_set*/ ) ) {
-					$this->db_check_add_admin_notices( array( array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_TRANS_ERROR ) ) ) );
+					$this->db_check_add_admin_notices( array( array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) ) ) );
 				}
 			}
 
@@ -1161,14 +1161,14 @@ class TLNormalizer {
 	 */
 	function db_check() {
 		if ( ! current_user_can( $this->db_check_cap ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.' /*Use WP string*/ ) );
+			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc_normalize' ) );
 		}
 
 		?>
 
-			<div id="tln_db_check" class="wrap">
+			<div id="unfc_db_check" class="wrap">
 
-				<h1><?php _e( "No\xcc\x88rmalizer Database Check", /*Lol*/ 'normalizer' ); ?></h1>
+				<h1><?php _e( "No\xcc\x88rmalizer Database Check", /*Lol*/ 'unfc_normalize' ); ?></h1>
 
 				<?php $this->db_check_print_page(); ?>
 
@@ -1181,7 +1181,7 @@ class TLNormalizer {
 	 * Output the page.
 	 */
 	function db_check_print_page() {
-		tln_debug_log( "this->db_check_num_items={$this->db_check_num_items}, this->db_check_num_slugs={$this->db_check_num_slugs}" );
+		unfc_debug_log( "this->db_check_num_items={$this->db_check_num_items}, this->db_check_num_slugs={$this->db_check_num_slugs}" );
 
 		if ( false !== $this->db_check_num_items ) {
 			// After scanning the database.
@@ -1189,12 +1189,12 @@ class TLNormalizer {
 				$this->db_check_print_normalize_form();
 				$this->db_check_print_items_list();
 				?>
-					<hr class="tln_db_check_form_hide">
+					<hr class="unfc_db_check_form_hide">
 				<?php
 			}
 			$this->db_check_print_item_form( true /*rescan*/ );
 			?>
-				<hr class="tln_db_check_form_hide">
+				<hr class="unfc_db_check_form_hide">
 			<?php
 			$this->db_check_print_slug_form();
 
@@ -1203,12 +1203,12 @@ class TLNormalizer {
 			if ( $this->db_check_num_slugs ) {
 				$this->db_check_print_slugs_list();
 				?>
-					<hr class="tln_db_check_form_hide">
+					<hr class="unfc_db_check_form_hide">
 				<?php
 			}
 			$this->db_check_print_slug_form( true /*rescan*/ );
 			?>
-				<hr class="tln_db_check_form_hide">
+				<hr class="unfc_db_check_form_hide">
 			<?php
 			$this->db_check_print_item_form();
 
@@ -1216,7 +1216,7 @@ class TLNormalizer {
 			// Front page.
 			$this->db_check_print_item_form();
 			?>
-				<hr class="tln_db_check_form_hide">
+				<hr class="unfc_db_check_form_hide">
 			<?php
 			$this->db_check_print_slug_form();
 		}
@@ -1227,22 +1227,22 @@ class TLNormalizer {
 	 */
 	function db_check_print_item_form( $rescan = false ) {
 		if ( $rescan ) {
-			$value = __( 'Rescan the Database', 'normalizer' );
+			$value = __( 'Rescan the Database', 'unfc_normalize' );
 		} else {
-			$value = __( 'Scan the Database', 'normalizer' );
+			$value = __( 'Scan the Database', 'unfc_normalize' );
 		}
 		?>
-			<form class="tln_db_check_form" method="GET">
-				<input type="hidden" name="page" value="<?php echo TLN_DB_CHECK_MENU_SLUG; ?>">
-				<?php wp_nonce_field( TLN_DB_CHECK_MENU_SLUG . '-items', '_wpnonce_items' ) ?>
+			<form class="unfc_db_check_form" method="GET">
+				<input type="hidden" name="page" value="<?php echo UNFC_DB_CHECK_MENU_SLUG; ?>">
+				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-items', '_wpnonce_items' ) ?>
 				<?php if ( ! $rescan ) { ?>
-					<p class="tln_db_check_form_hide">
-						<?php _e( 'You can scan the database for non-normalized data (nothing will be updated):', 'normalizer' ); ?>
+					<p class="unfc_db_check_form_hide">
+						<?php _e( 'You can scan the database for non-normalized data (nothing will be updated):', 'unfc_normalize' ); ?>
 					</p>
 				<?php } ?>
-				<input id="tln_db_check_items" class="button" name="tln_db_check_items" value="<?php echo esc_attr( $value ); ?>" type="submit">
+				<input id="unfc_db_check_items" class="button" name="unfc_db_check_items" value="<?php echo esc_attr( $value ); ?>" type="submit">
 				<p>
-					<?php _e( 'Scanning the database can take a long time depending on the amount and type of data you have.', 'normalizer' ); ?>
+					<?php _e( 'Scanning the database can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1252,21 +1252,21 @@ class TLNormalizer {
 	 * Output the normalize form.
 	 */
 	function db_check_print_normalize_form() {
-		$transient_key = $this->db_check_transient( 'tln_db_check_items', true /*dont_get*/, true /*dont_set*/ );
+		$transient_key = $this->db_check_transient( 'unfc_db_check_items', true /*dont_get*/, true /*dont_set*/ );
 		?>
-			<form class="tln_db_check_form" method="GET">
-				<input type="hidden" name="page" value="<?php echo TLN_DB_CHECK_MENU_SLUG; ?>">
-				<input type="hidden" name="tln_trans" value="<?php echo esc_attr( $transient_key ); ?>">
-				<?php wp_nonce_field( TLN_DB_CHECK_MENU_SLUG . '-normalize_all', '_wpnonce_normalize_all' ) ?>
-				<p class="tln_db_check_form_hide">
-					<?php _e( 'You can normalize the non-normalized data found in the database. The database <strong>will be updated</strong>.', 'normalizer' ); ?>
+			<form class="unfc_db_check_form" method="GET">
+				<input type="hidden" name="page" value="<?php echo UNFC_DB_CHECK_MENU_SLUG; ?>">
+				<input type="hidden" name="unfc_trans" value="<?php echo esc_attr( $transient_key ); ?>">
+				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all', '_wpnonce_normalize_all' ) ?>
+				<p class="unfc_db_check_form_hide">
+					<?php _e( 'You can normalize the non-normalized data found in the database. The database <strong>will be updated</strong>.', 'unfc_normalize' ); ?>
 				</p>
-				<p class="tln_db_check_form_hide">
-					<?php _e( '<strong>Important:</strong> before updating, please <a href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.', 'normalizer' ); ?>
+				<p class="unfc_db_check_form_hide">
+					<?php _e( '<strong>Important:</strong> before updating, please <a href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.', 'unfc_normalize' ); ?>
 				</p>
-				<input id="tln_db_check_normalize_all" class="button" name="tln_db_check_normalize_all" value="<?php echo esc_attr( __( 'Normalize All', 'normalizer' ) ); ?>" type="submit">
+				<input id="unfc_db_check_normalize_all" class="button" name="unfc_db_check_normalize_all" value="<?php echo esc_attr( __( 'Normalize All', 'unfc_normalize' ) ); ?>" type="submit">
 				<p>
-					<?php _e( 'Normalizing can take a long time depending on the amount and type of data you have.', 'normalizer' ); ?>
+					<?php _e( 'Normalizing can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1276,28 +1276,28 @@ class TLNormalizer {
 	 * Output the list of non-normalized items found.
 	 */
 	function db_check_print_items_list() {
-		if ( ! class_exists( 'TLN_DB_Check_Items_List_Table' ) ) {
-			require self::$dirname . '/class-tln-db_check-list-table.php';
+		if ( ! class_exists( 'UNFC_DB_Check_Items_List_Table' ) ) {
+			require self::$dirname . '/class-unfc-db_check-list-table.php';
 		}
 		if ( $this->db_check_num_items > count( $this->db_check_items ) ) {
 			$h2 = sprintf(
 				/* translators: %1$s: formatted maximum number of non-normalized items listed; %2$s: formatted total number of non-normalized items found. */
-				__( 'First %1$s Non-Normalized Items of %2$s Found', 'normalizer' ),
-				number_format_i18n( $this->get_list_limit( TLN_DB_CHECK_ITEMS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_items )
+				__( 'First %1$s Non-Normalized Items of %2$s Found', 'unfc_normalize' ),
+				number_format_i18n( $this->get_list_limit( UNFC_DB_CHECK_ITEMS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_items )
 			);
 		} else {
-			$h2 = __( 'Non-Normalized Items', 'normalizer' );
+			$h2 = __( 'Non-Normalized Items', 'unfc_normalize' );
 		}
 		?>
-			<div id="<?php echo substr( TLN_DB_CHECK_ITEMS_LIST_SEL, 1 ); ?>" class="tln_db_check_form_hide">
+			<div id="<?php echo substr( UNFC_DB_CHECK_ITEMS_LIST_SEL, 1 ); ?>" class="unfc_db_check_form_hide">
 				<hr>
 				<h2><?php echo $h2; ?></h2>
 		<?php
-		$list_table = new TLN_DB_Check_Items_List_Table();
+		$list_table = new UNFC_DB_Check_Items_List_Table();
 		$list_table->prepare_items();
 		$list_table->views();
 		?>
-				<form class="tln_db_check_list_form" method="GET">
+				<form class="unfc_db_check_list_form" method="GET">
 		<?php
 		$list_table->hiddens();
 		$list_table->display();
@@ -1312,25 +1312,25 @@ class TLNormalizer {
 	 */
 	function db_check_print_slug_form( $rescan = false ) {
 		if ( $rescan ) {
-			$value = __( 'Rescan Slugs', 'normalizer' );
+			$value = __( 'Rescan Slugs', 'unfc_normalize' );
 		} else {
-			$value = __( 'Scan Slugs', 'normalizer' );
+			$value = __( 'Scan Slugs', 'unfc_normalize' );
 		}
 		?>
-			<form class="tln_db_check_form" method="GET">
-				<input type="hidden" name="page" value="<?php echo TLN_DB_CHECK_MENU_SLUG; ?>">
-				<?php wp_nonce_field( TLN_DB_CHECK_MENU_SLUG . '-slugs', '_wpnonce_slugs' ) ?>
+			<form class="unfc_db_check_form" method="GET">
+				<input type="hidden" name="page" value="<?php echo UNFC_DB_CHECK_MENU_SLUG; ?>">
+				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-slugs', '_wpnonce_slugs' ) ?>
 				<?php if ( ! $rescan ) { ?>
-					<p class="tln_db_check_form_hide">
-						<?php _e( 'You can scan the database for slugs that could be percent-encoded from non-normalized data (nothing will be updated):', 'normalizer' ); ?>
+					<p class="unfc_db_check_form_hide">
+						<?php _e( 'You can scan the database for slugs that could be percent-encoded from non-normalized data (nothing will be updated):', 'unfc_normalize' ); ?>
 					</p>
-					<p class="tln_db_check_form_hide">
-						<?php _e( 'A list of posts and/or terms with suspect slugs will be displayed.', 'normalizer' ); ?>
+					<p class="unfc_db_check_form_hide">
+						<?php _e( 'A list of posts and/or terms with suspect slugs will be displayed.', 'unfc_normalize' ); ?>
 					</p>
 				<?php } ?>
-				<input id="tln_db_check_slugs" class="button" name="tln_db_check_slugs" value="<?php echo esc_attr( $value ); ?>" type="submit">
+				<input id="unfc_db_check_slugs" class="button" name="unfc_db_check_slugs" value="<?php echo esc_attr( $value ); ?>" type="submit">
 				<p>
-					<?php _e( 'Scanning the slugs can take a long time depending on the amount and type of data you have.', 'normalizer' ); ?>
+					<?php _e( 'Scanning the slugs can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1340,29 +1340,29 @@ class TLNormalizer {
 	 * Output the list of non-normalized slugs found.
 	 */
 	function db_check_print_slugs_list() {
-		if ( ! class_exists( 'TLN_DB_Check_Slugs_List_Table' ) ) {
-			require self::$dirname . '/class-tln-db_check-list-table.php';
+		if ( ! class_exists( 'UNFC_DB_Check_Slugs_List_Table' ) ) {
+			require self::$dirname . '/class-unfc-db_check-list-table.php';
 		}
 		if ( $this->db_check_num_slugs > count( $this->db_check_slugs ) ) {
 			$h2 = sprintf(
 				/* translators: %1$s: formatted maximum number of non-normalized slugs listed; %2$s: formatted total number of non-normalized slugs found. */
-				__( 'First %1$s Non-Normalized Slugs of %2$s Found', 'normalizer' ),
-				number_format_i18n( $this->get_list_limit( TLN_DB_CHECK_SLUGS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_slugs )
+				__( 'First %1$s Non-Normalized Slugs of %2$s Found', 'unfc_normalize' ),
+				number_format_i18n( $this->get_list_limit( UNFC_DB_CHECK_SLUGS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_slugs )
 			);
 		} else {
-			$h2 = __( 'Non-Normalized Slugs', 'normalizer' );
+			$h2 = __( 'Non-Normalized Slugs', 'unfc_normalize' );
 		}
 		?>
-			<div id="<?php echo substr( TLN_DB_CHECK_SLUGS_LIST_SEL, 1 ); ?>" class="tln_db_check_form_hide">
+			<div id="<?php echo substr( UNFC_DB_CHECK_SLUGS_LIST_SEL, 1 ); ?>" class="unfc_db_check_form_hide">
 				<hr>
 				<h2><?php echo $h2; ?></h2>
 		<?php
-		$list_table = new TLN_DB_Check_Slugs_List_Table();
+		$list_table = new UNFC_DB_Check_Slugs_List_Table();
 		$list_table->prepare_items();
 		$list_table->views();
 		// Note: using POST method rather than GET to allow for large selection for bulk action.
 		?>
-				<form class="tln_db_check_list_form" method="POST">
+				<form class="unfc_db_check_list_form" method="POST">
 		<?php
 		$list_table->hiddens();
 		$list_table->display();
@@ -1376,25 +1376,25 @@ class TLNormalizer {
 	 * Which button was pressed.
 	 */
 	function db_check_button() {
-		if ( isset( $_REQUEST['tln_db_check_items'] ) ) {
-			return 'tln_db_check_items';
+		if ( isset( $_REQUEST['unfc_db_check_items'] ) ) {
+			return 'unfc_db_check_items';
 		}
-		if ( isset( $_REQUEST['tln_db_check_normalize_all'] ) ) {
-			return 'tln_db_check_normalize_all';
+		if ( isset( $_REQUEST['unfc_db_check_normalize_all'] ) ) {
+			return 'unfc_db_check_normalize_all';
 		}
-		if ( isset( $_REQUEST['tln_db_check_slugs'] ) ) {
-			return 'tln_db_check_slugs';
+		if ( isset( $_REQUEST['unfc_db_check_slugs'] ) ) {
+			return 'unfc_db_check_slugs';
 		}
-		if ( isset( $_REQUEST['action'] ) && 'tln_db_check_normalize_slugs' === $_REQUEST['action'] ) {
-			return 'tln_db_check_normalize_slugs';
+		if ( isset( $_REQUEST['action'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action'] ) {
+			return 'unfc_db_check_normalize_slugs';
 		}
-		if ( isset( $_REQUEST['action2'] ) && 'tln_db_check_normalize_slugs' === $_REQUEST['action2'] ) {
-			return 'tln_db_check_normalize_slugs';
+		if ( isset( $_REQUEST['action2'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action2'] ) {
+			return 'unfc_db_check_normalize_slugs';
 		}
 		if ( isset( $_REQUEST['screen-options-apply'] ) && isset( $_REQUEST['wp_screen_options'] ) && is_array( $_REQUEST['wp_screen_options'] ) ) {
 			$options = $_REQUEST['wp_screen_options'];
-			if ( isset( $options['option'] ) && is_string( $options['option'] ) && TLN_DB_CHECK_PER_PAGE === $options['option'] ) {
-				return TLN_DB_CHECK_PER_PAGE;
+			if ( isset( $options['option'] ) && is_string( $options['option'] ) && UNFC_DB_CHECK_PER_PAGE === $options['option'] ) {
+				return UNFC_DB_CHECK_PER_PAGE;
 			}
 		}
 		if ( isset( $_REQUEST['_wp_http_referer'] ) && is_string( $_REQUEST['_wp_http_referer'] ) && '' !== $_REQUEST['_wp_http_referer'] ) {
@@ -1407,11 +1407,11 @@ class TLNormalizer {
 	 * Base url for button redirects, with basic checks on the standard query vars (will be fully checked before use).
 	 */
 	function db_check_base_redirect() {
-		$redirect = admin_url( 'tools.php?page=' . TLN_DB_CHECK_MENU_SLUG );
+		$redirect = admin_url( 'tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG );
 		$args = array();
 
-		if ( isset( $_REQUEST['tln_type'] ) && is_string( $_REQUEST['tln_type'] ) && $this->sanitize_type( $_REQUEST['tln_type'] ) ) {
-			$args['tln_type'] = $_REQUEST['tln_type'];
+		if ( isset( $_REQUEST['unfc_type'] ) && is_string( $_REQUEST['unfc_type'] ) && $this->sanitize_type( $_REQUEST['unfc_type'] ) ) {
+			$args['unfc_type'] = $_REQUEST['unfc_type'];
 		}
 		if ( isset( $_REQUEST['orderby'] ) && is_string( $_REQUEST['orderby'] ) && preg_match( '/^[a-z_]+$/i', $_REQUEST['orderby'] ) ) {
 			$redirect = add_query_arg( array( 'orderby' => $_REQUEST['orderby'] ), $redirect );
@@ -1434,13 +1434,13 @@ class TLNormalizer {
 	 * Get the transient holding the item listing info, and set the items or slugs arrays.
 	 */
 	function db_check_transient( $starts_with = false, $dont_get = false, $dont_set = false ) {
-		if ( isset( $_REQUEST['tln_trans'] ) && is_string( $_REQUEST['tln_trans'] ) ) {
-			$transient_key = $_REQUEST['tln_trans'];
+		if ( isset( $_REQUEST['unfc_trans'] ) && is_string( $_REQUEST['unfc_trans'] ) ) {
+			$transient_key = $_REQUEST['unfc_trans'];
 			if ( $starts_with && 0 !== strpos( $transient_key, $starts_with ) ) {
 				return false;
 			}
-			$is_items = 0 === strpos( $transient_key, 'tln_db_check_items' );
-			$is_slugs = 0 === strpos( $transient_key, 'tln_db_check_slugs' );
+			$is_items = 0 === strpos( $transient_key, 'unfc_db_check_items' );
+			$is_slugs = 0 === strpos( $transient_key, 'unfc_db_check_slugs' );
 			if ( $dont_get ) {
 				return $is_items || $is_slugs ? $transient_key : false;
 			}
@@ -1476,9 +1476,9 @@ class TLNormalizer {
 	 */
 	function admin_notices() {
 
-		$admin_notices = get_transient( 'tln_admin_notices' );
+		$admin_notices = get_transient( 'unfc_admin_notices' );
 		if ( false !== $admin_notices ) {
-			delete_transient( 'tln_admin_notices' );
+			delete_transient( 'unfc_admin_notices' );
 		}
 		if ( $admin_notices ) {
 
@@ -1512,7 +1512,7 @@ class TLNormalizer {
 	 */
 	function db_check_add_admin_notices( $admin_notices ) {
 		if ( $admin_notices ) {
-			set_transient( 'tln_admin_notices', $admin_notices, 5 * MINUTE_IN_SECONDS );
+			set_transient( 'unfc_admin_notices', $admin_notices, 5 * MINUTE_IN_SECONDS );
 		}
 	}
 
@@ -1521,12 +1521,12 @@ class TLNormalizer {
 	 */
 	function db_check_error_msg( $error ) {
 		$error_msgs = array(
-			TLN_DB_CHECK_DB_ERROR => __( 'Database error.', 'normalizer' ),
-			TLN_DB_CHECK_META_ERROR => __( 'Meta data error.', 'normalizer' ),
-			TLN_DB_CHECK_PARAM_ERROR => __( 'Parameters error.', 'normalizer' ),
-			TLN_DB_CHECK_TRANS_ERROR => __( 'Transient has expired. Please re-scan.', 'normalizer' ),
-			TLN_DB_CHECK_SYNC_ERROR => __( 'Data out of sync!', 'normalizer' ),
-			TLN_DB_CHECK_SELECT_ERROR => __( 'No items selected!', 'normalizer' ),
+			UNFC_DB_CHECK_DB_ERROR => __( 'Database error.', 'unfc_normalize' ),
+			UNFC_DB_CHECK_META_ERROR => __( 'Meta data error.', 'unfc_normalize' ),
+			UNFC_DB_CHECK_PARAM_ERROR => __( 'Parameters error.', 'unfc_normalize' ),
+			UNFC_DB_CHECK_TRANS_ERROR => __( 'Transient has expired. Please re-scan.', 'unfc_normalize' ),
+			UNFC_DB_CHECK_SYNC_ERROR => __( 'Data out of sync!', 'unfc_normalize' ),
+			UNFC_DB_CHECK_SELECT_ERROR => __( 'No items selected!', 'unfc_normalize' ),
 		);
 
 		return $error_msgs[ $error ];
@@ -1543,7 +1543,7 @@ class TLNormalizer {
 		$this->check_db_fields();
 
 		if ( $this->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			$this->load_tln_normalizer_class();
+			$this->load_unfc_normalizer_class();
 		}
 
 		$time_query = $time_loop = $total_results = $total_gets = 0; // Some stats.
@@ -1552,11 +1552,11 @@ class TLNormalizer {
 		$batch_limit = $this->get_batch_limit( __FUNCTION__ );
 
 		// In-memory list limit.
-		$list_limit = $this->get_list_limit( TLN_DB_CHECK_ITEMS_LIST_SEL );
+		$list_limit = $this->get_list_limit( UNFC_DB_CHECK_ITEMS_LIST_SEL );
 
 		$type = $subtype = '';
-		if ( ! empty( $_REQUEST['tln_type'] ) ) {
-			list( $type, $subtype ) = $this->parse_type( $_REQUEST['tln_type'] );
+		if ( ! empty( $_REQUEST['unfc_type'] ) ) {
+			list( $type, $subtype ) = $this->parse_type( $_REQUEST['unfc_type'] );
 		}
 		if ( $type ) {
 			$types = array( $type );
@@ -1566,6 +1566,9 @@ class TLNormalizer {
 
 		foreach ( $types as $type ) {
 			$sql = $this->db_check_sql( false /*normalize*/, $type, $subtype );
+			if ( ! $sql ) {
+				continue;
+			}
 
 			$time_query += -microtime( true );
 			$results = $wpdb->get_results( $sql . ' LIMIT 0, ' . $batch_limit );
@@ -1582,7 +1585,7 @@ class TLNormalizer {
 					$have_field = false;
 
 					foreach ( $this->db_fields[ $type ] as $field ) {
-						if ( ! empty( $obj->$field ) && ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $obj->$field ) : normalizer_is_normalized( $obj->$field ) ) ) {
+						if ( ! empty( $obj->$field ) && ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $obj->$field ) : normalizer_is_normalized( $obj->$field ) ) ) {
 							$have_field = $field;
 							break;
 						}
@@ -1590,15 +1593,15 @@ class TLNormalizer {
 
 					// Meta data retrieved as group concatenated fields.
 					if ( ! $have_field && ! empty( $obj->meta_values )
-							&& ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $obj->meta_values ) : normalizer_is_normalized( $obj->meta_values ) ) ) {
+							&& ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $obj->meta_values ) : normalizer_is_normalized( $obj->meta_values ) ) ) {
 						$have_field = 'meta';
 					}
 
 					if ( $have_field ) {
 						if ( $ret['num_items'] < $list_limit ) {
 							$title = $obj->{$this->db_title_cols[ $type ]};
-							if ( mb_strlen( $title ) > TLN_DB_CHECK_TITLE_MAX_LEN ) {
-								$title = mb_substr( $title, 0, TLN_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'normalizer' );
+							if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
+								$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc_normalize' );
 							}
 							$ret['items'][] = array(
 								'id' => (int) $obj->id, 'type' => $type, 'idx' => $ret['num_items'],
@@ -1622,23 +1625,23 @@ class TLNormalizer {
 			$total_gets += $num_gets;
 
 			if ( null === $results ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 				return $ret;
 			}
 			unset( $results );
 		}
 
-		tln_debug_log(
+		unfc_debug_log(
 			"num_items={$ret['num_items']}, total_results=$total_results, total_gets=$total_gets, time_query=", sprintf( '%.10f', $time_query ), ", time_loop=", sprintf( '%.10f', $time_loop )
 		);
 
 		if ( $ret['num_items'] ) {
 			$admin_notices[] = array( 'info', sprintf(
 				/* translators: %s: formatted number of items detected. */
-				_n( '%s non-normalized item detected.', '%s non-normalized items detected.', $ret['num_items'], 'normalizer' ), number_format_i18n( $ret['num_items'] )
+				_n( '%s non-normalized item detected.', '%s non-normalized items detected.', $ret['num_items'], 'unfc_normalize' ), number_format_i18n( $ret['num_items'] )
 			) );
 		} else {
-			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized data detected!', 'normalizer' ) );
+			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized data detected!', 'unfc_normalize' ) );
 		}
 
 		return $ret;
@@ -1656,7 +1659,7 @@ class TLNormalizer {
 		$this->check_db_fields();
 
 		if ( $this->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			$this->load_tln_normalizer_class();
+			$this->load_unfc_normalizer_class();
 		}
 
 		$time_query = $time_loop = $total_results = $total_gets = 0; // Some stats.
@@ -1665,8 +1668,8 @@ class TLNormalizer {
 		$batch_limit = $this->get_batch_limit( __FUNCTION__ );
 
 		$type = $subtype = '';
-		if ( ! empty( $_REQUEST['tln_type'] ) ) {
-			list( $type, $subtype ) = $this->parse_type( $_REQUEST['tln_type'] );
+		if ( ! empty( $_REQUEST['unfc_type'] ) ) {
+			list( $type, $subtype ) = $this->parse_type( $_REQUEST['unfc_type'] );
 		}
 		if ( $type ) {
 			$types = array( $type );
@@ -1678,6 +1681,9 @@ class TLNormalizer {
 
 		foreach ( $types as $type ) {
 			$sql = $this->db_check_sql( true /*normalize*/, $type, $subtype );
+			if ( ! $sql ) {
+				continue;
+			}
 			$per_type_updates = 0;
 
 			$time_query += -microtime( true );
@@ -1700,8 +1706,8 @@ class TLNormalizer {
 					if ( ! $locked ) {
 						$data = array();
 						foreach ( $this->db_fields[ $type ] as $field ) {
-							if ( ! empty( $obj->$field ) && ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $obj->$field ) : normalizer_is_normalized( $obj->$field ) ) ) {
-								$normalized = $this->no_normalizer ? tl_normalizer_normalize( $obj->$field ) : normalizer_normalize( $obj->$field );
+							if ( ! empty( $obj->$field ) && ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $obj->$field ) : normalizer_is_normalized( $obj->$field ) ) ) {
+								$normalized = $this->no_normalizer ? unfc_normalizer_normalize( $obj->$field ) : normalizer_normalize( $obj->$field );
 								if ( false === $normalized ) { // As taking values from database which should be valid UTF-8, this shouldn't happen.
 									$failed = true;
 									break;
@@ -1717,7 +1723,7 @@ class TLNormalizer {
 							if ( 'term' === $type && isset( $data['description'] ) ) {
 								$update = $wpdb->update( $wpdb->term_taxonomy, array( 'description' => $data['description'] ), array( 'term_id' => $id, 'taxonomy' => $obj->subtype ) );
 								if ( false === $update ) {
-									$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+									$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 									return false;
 								}
 								unset( $data['description'] );
@@ -1729,7 +1735,7 @@ class TLNormalizer {
 								$db_id_col = $this->db_id_cols[ $type ];
 								$update = $wpdb->update( $db_table, $data, array( $db_id_col => $id ) );
 								if ( false === $update ) {
-									$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+									$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 									return false;
 								}
 								$updated = true;
@@ -1742,15 +1748,15 @@ class TLNormalizer {
 								$cnt = count( $meta_ids );
 								$meta_values = $this->db_check_meta_split( $obj->meta_values, $obj->meta_value_lens );
 								if ( $cnt !== count( $meta_values ) ) {
-									$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_META_ERROR ) );
+									$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_META_ERROR ) );
 									return false;
 								}
 								$db_meta_table = $wpdb->{$this->db_meta_tables[ $type ]};
 								$db_meta_id_col = $this->db_meta_id_cols[ $type ];
 								foreach ( $meta_values as $idx => $meta_value ) {
 									$data = array();
-									if ( ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $meta_value ) : normalizer_is_normalized( $meta_value ) ) ) {
-										$normalized = $this->no_normalizer ? tl_normalizer_normalize( $meta_value ) : normalizer_normalize( $meta_value );
+									if ( ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $meta_value ) : normalizer_is_normalized( $meta_value ) ) ) {
+										$normalized = $this->no_normalizer ? unfc_normalizer_normalize( $meta_value ) : normalizer_normalize( $meta_value );
 										if ( false === $normalized ) {
 											$failed = true;
 											break;
@@ -1762,7 +1768,7 @@ class TLNormalizer {
 									if ( $data ) {
 										$update = $wpdb->update( $db_meta_table, $data, array( $db_meta_id_col => $meta_ids[ $idx ] ) );
 										if ( false === $update ) {
-											$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+											$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 											return false;
 										}
 										$updated = true;
@@ -1797,13 +1803,13 @@ class TLNormalizer {
 			$total_gets += $num_gets;
 
 			if ( null === $results ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 				return false;
 			}
 			unset( $results );
 		}
 
-		tln_debug_log(
+		unfc_debug_log(
 			"num_updates=$num_updates, total_results=$total_results, total_gets=$total_gets, time_query=", sprintf( '%.10f', $time_query ), ", time_loop=", sprintf( '%.10f', $time_loop )
 		);
 
@@ -1813,20 +1819,20 @@ class TLNormalizer {
 
 		if ( $num_updates ) {
 			/* translators: %s: formatted number of items normalized. */
-			$admin_notices[] = array( 'updated', sprintf( _n( '%s item normalized.', '%s items normalized.', $num_updates, 'normalizer' ), number_format_i18n( $num_updates ) ) );
+			$admin_notices[] = array( 'updated', sprintf( _n( '%s item normalized.', '%s items normalized.', $num_updates, 'unfc_normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'normalizer' ) );
+			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc_normalize' ) );
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s item not normalized, somebody is editing it.', '%s items not normalized, somebody is editing them.', $num_locked, 'normalizer' ), number_format_i18n( $num_locked )
+				_n( '%s item not normalized, somebody is editing it.', '%s items not normalized, somebody is editing them.', $num_locked, 'unfc_normalize' ), number_format_i18n( $num_locked )
 			) );
 		}
 		if ( $num_fails ) {
 			/* translators: %s: formatted number of items that failed to normalize. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s item not normalized, failed to normalize.', '%s items not normalized, failed to normalize.', $num_fails, 'normalizer' ), number_format_i18n( $num_fails )
+				_n( '%s item not normalized, failed to normalize.', '%s items not normalized, failed to normalize.', $num_fails, 'unfc_normalize' ), number_format_i18n( $num_fails )
 			) );
 		}
 
@@ -1985,7 +1991,7 @@ class TLNormalizer {
 		$this->check_db_fields();
 
 		if ( $this->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			$this->load_tln_normalizer_class();
+			$this->load_unfc_normalizer_class();
 		}
 
 		$time_query = $time_loop = $total_results = $total_gets = 0; // Some stats.
@@ -1994,11 +2000,11 @@ class TLNormalizer {
 		$batch_limit = $this->get_batch_limit( __FUNCTION__ );
 
 		// In-memory list limit.
-		$list_limit = $this->get_list_limit( TLN_DB_CHECK_SLUGS_LIST_SEL );
+		$list_limit = $this->get_list_limit( UNFC_DB_CHECK_SLUGS_LIST_SEL );
 
 		$type = $subtype = '';
-		if ( ! empty( $_REQUEST['tln_type'] ) ) {
-			list( $type, $subtype ) = $this->parse_type( $_REQUEST['tln_type'] );
+		if ( ! empty( $_REQUEST['unfc_type'] ) ) {
+			list( $type, $subtype ) = $this->parse_type( $_REQUEST['unfc_type'] );
 		}
 		if ( $type ) {
 			$types = isset( $this->db_slug_cols[ $type ] ) ? array( $type ) : array();
@@ -2008,6 +2014,9 @@ class TLNormalizer {
 
 		foreach ( $types as $type ) {
 			$sql = $this->db_check_slug_sql( $type, $subtype );
+			if ( ! $sql ) {
+				continue;
+			}
 
 			$time_query += -microtime( true );
 			$results = $wpdb->get_results( $sql . ' LIMIT 0, ' . $batch_limit );
@@ -2024,11 +2033,11 @@ class TLNormalizer {
 
 					if ( ! empty( $obj->slug ) ) {
 						$decoded = self::percent_decode( $obj->slug ); // Note slugs aren't properly percent-encoded by sanitize_title_with_dashes() so not using rawurldecode().
-						if ( ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
+						if ( ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
 							if ( $ret['num_slugs'] < $list_limit ) {
 								$title = $obj->title;
-								if ( mb_strlen( $title ) > TLN_DB_CHECK_TITLE_MAX_LEN ) {
-									$title = mb_substr( $title, 0, TLN_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'normalizer' );
+								if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
+									$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc_normalize' );
 								}
 								$ret['slugs'][] = array(
 									'id' => (int) $obj->id, 'type' => $type, 'idx' => $ret['num_slugs'],
@@ -2053,7 +2062,7 @@ class TLNormalizer {
 			$total_gets += $num_gets;
 
 			if ( null === $results ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 				return $ret;
 			}
 			unset( $results );
@@ -2062,14 +2071,14 @@ class TLNormalizer {
 		if ( $ret['num_slugs'] ) {
 			$admin_notices[] = array( 'info', sprintf(
 				/* translators: %s: formatted number of percent-encoded items detected. */
-				_n( '%s non-normalized percent-encoded slug detected.', '%s non-normalized percent-encoded slugs detected.', $ret['num_slugs'], 'normalizer' ),
+				_n( '%s non-normalized percent-encoded slug detected.', '%s non-normalized percent-encoded slugs detected.', $ret['num_slugs'], 'unfc_normalize' ),
 				number_format_i18n( $ret['num_slugs'] )
 			) );
 		} else {
-			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized percent-encoded slugs detected!', 'normalizer' ) );
+			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized percent-encoded slugs detected!', 'unfc_normalize' ) );
 		}
 
-		tln_debug_log(
+		unfc_debug_log(
 			"num_slugs={$ret['num_slugs']}, total_results=$total_results, total_gets=$total_gets, time_query=", sprintf( '%.10f', $time_query ), ", time_loop=", sprintf( '%.10f', $time_loop )
 		);
 
@@ -2158,7 +2167,7 @@ class TLNormalizer {
 		$this->check_db_fields();
 
 		if ( $this->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			$this->load_tln_normalizer_class();
+			$this->load_unfc_normalizer_class();
 		}
 
 		$current_user_id = get_current_user_id();
@@ -2167,7 +2176,7 @@ class TLNormalizer {
 
 			// Parse id:type:db_check_slugs_idx.
 			if ( false == preg_match( '/^([1-9]\d*):(' . implode( '|', array_keys( $this->db_slug_cols ) ) . '):(\d+)$/', $checked, $matches ) ) {
-				$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_PARAM_ERROR ) );
+				$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_PARAM_ERROR ) );
 				return false; // Should never happen so treat as fatal error.
 			}
 			$id = intval( $matches[1] );
@@ -2175,7 +2184,7 @@ class TLNormalizer {
 			$idx = intval( $matches[3] );
 
 			if ( ! isset( $this->db_check_slugs[ $idx ] ) || $this->db_check_slugs[ $idx ]['id'] !== $id || $this->db_check_slugs[ $idx ]['type'] !== $type ) {
-				$admin_notices[] = array( 'warning', $this->db_check_error_msg( TLN_DB_CHECK_SYNC_ERROR ) ); // Treat mismatched slug indexes as warning.
+				$admin_notices[] = array( 'warning', $this->db_check_error_msg( UNFC_DB_CHECK_SYNC_ERROR ) ); // Treat mismatched slug indexes as warning.
 				break; // Stop but report anything done so far.
 			}
 
@@ -2187,7 +2196,7 @@ class TLNormalizer {
 			$obj = $wpdb->get_row( $wpdb->prepare( "SELECT $field FROM $db_table WHERE $db_id_col = %d", $id ) );
 			if ( ! $obj ) {
 				if ( $wpdb->last_error ) { // get_row() returns null on no result or on error so need to check.
-					$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+					$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 					return false;
 				}
 				$num_missing++;
@@ -2203,8 +2212,8 @@ class TLNormalizer {
 					$data = array();
 					if ( ! empty( $obj->$field ) ) {
 						$decoded = self::percent_decode( $obj->$field ); // Note slugs aren't properly percent-encoded by sanitize_title_with_dashes() so not using rawurldecode().
-						if ( ! ( $this->no_normalizer ? tl_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
-							$normalized = $this->no_normalizer ? tl_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
+						if ( ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
+							$normalized = $this->no_normalizer ? unfc_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
 							if ( false === $normalized ) { // Note this should only happen if the slug originally had raw (not percent-encoded) invalid UTF-8 sequences. Which shouldn't happen.
 								$num_fails++;
 							} else {
@@ -2223,7 +2232,7 @@ class TLNormalizer {
 					if ( $data ) {
 						$update = $wpdb->update( $db_table, $data, array( $db_id_col => $id ) );
 						if ( false === $update ) {
-							$admin_notices[] = array( 'error', $this->db_check_error_msg( TLN_DB_CHECK_DB_ERROR ) );
+							$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 							return false;
 						}
 						$num_updates++;
@@ -2240,32 +2249,32 @@ class TLNormalizer {
 
 		if ( $num_updates ) {
 			/* translators: %s: formatted number of slugs normalized. */
-			$admin_notices[] = array( 'updated', sprintf( _n( '%s slug normalized.', '%s slugs normalized.', $num_updates, 'normalizer' ), number_format_i18n( $num_updates ) ) );
+			$admin_notices[] = array( 'updated', sprintf( _n( '%s slug normalized.', '%s slugs normalized.', $num_updates, 'unfc_normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'normalizer' ) );
+			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc_normalize' ) );
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, somebody is editing it.', '%s slugs not normalized, somebody is editing them.', $num_locked, 'normalizer' ), number_format_i18n( $num_locked )
+				_n( '%s slug not normalized, somebody is editing it.', '%s slugs not normalized, somebody is editing them.', $num_locked, 'unfc_normalize' ), number_format_i18n( $num_locked )
 			) );
 		}
 		if ( $num_missing ) {
 			/* translators: %s: formatted number of slugs not found. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, no longer exists.', '%s slugs not normalized, no longer exist.', $num_missing, 'normalizer' ), number_format_i18n( $num_missing )
+				_n( '%s slug not normalized, no longer exists.', '%s slugs not normalized, no longer exist.', $num_missing, 'unfc_normalize' ), number_format_i18n( $num_missing )
 			) );
 		}
 		if ( $num_skipped ) {
 			/* translators: %s: formatted number of slugs not non-normalized. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, no longer non-normalized.', '%s slugs not normalized, no longer non-normalized.', $num_skipped, 'normalizer' ), number_format_i18n( $num_skipped )
+				_n( '%s slug not normalized, no longer non-normalized.', '%s slugs not normalized, no longer non-normalized.', $num_skipped, 'unfc_normalize' ), number_format_i18n( $num_skipped )
 			) );
 		}
 		if ( $num_fails ) {
 			/* translators: %s: formatted number of slugs that failed to normalize. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, failed to normalize.', '%s slugs not normalized, failed to normalize.', $num_fails, 'normalizer' ), number_format_i18n( $num_fails )
+				_n( '%s slug not normalized, failed to normalize.', '%s slugs not normalized, failed to normalize.', $num_fails, 'unfc_normalize' ), number_format_i18n( $num_fails )
 			) );
 		}
 
@@ -2293,9 +2302,9 @@ class TLNormalizer {
 	function get_batch_limit( $from ) {
 		// TODO: perhaps some groovy calculation based on database size and memory limit.
 
-		$batch_limit = 'db_check_normalize_all' === $from ? TLN_DB_CHECK_NORMALIZE_BATCH_LIMIT : TLN_DB_CHECK_ITEM_BATCH_LIMIT;
+		$batch_limit = 'db_check_normalize_all' === $from ? UNFC_DB_CHECK_NORMALIZE_BATCH_LIMIT : UNFC_DB_CHECK_ITEM_BATCH_LIMIT;
 
-		return apply_filters( 'tln_batch_limit', $batch_limit, $from );
+		return apply_filters( 'unfc_batch_limit', $batch_limit, $from );
 	}
 
 	/**
@@ -2303,7 +2312,7 @@ class TLNormalizer {
 	 */
 	function get_list_limit( $sel ) {
 
-		$list_limit = TLN_DB_CHECK_LIST_LIMIT;
+		$list_limit = UNFC_DB_CHECK_LIST_LIMIT;
 
 		$post_max_size = ini_get( 'post_max_size' );
 		$memory_limit = ini_get( 'memory_limit' );
@@ -2317,7 +2326,7 @@ class TLNormalizer {
 			$list_limit = max( 20, min( 10000, intval( $limit / 10240 ) * 10 ) ); // Limit to maximum 10000, minimum 20.
 		}
 
-		return apply_filters( 'tln_list_limit', $list_limit, $sel );
+		return apply_filters( 'unfc_list_limit', $list_limit, $sel );
 	}
 
 	/**
@@ -2442,6 +2451,6 @@ class TLNormalizer {
 }
 
 // Debug functions - no-ops unless WP_DEBUG is set.
-if ( ! function_exists( 'tln_debug_log' ) ) {
+if ( ! function_exists( 'unfc_debug_log' ) ) {
 	require dirname( __FILE__ ) . '/debug.php';
 }
