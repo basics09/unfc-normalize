@@ -1190,6 +1190,9 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		global $wpdb;
 		$option_id1 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option1') ORDER BY option_id ASC" ) );
 		$num_updates++;
+		add_option( 'option3', array( 'key1' => 'val3' . $decomposed_str1 ) );
+		$option_id2 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option3') ORDER BY option_id ASC" ) );
+		$num_updates++;
 
 		add_site_option( 'option1', 'val1' . $decomposed_str1 );
 		add_site_option( 'option2', 'val2' );
