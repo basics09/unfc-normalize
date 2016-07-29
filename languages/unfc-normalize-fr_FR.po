@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UTF-8 NFC Normalize 0.9.1\n"
+"Project-Id-Version: UNFC Normalize 0.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-07-29 06:49+0100\n"
-"PO-Revision-Date: 2016-07-29 06:49+0100\n"
+"POT-Creation-Date: 2016-07-29 07:11+0100\n"
+"PO-Revision-Date: 2016-07-29 07:15+0100\n"
 "Last-Translator: MB <mb@mb.ie>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -125,12 +125,11 @@ msgstr "Aucune différence&nbsp;!"
 
 #: class-unfc-normalize.php:217
 msgid ""
-"The plugin \"UTF-8 Normalization Form C Normalize\" is not compatible with "
-"your system and can't be activated."
+"The plugin \"UNFC Normalize\" is not compatible with your system and can't "
+"be activated."
 msgstr ""
-"L&rsquo;extension &laquo;&nbsp;TF-8 Normalization Form C Normalize&nbsp;"
-"&raquo; n&rsquo;est pas compatible avec votre système et ne peut pas être "
-"activée."
+"L&rsquo;extension &laquo;&nbsp;UNFC Normalize&nbsp;&raquo; n&rsquo;est pas "
+"compatible avec votre système et ne peut pas être activée."
 
 #: class-unfc-normalize.php:271
 msgid "Plugin deactivated!"
@@ -138,11 +137,11 @@ msgstr "Extension désactivée !"
 
 #: class-unfc-normalize.php:272
 msgid ""
-"The plugin \"UTF-8 Normalization Form C Normalize\" is not compatible with "
-"your system and has been deactivated."
+"The plugin \"UNFC Normalize\" is not compatible with your system and has "
+"been deactivated."
 msgstr ""
-"L&rsquo;extension &laquo;&nbsp;TF-8 Normalization Form C Normalize&nbsp;"
-"&raquo; n&rsquo;est pas compatible avec votre système et a été désactivée."
+"L&rsquo;extension &laquo;&nbsp;UNFC Normalize&nbsp;&raquo; n&rsquo;est pas "
+"compatible avec votre système et a été désactivée."
 
 #: class-unfc-normalize.php:295
 msgid "Warning: untested!"
@@ -152,20 +151,20 @@ msgstr "Attention&nbsp;: non-testé&nbsp;!"
 #. version tested; %3$s: user's current WordPress version.
 #: class-unfc-normalize.php:301
 msgid ""
-"The plugin \"UTF-8 Normalization Form C Normalize\" has only been tested on "
-"WordPress Versions %1$s to %2$s. You have WordPress Version %3$s."
+"The plugin \"UNFC Normalize\" has only been tested on WordPress Versions "
+"%1$s to %2$s. You have WordPress Version %3$s."
 msgstr ""
-"L&rsquo;extension &laquo;&nbsp;TF-8 Normalization Form C Normalize&nbsp;"
-"&raquo; n&rsquo;a été testée que sur des versions de WordPress %1$s à %2$s. "
-"Vous avez WordPress version %3$s."
+"L&rsquo;extension &laquo;&nbsp;UNFC Normalize&nbsp;&raquo; n&rsquo;a été "
+"testée que sur des versions de WordPress %1$s à %2$s. Vous avez WordPress "
+"version %3$s."
 
 #: class-unfc-normalize.php:816
 msgid "Please wait..."
 msgstr "S&rsquo;il vous plaît attendre..."
 
 #: class-unfc-normalize.php:947 class-unfc-normalize.php:1171
-msgid "UTF-8 NFC Nörmalize Database Check"
-msgstr "UTF-8 NFC Nörmalize vérifier la base de données"
+msgid "UNFC Nörmalize Database Check"
+msgstr "UNFC Nörmalize vérifier la base de données"
 
 #: class-unfc-normalize.php:947
 msgid "UNFC Nörm Db Check"
@@ -438,8 +437,8 @@ msgstr ""
 "%s&nbsp;&raquo;"
 
 #. Plugin Name of the plugin/theme
-msgid "UTF-8 NFC Nörmalize"
-msgstr "UTF-8 NFC Nörmalize"
+msgid "UNFC Nörmalize"
+msgstr "UNFC Nörmalize"
 
 #. Plugin URI of the plugin/theme
 msgid "https://github.com/gitlost/unfc-normalize"

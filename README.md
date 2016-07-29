@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)
-# UTF-8 NFC Nörmalize #
+# UNFC Nörmalize #
 **Contributors:** [gitlost](https://profiles.wordpress.org/gitlost), [zodiac1978](https://profiles.wordpress.org/zodiac1978)  
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  
 **Requires at least:** 3.9.13  
@@ -46,7 +46,7 @@ The project is on [github](https://github.com/gitlost/unfc-normalize).
 
 ## Installation ##
 
-1. Upload the zip file from this plugin on your plugins page or search for "UTF-8 NFC Nörmalize" and install it directly from the repository
+1. Upload the zip file from this plugin on your plugins page or search for "UNFC Nörmalize" and install it directly from the repository
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Done!
 

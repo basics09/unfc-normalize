@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: UTF-8 NFC Nörmalize
+ * Plugin Name: UNFC Nörmalize
  * Plugin URI: https://github.com/gitlost/unfc-normalize
  * Description: Normalizes UTF-8 input to Normalization Form C.
  * Version: 0.9.1

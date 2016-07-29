@@ -214,7 +214,7 @@ class UNFC_Normalize {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( self::$plugin_basename );
-			wp_die( __( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and can\'t be activated.', 'unfc-normalize' ) );
+			wp_die( __( 'The plugin "UNFC Normalize" is not compatible with your system and can\'t be activated.', 'unfc-normalize' ) );
 		} else {
 			if ( ! self::tested_wp_version() ) {
 				$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
@@ -269,7 +269,7 @@ class UNFC_Normalize {
 	function disabled_notice() {
 		$error_message  = '<div id="message" class="updated is-dismissible">';
 		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'unfc-normalize' ) . '</strong> ';
-		$error_message .= esc_html__( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and has been deactivated.', 'unfc-normalize' );
+		$error_message .= esc_html__( 'The plugin "UNFC Normalize" is not compatible with your system and has been deactivated.', 'unfc-normalize' );
 		$error_message .= '</p></div>';
 		echo $error_message;
 	}
@@ -298,7 +298,7 @@ class UNFC_Normalize {
 				<p>
 					<?php printf(
 						/* translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress version tested; %3$s: user's current WordPress version. */
-						__( 'The plugin "UTF-8 Normalization Form C Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc-normalize' ),
+						__( 'The plugin "UNFC Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc-normalize' ),
 						UNFC_WP_AT_LEAST_VERSION, UNFC_WP_UP_TO_VERSION, $wp_version
 					); ?>
 				</p>
@@ -944,7 +944,7 @@ class UNFC_Normalize {
 	function admin_menu() {
 		// Add the database check to the tools menu.
 		$this->db_check_hook_suffix = add_management_page(
-			__( "UTF-8 NFC No\xcc\x88rmalize Database Check", /*Teehee*/ 'unfc-normalize' ), __( "UNFC No\xcc\x88rm Db Check", 'unfc-normalize' ), $this->db_check_cap, UNFC_DB_CHECK_MENU_SLUG,
+			__( "UNFC No\xcc\x88rmalize Database Check", /*Teehee*/ 'unfc-normalize' ), __( "UNFC No\xcc\x88rm Db Check", 'unfc-normalize' ), $this->db_check_cap, UNFC_DB_CHECK_MENU_SLUG,
 			array( $this, 'db_check' )
 		);
 		if ( $this->db_check_hook_suffix ) {
@@ -1168,7 +1168,7 @@ class UNFC_Normalize {
 
 			<div id="unfc_db_check" class="wrap">
 
-				<h1><?php _e( "UTF-8 NFC No\xcc\x88rmalize Database Check", /*Lol*/ 'unfc-normalize' ); ?></h1>
+				<h1><?php _e( "UNFC No\xcc\x88rmalize Database Check", /*Lol*/ 'unfc-normalize' ); ?></h1>
 
 				<?php $this->db_check_print_page(); ?>
 
