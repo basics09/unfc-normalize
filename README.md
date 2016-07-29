@@ -13,7 +13,7 @@ Normalizes UTF-8 input to Normalization Form C.
 ## Description ##
 
 This is a souped-up version of the [Normalizer plugin](https://wordpress.org/plugins/normalizer/ "Normalizer - WordPress Plugins") by
-[Torsten Landsiedel](https://profiles.wordpress.org/zodiac1978/ "WordPress > Profiles >> Torsten Landsiedel").
+[Torsten Landsiedel](https://profiles.wordpress.org/zodiac1978/).
 
 It adds WP filters to normalize UTF-8 data coming into the system to the
 [de facto web standard Normalization Form C](https://www.w3.org/International/docs/charmod-norm/#choice-of-normalization-form "Choice of Normalization Form").
@@ -39,7 +39,7 @@ The project is on [github](https://github.com/gitlost/unfc-normalize).
 
 ## Installation ##
 
-1. Upload the zip file from this plugin on your plugins page or search for `Normalizer` and install it directly from the repository
+1. Upload the zip file from this plugin on your plugins page or search for `UTF-8 NFC Nörmalize` and install it directly from the repository
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Done!
 

@@ -214,7 +214,7 @@ class UNFC_Normalize {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( self::$plugin_basename );
-			wp_die( __( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and can\'t be activated.', 'unfc_normalize' ) );
+			wp_die( __( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and can\'t be activated.', 'unfc-normalize' ) );
 		} else {
 			if ( ! self::tested_wp_version() ) {
 				$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
@@ -268,8 +268,8 @@ class UNFC_Normalize {
 	 */
 	function disabled_notice() {
 		$error_message  = '<div id="message" class="updated is-dismissible">';
-		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'unfc_normalize' ) . '</strong> ';
-		$error_message .= esc_html__( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and has been deactivated.', 'unfc_normalize' );
+		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'unfc-normalize' ) . '</strong> ';
+		$error_message .= esc_html__( 'The plugin "UTF-8 Normalization Form C Normalize" is not compatible with your system and has been deactivated.', 'unfc-normalize' );
 		$error_message .= '</p></div>';
 		echo $error_message;
 	}
@@ -292,13 +292,13 @@ class UNFC_Normalize {
 		?>
 		<div class="notice notice-warning is-dismissible">
 			<p>
-				<strong><?php _e( 'Warning: untested!', 'unfc_normalize' ); ?></strong>
+				<strong><?php _e( 'Warning: untested!', 'unfc-normalize' ); ?></strong>
 			</p>
 			<?php if ( $untested_wp ) { ?>
 				<p>
 					<?php printf(
 						/* translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress version tested; %3$s: user's current WordPress version. */
-						__( 'The plugin "UTF-8 Normalization Form C Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc_normalize' ),
+						__( 'The plugin "UTF-8 Normalization Form C Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc-normalize' ),
 						UNFC_WP_AT_LEAST_VERSION, UNFC_WP_UP_TO_VERSION, $wp_version
 					); ?>
 				</p>
@@ -813,7 +813,7 @@ class UNFC_Normalize {
 
 		// Our parameters.
 		$params = array(
-			'please_wait_msg' => '<div class="notice notice-warning inline"><p>' . __( 'Please wait...', 'unfc_normalize' )
+			'please_wait_msg' => '<div class="notice notice-warning inline"><p>' . __( 'Please wait...', 'unfc-normalize' )
 									. '<span class="spinner is-active" style="float:none;margin-top:0;"></span></p></div>',
 			'no_items_selected_msg' => '<div class="notice notice-warning is-dismissible inline"><p>' . $this->db_check_error_msg( UNFC_DB_CHECK_SELECT_ERROR ) . '</p></div>',
 			'is' => array( // Gets around stringification of direct localize elements.
@@ -943,8 +943,8 @@ class UNFC_Normalize {
 	 */
 	function admin_menu() {
 		// Add the database check to the tools menu.
-		$this->db_check_hook_suffix = add_management_page( /*Teehee*/
-			__( "No\xcc\x88rmalizer Database Check", /*Teehee*/ 'unfc_normalize' ), __( "No\xcc\x88rmalizer Db Check", 'unfc_normalize' ), $this->db_check_cap, UNFC_DB_CHECK_MENU_SLUG,
+		$this->db_check_hook_suffix = add_management_page(
+			__( "UTF-8 NFC No\xcc\x88rmalize Database Check", /*Teehee*/ 'unfc-normalize' ), __( "UNFC No\xcc\x88rm Db Check", 'unfc-normalize' ), $this->db_check_cap, UNFC_DB_CHECK_MENU_SLUG,
 			array( $this, 'db_check' )
 		);
 		if ( $this->db_check_hook_suffix ) {
@@ -958,7 +958,7 @@ class UNFC_Normalize {
 	function load_db_check() {
 		unfc_debug_log( "REQUEST=", $_REQUEST );
 		if ( ! current_user_can( $this->db_check_cap ) ) {
-			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc_normalize' ) );
+			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc-normalize' ) );
 		}
 
 		$this->db_check_loaded = true;
@@ -1161,14 +1161,14 @@ class UNFC_Normalize {
 	 */
 	function db_check() {
 		if ( ! current_user_can( $this->db_check_cap ) ) {
-			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc_normalize' ) );
+			wp_die( __( 'Sorry, you are not allowed to access this page.', 'unfc-normalize' ) );
 		}
 
 		?>
 
 			<div id="unfc_db_check" class="wrap">
 
-				<h1><?php _e( "No\xcc\x88rmalizer Database Check", /*Lol*/ 'unfc_normalize' ); ?></h1>
+				<h1><?php _e( "UTF-8 NFC No\xcc\x88rmalize Database Check", /*Lol*/ 'unfc-normalize' ); ?></h1>
 
 				<?php $this->db_check_print_page(); ?>
 
@@ -1227,9 +1227,9 @@ class UNFC_Normalize {
 	 */
 	function db_check_print_item_form( $rescan = false ) {
 		if ( $rescan ) {
-			$value = __( 'Rescan the Database', 'unfc_normalize' );
+			$value = __( 'Rescan the Database', 'unfc-normalize' );
 		} else {
-			$value = __( 'Scan the Database', 'unfc_normalize' );
+			$value = __( 'Scan the Database', 'unfc-normalize' );
 		}
 		?>
 			<form class="unfc_db_check_form" method="GET">
@@ -1237,12 +1237,12 @@ class UNFC_Normalize {
 				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-items', '_wpnonce_items' ) ?>
 				<?php if ( ! $rescan ) { ?>
 					<p class="unfc_db_check_form_hide">
-						<?php _e( 'You can scan the database for non-normalized data (nothing will be updated):', 'unfc_normalize' ); ?>
+						<?php _e( 'You can scan the database for non-normalized data (nothing will be updated):', 'unfc-normalize' ); ?>
 					</p>
 				<?php } ?>
 				<input id="unfc_db_check_items" class="button" name="unfc_db_check_items" value="<?php echo esc_attr( $value ); ?>" type="submit">
 				<p>
-					<?php _e( 'Scanning the database can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
+					<?php _e( 'Scanning the database can take a long time depending on the amount and type of data you have.', 'unfc-normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1259,14 +1259,14 @@ class UNFC_Normalize {
 				<input type="hidden" name="unfc_trans" value="<?php echo esc_attr( $transient_key ); ?>">
 				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all', '_wpnonce_normalize_all' ) ?>
 				<p class="unfc_db_check_form_hide">
-					<?php _e( 'You can normalize the non-normalized data found in the database. The database <strong>will be updated</strong>.', 'unfc_normalize' ); ?>
+					<?php _e( 'You can normalize the non-normalized data found in the database. The database <strong>will be updated</strong>.', 'unfc-normalize' ); ?>
 				</p>
 				<p class="unfc_db_check_form_hide">
-					<?php _e( '<strong>Important:</strong> before updating, please <a href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.', 'unfc_normalize' ); ?>
+					<?php _e( '<strong>Important:</strong> before updating, please <a href="https://codex.wordpress.org/WordPress_Backups">back up your database</a>.', 'unfc-normalize' ); ?>
 				</p>
-				<input id="unfc_db_check_normalize_all" class="button" name="unfc_db_check_normalize_all" value="<?php echo esc_attr( __( 'Normalize All', 'unfc_normalize' ) ); ?>" type="submit">
+				<input id="unfc_db_check_normalize_all" class="button" name="unfc_db_check_normalize_all" value="<?php echo esc_attr( __( 'Normalize All', 'unfc-normalize' ) ); ?>" type="submit">
 				<p>
-					<?php _e( 'Normalizing can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
+					<?php _e( 'Normalizing can take a long time depending on the amount and type of data you have.', 'unfc-normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1282,11 +1282,11 @@ class UNFC_Normalize {
 		if ( $this->db_check_num_items > count( $this->db_check_items ) ) {
 			$h2 = sprintf(
 				/* translators: %1$s: formatted maximum number of non-normalized items listed; %2$s: formatted total number of non-normalized items found. */
-				__( 'First %1$s Non-Normalized Items of %2$s Found', 'unfc_normalize' ),
+				__( 'First %1$s Non-Normalized Items of %2$s Found', 'unfc-normalize' ),
 				number_format_i18n( $this->get_list_limit( UNFC_DB_CHECK_ITEMS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_items )
 			);
 		} else {
-			$h2 = __( 'Non-Normalized Items', 'unfc_normalize' );
+			$h2 = __( 'Non-Normalized Items', 'unfc-normalize' );
 		}
 		?>
 			<div id="<?php echo substr( UNFC_DB_CHECK_ITEMS_LIST_SEL, 1 ); ?>" class="unfc_db_check_form_hide">
@@ -1312,9 +1312,9 @@ class UNFC_Normalize {
 	 */
 	function db_check_print_slug_form( $rescan = false ) {
 		if ( $rescan ) {
-			$value = __( 'Rescan Slugs', 'unfc_normalize' );
+			$value = __( 'Rescan Slugs', 'unfc-normalize' );
 		} else {
-			$value = __( 'Scan Slugs', 'unfc_normalize' );
+			$value = __( 'Scan Slugs', 'unfc-normalize' );
 		}
 		?>
 			<form class="unfc_db_check_form" method="GET">
@@ -1322,15 +1322,15 @@ class UNFC_Normalize {
 				<?php wp_nonce_field( UNFC_DB_CHECK_MENU_SLUG . '-slugs', '_wpnonce_slugs' ) ?>
 				<?php if ( ! $rescan ) { ?>
 					<p class="unfc_db_check_form_hide">
-						<?php _e( 'You can scan the database for slugs that could be percent-encoded from non-normalized data (nothing will be updated):', 'unfc_normalize' ); ?>
+						<?php _e( 'You can scan the database for slugs that could be percent-encoded from non-normalized data (nothing will be updated):', 'unfc-normalize' ); ?>
 					</p>
 					<p class="unfc_db_check_form_hide">
-						<?php _e( 'A list of posts and/or terms with suspect slugs will be displayed.', 'unfc_normalize' ); ?>
+						<?php _e( 'A list of posts and/or terms with suspect slugs will be displayed.', 'unfc-normalize' ); ?>
 					</p>
 				<?php } ?>
 				<input id="unfc_db_check_slugs" class="button" name="unfc_db_check_slugs" value="<?php echo esc_attr( $value ); ?>" type="submit">
 				<p>
-					<?php _e( 'Scanning the slugs can take a long time depending on the amount and type of data you have.', 'unfc_normalize' ); ?>
+					<?php _e( 'Scanning the slugs can take a long time depending on the amount and type of data you have.', 'unfc-normalize' ); ?>
 				</p>
 			</form>
 		<?php
@@ -1346,11 +1346,11 @@ class UNFC_Normalize {
 		if ( $this->db_check_num_slugs > count( $this->db_check_slugs ) ) {
 			$h2 = sprintf(
 				/* translators: %1$s: formatted maximum number of non-normalized slugs listed; %2$s: formatted total number of non-normalized slugs found. */
-				__( 'First %1$s Non-Normalized Slugs of %2$s Found', 'unfc_normalize' ),
+				__( 'First %1$s Non-Normalized Slugs of %2$s Found', 'unfc-normalize' ),
 				number_format_i18n( $this->get_list_limit( UNFC_DB_CHECK_SLUGS_LIST_SEL ) ), number_format_i18n( $this->db_check_num_slugs )
 			);
 		} else {
-			$h2 = __( 'Non-Normalized Slugs', 'unfc_normalize' );
+			$h2 = __( 'Non-Normalized Slugs', 'unfc-normalize' );
 		}
 		?>
 			<div id="<?php echo substr( UNFC_DB_CHECK_SLUGS_LIST_SEL, 1 ); ?>" class="unfc_db_check_form_hide">
@@ -1521,12 +1521,12 @@ class UNFC_Normalize {
 	 */
 	function db_check_error_msg( $error ) {
 		$error_msgs = array(
-			UNFC_DB_CHECK_DB_ERROR => __( 'Database error.', 'unfc_normalize' ),
-			UNFC_DB_CHECK_META_ERROR => __( 'Meta data error.', 'unfc_normalize' ),
-			UNFC_DB_CHECK_PARAM_ERROR => __( 'Parameters error.', 'unfc_normalize' ),
-			UNFC_DB_CHECK_TRANS_ERROR => __( 'Transient has expired. Please re-scan.', 'unfc_normalize' ),
-			UNFC_DB_CHECK_SYNC_ERROR => __( 'Data out of sync!', 'unfc_normalize' ),
-			UNFC_DB_CHECK_SELECT_ERROR => __( 'No items selected!', 'unfc_normalize' ),
+			UNFC_DB_CHECK_DB_ERROR => __( 'Database error.', 'unfc-normalize' ),
+			UNFC_DB_CHECK_META_ERROR => __( 'Meta data error.', 'unfc-normalize' ),
+			UNFC_DB_CHECK_PARAM_ERROR => __( 'Parameters error.', 'unfc-normalize' ),
+			UNFC_DB_CHECK_TRANS_ERROR => __( 'Transient has expired. Please re-scan.', 'unfc-normalize' ),
+			UNFC_DB_CHECK_SYNC_ERROR => __( 'Data out of sync!', 'unfc-normalize' ),
+			UNFC_DB_CHECK_SELECT_ERROR => __( 'No items selected!', 'unfc-normalize' ),
 		);
 
 		return $error_msgs[ $error ];
@@ -1601,7 +1601,7 @@ class UNFC_Normalize {
 						if ( $ret['num_items'] < $list_limit ) {
 							$title = $obj->{$this->db_title_cols[ $type ]};
 							if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
-								$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc_normalize' );
+								$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc-normalize' );
 							}
 							$ret['items'][] = array(
 								'id' => (int) $obj->id, 'type' => $type, 'idx' => $ret['num_items'],
@@ -1638,10 +1638,10 @@ class UNFC_Normalize {
 		if ( $ret['num_items'] ) {
 			$admin_notices[] = array( 'info', sprintf(
 				/* translators: %s: formatted number of items detected. */
-				_n( '%s non-normalized item detected.', '%s non-normalized items detected.', $ret['num_items'], 'unfc_normalize' ), number_format_i18n( $ret['num_items'] )
+				_n( '%s non-normalized item detected.', '%s non-normalized items detected.', $ret['num_items'], 'unfc-normalize' ), number_format_i18n( $ret['num_items'] )
 			) );
 		} else {
-			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized data detected!', 'unfc_normalize' ) );
+			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized data detected!', 'unfc-normalize' ) );
 		}
 
 		return $ret;
@@ -1707,7 +1707,7 @@ class UNFC_Normalize {
 						$data = array();
 						foreach ( $this->db_fields[ $type ] as $field ) {
 							if ( ! empty( $obj->$field ) && ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $obj->$field ) : normalizer_is_normalized( $obj->$field ) ) ) {
-								$normalized = $this->no_normalizer ? unfc_normalizer_normalize( $obj->$field ) : normalizer_normalize( $obj->$field );
+								$normalized = $this->recursive_unserialize_normalize( $obj->$field );
 								if ( false === $normalized ) { // As taking values from database which should be valid UTF-8, this shouldn't happen.
 									$failed = true;
 									break;
@@ -1756,7 +1756,7 @@ class UNFC_Normalize {
 								foreach ( $meta_values as $idx => $meta_value ) {
 									$data = array();
 									if ( ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $meta_value ) : normalizer_is_normalized( $meta_value ) ) ) {
-										$normalized = $this->no_normalizer ? unfc_normalizer_normalize( $meta_value ) : normalizer_normalize( $meta_value );
+										$normalized = $this->recursive_unserialize_normalize( $meta_value );
 										if ( false === $normalized ) {
 											$failed = true;
 											break;
@@ -1819,20 +1819,20 @@ class UNFC_Normalize {
 
 		if ( $num_updates ) {
 			/* translators: %s: formatted number of items normalized. */
-			$admin_notices[] = array( 'updated', sprintf( _n( '%s item normalized.', '%s items normalized.', $num_updates, 'unfc_normalize' ), number_format_i18n( $num_updates ) ) );
+			$admin_notices[] = array( 'updated', sprintf( _n( '%s item normalized.', '%s items normalized.', $num_updates, 'unfc-normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc_normalize' ) );
+			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s item not normalized, somebody is editing it.', '%s items not normalized, somebody is editing them.', $num_locked, 'unfc_normalize' ), number_format_i18n( $num_locked )
+				_n( '%s item not normalized, somebody is editing it.', '%s items not normalized, somebody is editing them.', $num_locked, 'unfc-normalize' ), number_format_i18n( $num_locked )
 			) );
 		}
 		if ( $num_fails ) {
 			/* translators: %s: formatted number of items that failed to normalize. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s item not normalized, failed to normalize.', '%s items not normalized, failed to normalize.', $num_fails, 'unfc_normalize' ), number_format_i18n( $num_fails )
+				_n( '%s item not normalized, failed to normalize.', '%s items not normalized, failed to normalize.', $num_fails, 'unfc-normalize' ), number_format_i18n( $num_fails )
 			) );
 		}
 
@@ -2037,7 +2037,7 @@ class UNFC_Normalize {
 							if ( $ret['num_slugs'] < $list_limit ) {
 								$title = $obj->title;
 								if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
-									$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc_normalize' );
+									$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc-normalize' );
 								}
 								$ret['slugs'][] = array(
 									'id' => (int) $obj->id, 'type' => $type, 'idx' => $ret['num_slugs'],
@@ -2071,11 +2071,11 @@ class UNFC_Normalize {
 		if ( $ret['num_slugs'] ) {
 			$admin_notices[] = array( 'info', sprintf(
 				/* translators: %s: formatted number of percent-encoded items detected. */
-				_n( '%s non-normalized percent-encoded slug detected.', '%s non-normalized percent-encoded slugs detected.', $ret['num_slugs'], 'unfc_normalize' ),
+				_n( '%s non-normalized percent-encoded slug detected.', '%s non-normalized percent-encoded slugs detected.', $ret['num_slugs'], 'unfc-normalize' ),
 				number_format_i18n( $ret['num_slugs'] )
 			) );
 		} else {
-			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized percent-encoded slugs detected!', 'unfc_normalize' ) );
+			$admin_notices[] = array( 'success', __( '<strong>No</strong> non-normalized percent-encoded slugs detected!', 'unfc-normalize' ) );
 		}
 
 		unfc_debug_log(
@@ -2249,32 +2249,32 @@ class UNFC_Normalize {
 
 		if ( $num_updates ) {
 			/* translators: %s: formatted number of slugs normalized. */
-			$admin_notices[] = array( 'updated', sprintf( _n( '%s slug normalized.', '%s slugs normalized.', $num_updates, 'unfc_normalize' ), number_format_i18n( $num_updates ) ) );
+			$admin_notices[] = array( 'updated', sprintf( _n( '%s slug normalized.', '%s slugs normalized.', $num_updates, 'unfc-normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc_normalize' ) );
+			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, somebody is editing it.', '%s slugs not normalized, somebody is editing them.', $num_locked, 'unfc_normalize' ), number_format_i18n( $num_locked )
+				_n( '%s slug not normalized, somebody is editing it.', '%s slugs not normalized, somebody is editing them.', $num_locked, 'unfc-normalize' ), number_format_i18n( $num_locked )
 			) );
 		}
 		if ( $num_missing ) {
 			/* translators: %s: formatted number of slugs not found. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, no longer exists.', '%s slugs not normalized, no longer exist.', $num_missing, 'unfc_normalize' ), number_format_i18n( $num_missing )
+				_n( '%s slug not normalized, no longer exists.', '%s slugs not normalized, no longer exist.', $num_missing, 'unfc-normalize' ), number_format_i18n( $num_missing )
 			) );
 		}
 		if ( $num_skipped ) {
 			/* translators: %s: formatted number of slugs not non-normalized. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, no longer non-normalized.', '%s slugs not normalized, no longer non-normalized.', $num_skipped, 'unfc_normalize' ), number_format_i18n( $num_skipped )
+				_n( '%s slug not normalized, no longer non-normalized.', '%s slugs not normalized, no longer non-normalized.', $num_skipped, 'unfc-normalize' ), number_format_i18n( $num_skipped )
 			) );
 		}
 		if ( $num_fails ) {
 			/* translators: %s: formatted number of slugs that failed to normalize. */
 			$admin_notices[] = array( 'warning', sprintf(
-				_n( '%s slug not normalized, failed to normalize.', '%s slugs not normalized, failed to normalize.', $num_fails, 'unfc_normalize' ), number_format_i18n( $num_fails )
+				_n( '%s slug not normalized, failed to normalize.', '%s slugs not normalized, failed to normalize.', $num_fails, 'unfc-normalize' ), number_format_i18n( $num_fails )
 			) );
 		}
 
@@ -2294,6 +2294,42 @@ class UNFC_Normalize {
 				unset( $this->db_fields['link'] );
 			}
 		}
+	}
+
+	/**
+	 * Normalizes raw database data that may be serialized.
+	 * Based on recursive_unserialize_replace() from "searchreplacedb2.php".
+	 * See https://interconnectit.com/products/search-and-replace-for-wordpress-databases/
+	 */
+	function recursive_unserialize_normalize( $data = '', $serialised = false ) {
+		// Some unserialised data cannot be re-serialised eg. SimpleXMLElements
+		try {
+			if ( is_string( $data ) && false !== ( $unserialized = @unserialize( $data ) ) ) {
+				$data = $this->recursive_unserialize_normalize( $unserialized, true );
+
+			} elseif ( is_array( $data ) ) {
+				$_tmp = array();
+				foreach ( $data as $key => $value ) {
+					$_tmp[ $key ] = $this->recursive_unserialize_normalize( $value, false );
+				}
+
+				$data = $_tmp;
+				unset( $_tmp );
+
+			} else {
+				if ( is_string( $data ) ) {
+					$data = $this->no_normalizer ? unfc_normalizer_normalize( $data ) : normalizer_normalize( $data );
+				}
+			}
+
+			if ( $serialised ) {
+				return serialize( $data );
+			}
+
+		} catch( Exception $error ) {
+		}
+
+		return $data;
 	}
 
 	/**

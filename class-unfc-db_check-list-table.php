@@ -41,13 +41,13 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 		$this->items = array(); // Defined in parent. The slice of all items in a page.
 
 		$this->standard_types = array(
-			'post' => __( 'Post, Page', 'unfc_normalize' ),
-			'comment' => __( 'Comment', 'unfc_normalize' ),
-			'term' => __( 'Category, Tag', 'unfc_normalize' ),
-			'user' => __( 'User', 'unfc_normalize' ),
-			'options' => __( 'Options', 'unfc_normalize' ),
-			'settings' => __( 'Settings', 'unfc_normalize' ),
-			'link' => __( 'Link', 'unfc_normalize' ),
+			'post' => __( 'Post, Page', 'unfc-normalize' ),
+			'comment' => __( 'Comment', 'unfc-normalize' ),
+			'term' => __( 'Category, Tag', 'unfc-normalize' ),
+			'user' => __( 'User', 'unfc-normalize' ),
+			'options' => __( 'Options', 'unfc-normalize' ),
+			'settings' => __( 'Settings', 'unfc-normalize' ),
+			'link' => __( 'Link', 'unfc-normalize' ),
 		);
 
 		$this->blog_charset = get_option( 'blog_charset' );
@@ -171,22 +171,22 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 				if ( $menu_id ) {
 					$url = admin_url( 'nav-menus.php?action=edit&menu=' . $menu_id );
 					/* translators: %s: menu item name */
-					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit the menu containing this menu item', 'unfc_normalize' ) ) );
+					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit the menu containing this menu item', 'unfc-normalize' ) ) );
 				}
 			} else {
 				$url = get_edit_post_link( $item['id'] );
 				if ( $url ) {
 					/* translators: %s: post title */
-					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc_normalize' ), $item['title'] ) ) );
+					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc-normalize' ), $item['title'] ) ) );
 				}
 			}
 		} elseif ( 'comment' === $item['type'] ) {
 			$url = admin_url( 'comment.php?action=editcomment&c=' . $item['id'] );
-			$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this comment', 'unfc_normalize' ) ) );
+			$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this comment', 'unfc-normalize' ) ) );
 		} elseif ( 'user' === $item['type'] ) {
 			$url = get_edit_user_link( $item['id'] );
 			if ( $url ) {
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this user', 'unfc_normalize' ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit this user', 'unfc-normalize' ) ) );
 			}
 		} elseif ( 'term' === $item['type'] ) {
 			if ( 'nav_menu' === $item['subtype'] ) {
@@ -196,7 +196,7 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 			}
 			if ( $url ) {
 				/* translators: %s: taxonomy term name */
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc_normalize' ), $item['title'] ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)', 'unfc-normalize' ), $item['title'] ) ) );
 			}
 		} elseif ( 'options' === $item['type'] ) {
 			$url = ''; // TODO: Map standard options to a url.
@@ -206,7 +206,7 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 			$url = get_edit_bookmark_link( $item['id'] );
 			if ( $url ) {
 				/* translators: %s: link name */
-				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'unfc_normalize' ), $item['title'] ) ) );
+				$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;', 'unfc-normalize' ), $item['title'] ) ) );
 			}
 		} else { // Shouldn't happen.
 			$url = '';
@@ -330,9 +330,9 @@ class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
 	public function get_columns() {
 		$columns = array();
 
-		$columns['title'] = __( 'Title', 'unfc_normalize' );
-		$columns['type'] = __( 'Type', 'unfc_normalize' );
-		$columns['field'] = __( 'Field (1st detected only)', 'unfc_normalize' );
+		$columns['title'] = __( 'Title', 'unfc-normalize' );
+		$columns['type'] = __( 'Type', 'unfc-normalize' );
+		$columns['field'] = __( 'Field (1st detected only)', 'unfc-normalize' );
 
 		return $columns;
 	}
@@ -417,7 +417,7 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 	 */
 	protected function get_bulk_actions() {
 		$actions = array(
-			'unfc_db_check_normalize_slugs' => __( 'Normalize', 'unfc_normalize' ),
+			'unfc_db_check_normalize_slugs' => __( 'Normalize', 'unfc-normalize' ),
 		);
 		return $actions;
 	}
@@ -430,12 +430,12 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 		$columns = array();
 
 		$columns['cb'] = '<input type="checkbox" />';
-		$columns['title'] = __( 'Title', 'unfc_normalize' );
-		$columns['type'] = __( 'Type', 'unfc_normalize' );
-		$columns['slug'] = __( 'Slug', 'unfc_normalize' );
-		$columns['decoded'] = __( 'Decoded', 'unfc_normalize' );
-		$columns['normalized'] = __( 'If Normalized', 'unfc_normalize' );
-		$columns['normalized_decoded'] = __( 'Normalized Decoded', 'unfc_normalize' );
+		$columns['title'] = __( 'Title', 'unfc-normalize' );
+		$columns['type'] = __( 'Type', 'unfc-normalize' );
+		$columns['slug'] = __( 'Slug', 'unfc-normalize' );
+		$columns['decoded'] = __( 'Decoded', 'unfc-normalize' );
+		$columns['normalized'] = __( 'If Normalized', 'unfc-normalize' );
+		$columns['normalized_decoded'] = __( 'Normalized Decoded', 'unfc-normalize' );
 
 		return $columns;
 	}
@@ -462,7 +462,7 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 	protected function column_cb( $item ) {
 		$value = $item['id'] . ':' . $item['type'] . ':' . $item['idx'];
 		?>
-		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>"><?php printf( __( 'Select %s', 'unfc_normalize' ), $item['title'] ); ?></label>
+		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>"><?php printf( __( 'Select %s', 'unfc-normalize' ), $item['title'] ); ?></label>
 		<input id="cb-select-<?php echo $item['id']; ?>" type="checkbox" name="item[]" value="<?php echo esc_attr( $value ); ?>" />
 		<?php
 	}
@@ -498,12 +498,12 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 		if ( ! ( self::$unfc_normalize->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
 			$normalized = self::$unfc_normalize->no_normalizer ? unfc_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
 			if ( false === $normalized ) {
-				_e( 'Not normalizable!', 'unfc_normalize' );
+				_e( 'Not normalizable!', 'unfc-normalize' );
 			} else {
 				echo htmlspecialchars( UNFC_Normalize::percent_encode( $normalized ), ENT_NOQUOTES, $this->blog_charset );
 			}
 		} else {
-			_e( 'No difference!', 'unfc_normalize' );
+			_e( 'No difference!', 'unfc-normalize' );
 		}
 	}
 
@@ -515,12 +515,12 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 		if ( ! ( self::$unfc_normalize->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
 			$normalized = self::$unfc_normalize->no_normalizer ? unfc_normalizer_normalize( $decoded ) : normalizer_normalize( $decoded );
 			if ( false === $normalized ) {
-				_e( 'Not normalizable!', 'unfc_normalize' );
+				_e( 'Not normalizable!', 'unfc-normalize' );
 			} else {
 				echo htmlspecialchars( rawurldecode( UNFC_Normalize::percent_encode( $normalized ) ), ENT_NOQUOTES, $this->blog_charset ); // Re-encode & rawurldecode to give accurate representation.
 			}
 		} else {
-			_e( 'No difference!', 'unfc_normalize' );
+			_e( 'No difference!', 'unfc-normalize' );
 		}
 	}
 

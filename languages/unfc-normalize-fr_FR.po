@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UTF-8 NFC Normalize 0.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-07-28 08:45+0100\n"
-"PO-Revision-Date: 2016-07-28 08:46+0100\n"
+"POT-Creation-Date: 2016-07-29 05:42+0100\n"
+"PO-Revision-Date: 2016-07-29 05:42+0100\n"
 "Last-Translator: MB <mb@mb.ie>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -164,12 +164,12 @@ msgid "Please wait..."
 msgstr "S&rsquo;il vous plaît attendre..."
 
 #: class-unfc-normalize.php:947 class-unfc-normalize.php:1171
-msgid "Nörmalizer Database Check"
-msgstr "Nörmalizer vérifier la base de données"
+msgid "UTF-8 NFC Nörmalize Database Check"
+msgstr "UTF-8 NFC Nörmalize vérifier la base de données"
 
 #: class-unfc-normalize.php:947
-msgid "Nörmalizer Db Check"
-msgstr "Nörmalizer vérifier"
+msgid "UNFC Nörm Db Check"
+msgstr "UNFC Nörm vérifier"
 
 #: class-unfc-normalize.php:961 class-unfc-normalize.php:1164
 msgid "Sorry, you are not allowed to access this page."
@@ -438,12 +438,12 @@ msgstr ""
 "%s&nbsp;&raquo;"
 
 #. Plugin Name of the plugin/theme
-msgid "UTF-8 NFC Normalize"
-msgstr "UTF-8 NFC Normalize"
+msgid "UTF-8 NFC Nörmalize"
+msgstr "UTF-8 NFC Nörmalize"
 
 #. Plugin URI of the plugin/theme
-msgid "https://github.com/gitlost/unfc-normalizer"
-msgstr "https://github.com/gitlost/unfc-normalizer"
+msgid "https://github.com/gitlost/unfc-normalize"
+msgstr "https://github.com/gitlost/unfc-normalize"
 
 #. Description of the plugin/theme
 msgid "Normalizes UTF-8 input to Normalization Form C."
@@ -454,8 +454,11 @@ msgid "gitlost"
 msgstr "gitlost"
 
 #. Author URI of the plugin/theme
-msgid "http://gitlostbonger.com"
-msgstr "http://gitlostbonger.com"
+msgid "https://profiles.wordpress.org/gitlost"
+msgstr "https://profiles.wordpress.org/gitlost"
+
+#~ msgid "http://gitlostbonger.com"
+#~ msgstr "http://gitlostbonger.com"
 
 #~ msgid "Normalizer"
 #~ msgstr "Normalizer"

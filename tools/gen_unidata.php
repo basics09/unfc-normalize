@@ -29,7 +29,7 @@ error_log( "$basename: reading file=$file" );
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
 	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read composition exclusions file "%s"', 'normalizer' ), $file );
+	$error = sprintf( __( 'Could not read composition exclusions file "%s"', 'unfc-normalize' ), $file );
 	error_log( $error );
 	return $error;
 }
@@ -71,7 +71,7 @@ error_log( "$basename: reading file=$file" );
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
 	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read unicode data file "%s"', 'normalizer' ), $file );
+	$error = sprintf( __( 'Could not read unicode data file "%s"', 'unfc-normalize' ), $file );
 	error_log( $error );
 	return $error;
 }

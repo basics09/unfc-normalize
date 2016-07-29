@@ -359,6 +359,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 		$unfc_normalize = $old_unfc_normalize; // Restore first before asserting so as not to mess up other tests on failure.
 
 		$this->assertSame( 10, has_filter( 'activate_' . plugin_basename( $file ), array( 'UNFC_Normalize', 'activation_check' ) ) );
-		//$this->assertTrue( is_textdomain_loaded( 'normalizer' ) ); Doesn't load as running in development directory.
+		//$this->assertTrue( is_textdomain_loaded( 'unfc-normalize' ) ); Doesn't load as running in development directory.
 	}
 }

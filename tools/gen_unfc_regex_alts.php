@@ -28,7 +28,7 @@ error_log( "$basename: reading file=$file" );
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
 	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read UCD derived normalization properties file "%s"', 'normalizer' ), $file );
+	$error = sprintf( __( 'Could not read UCD derived normalization properties file "%s"', 'unfc-normalize' ), $file );
 	error_log( "$basename: ERROR: $error" );
 	return $error;
 }
@@ -117,7 +117,7 @@ foreach ( $lines as $line ) {
 }
 if ( count( $haves ) !== count( $idx_strs ) ) {
 	/* translators: %s: file name */
-	$error = sprintf( __( 'Missing NO or MAYBE codepoints in UCD derived normalization properties file "%s"', 'normalizer' ), $file );
+	$error = sprintf( __( 'Missing NO or MAYBE codepoints in UCD derived normalization properties file "%s"', 'unfc-normalize' ), $file );
 	error_log( "$basename: ERROR: $error" );
 	return $error;
 }
@@ -132,7 +132,7 @@ error_log( "$basename: reading file=$file" );
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
 	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read derived combining class file "%s"', 'normalizer' ), $file );
+	$error = sprintf( __( 'Could not read derived combining class file "%s"', 'unfc-normalize' ), $file );
 	error_log( $error );
 	return $error;
 }
