@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UTF-8 NFC Normalize 0.9.0\n"
+"Project-Id-Version: UTF-8 NFC Normalize 0.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-07-29 05:42+0100\n"
-"PO-Revision-Date: 2016-07-29 05:42+0100\n"
+"POT-Creation-Date: 2016-07-29 06:49+0100\n"
+"PO-Revision-Date: 2016-07-29 06:49+0100\n"
 "Last-Translator: MB <mb@mb.ie>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"

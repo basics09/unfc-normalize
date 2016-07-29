@@ -4,7 +4,7 @@
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  
 **Requires at least:** 3.9.13  
 **Tested up to:** 4.5.3  
-**Stable tag:** 0.9.0  
+**Stable tag:** 0.9.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -33,13 +33,20 @@ For further info, see the [PHP:Normalizer::normalize manual page](http://php.net
 and the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130).
 
 For existing data, the plugin includes an administration tool to scan and normalize the database.
-**Important:** before updating, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
+**Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
+This is especially important if your database contains non-normalized serialized data, as this plugin uses the same suck-and-see technique as interconnect/it's
+[Database Search and Replace Script in PHP](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/) to deal with serialized
+data, and is fallible.
+
+A google-cheating schoolboy French translation is supplied.
+
+The plugin should run on PHP 5.2.17 to 7.0.9, and on WP 3.9.13 to 4.5.3.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
 ## Installation ##
 
-1. Upload the zip file from this plugin on your plugins page or search for `UTF-8 NFC Nörmalize` and install it directly from the repository
+1. Upload the zip file from this plugin on your plugins page or search for "UTF-8 NFC Nörmalize" and install it directly from the repository
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Done!
 
@@ -48,6 +55,10 @@ The project is on [github](https://github.com/gitlost/unfc-normalize).
 ## Screenshots ##
 
 ## Changelog ##
+
+### 0.9.1 ###
+* Fix bad serialized data corruption on db check.
+* Fix text domain tag.
 
 ### 0.9.0 ###
 * Initial version after renaming from tl-normalize.
