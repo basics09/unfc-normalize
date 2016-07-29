@@ -43,3 +43,6 @@ before_script:
 
 script: 
 - PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib phpunit
+
+after_success:
+- bash <(curl -s https://codecov.io/bash)

@@ -29,8 +29,7 @@ the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/mas
 Text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
 For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
-For further info, see the [PHP:Normalizer::normalize manual page](http://php.net/manual/en/normalizer.normalize.php)
-and the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130).
+For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130).
 
 For existing data, the plugin includes an administration tool to scan and normalize the database.
 **Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).

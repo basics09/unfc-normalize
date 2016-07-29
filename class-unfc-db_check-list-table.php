@@ -6,6 +6,7 @@
 require dirname( __FILE__ ) . '/class-unfc-list-table.php'; // Our (almost-)clone of WP_List_Table.
 
 /**
+ * UNFC Nörmalize Database Check parent class.
  * Shared parent functionality for lists.
  */
 class UNFC_DB_Check_List_Table extends UNFC_List_Table {
@@ -306,7 +307,7 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 }
 
 /**
- * Normalizer Items List Table class.
+ * UNFC Nörmalize Database Check Items List Table class.
  * List of non-normalized items, up to UNFC_DB_CHECK_LIST_LIMIT.
  */
 class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
@@ -394,7 +395,7 @@ class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
 }
 
 /**
- * Normalizer Slugs List Table class.
+ * UNFC Nörmalize Database Check Slugs List Table class.
  * List of non-normalized percent-encoded slugs, up to UNFC_DB_CHECK_LIST_LIMIT.
  */
 class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {

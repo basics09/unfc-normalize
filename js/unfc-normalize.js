@@ -1,5 +1,5 @@
 /**
- * Javascript for Normalizer WP plugin.
+ * Javascript for UNFC Nörmalize WP plugin.
  */
 /*jslint ass: true, nomen: true, plusplus: true, regexp: true, vars: true, white: true, indent: 4 */
 /*global jQuery, wp, commonL10n, unfc_params, console */

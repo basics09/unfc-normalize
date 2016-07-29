@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UNFC Nörmalize 0.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-07-29 06:14:51+00:00\n"
+"POT-Creation-Date: 2016-07-29 16:26:46+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,104 +24,104 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: class-unfc-db_check-list-table.php:44
+#: class-unfc-db_check-list-table.php:45
 msgid "Post, Page"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:45
+#: class-unfc-db_check-list-table.php:46
 msgid "Comment"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:46
+#: class-unfc-db_check-list-table.php:47
 msgid "Category, Tag"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:47
+#: class-unfc-db_check-list-table.php:48
 msgid "User"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:48
+#: class-unfc-db_check-list-table.php:49
 msgid "Options"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:49
+#: class-unfc-db_check-list-table.php:50
 msgid "Settings"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:50
+#: class-unfc-db_check-list-table.php:51
 msgid "Link"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:174
+#: class-unfc-db_check-list-table.php:175
 #. translators: %s: menu item name
 msgid "Edit the menu containing this menu item"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:180
-#: class-unfc-db_check-list-table.php:199
+#: class-unfc-db_check-list-table.php:181
+#: class-unfc-db_check-list-table.php:200
 #. translators: %s: post title
 #. translators: %s: taxonomy term name
 msgid "&#8220;%s&#8221; (Edit)"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:185
+#: class-unfc-db_check-list-table.php:186
 msgid "Edit this comment"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:189
+#: class-unfc-db_check-list-table.php:190
 msgid "Edit this user"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:209
+#: class-unfc-db_check-list-table.php:210
 #. translators: %s: link name
 msgid "Edit &#8220;%s&#8221;"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:333
-#: class-unfc-db_check-list-table.php:433
+#: class-unfc-db_check-list-table.php:334
+#: class-unfc-db_check-list-table.php:434
 msgid "Title"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:334
-#: class-unfc-db_check-list-table.php:434
+#: class-unfc-db_check-list-table.php:335
+#: class-unfc-db_check-list-table.php:435
 msgid "Type"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:335
+#: class-unfc-db_check-list-table.php:336
 msgid "Field (1st detected only)"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:420
+#: class-unfc-db_check-list-table.php:421
 msgid "Normalize"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:435
+#: class-unfc-db_check-list-table.php:436
 msgid "Slug"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:436
+#: class-unfc-db_check-list-table.php:437
 msgid "Decoded"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:437
+#: class-unfc-db_check-list-table.php:438
 msgid "If Normalized"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:438
+#: class-unfc-db_check-list-table.php:439
 msgid "Normalized Decoded"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:465
+#: class-unfc-db_check-list-table.php:466
 msgid "Select %s"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:501
-#: class-unfc-db_check-list-table.php:518
+#: class-unfc-db_check-list-table.php:502
+#: class-unfc-db_check-list-table.php:519
 msgid "Not normalizable!"
 msgstr ""
 
-#: class-unfc-db_check-list-table.php:506
-#: class-unfc-db_check-list-table.php:523
+#: class-unfc-db_check-list-table.php:507
+#: class-unfc-db_check-list-table.php:524
 msgid "No difference!"
 msgstr ""
 

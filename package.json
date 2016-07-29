@@ -1,12 +1,12 @@
 {
-  "name": "Normalizer",
-  "version": "2.0.6",
+  "name": "UNFC Nörmalize",
+  "version": "0.9.1",
   "description": "Normalizes UTF-8 input to Normalization Form C.",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Zodiac1978/tl-normalizer"
+    "url": "git://github.com/gitlost/unfc-normalize"
   },
-  "author": "Torsten Landsiedel",
+  "author": "gitlost",
   "license": "GPL-2.0",
   "devDependencies": {
     "grunt": "~0.4.2",
