@@ -1,5 +1,5 @@
 {
-  "name": "UNFC Normalize",
+  "name": "unfc-normalize",
   "version": "0.9.1",
   "description": "Normalizes UTF-8 input to Normalization Form C.",
   "repository": {
