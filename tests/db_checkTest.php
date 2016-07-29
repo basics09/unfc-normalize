@@ -49,7 +49,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 			self::wpSetUpBeforeClass();
 		}
 		if ( self::$is_less_than_wp_4 ) {
-			mbstring_binary_safe_encoding(); // For <= WP 3.9.12 compatibility - remove_accents() uses naked strlen().
+			mbstring_binary_safe_encoding(); // For <= WP 3.9.13 compatibility - remove_accents() uses naked strlen().
 		}
 	}
 
@@ -63,7 +63,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 			self::wpTearDownAfterClass();
 		}
 		if ( self::$is_less_than_wp_4 ) {
-			reset_mbstring_encoding(); // For <= WP 3.9.12 compatibility - remove_accents() uses naked strlen().
+			reset_mbstring_encoding(); // For <= WP 3.9.13 compatibility - remove_accents() uses naked strlen().
 		}
 	}
 
@@ -97,7 +97,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		global $unfc_normalize;
 		if ( self::$is_less_than_wp_4 ) {
-			// For <= WP 3.9.12 compatibility - filters seem to get left hanging around.
+			// For <= WP 3.9.13 compatibility - filters seem to get left hanging around.
 			foreach( $unfc_normalize->post_filters as $filter ) {
 				remove_filter( $filter, array( $unfc_normalize, 'tl_normalizer' ), $unfc_normalize->priority );
 			}
@@ -254,7 +254,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		global $unfc_normalize;
 		if ( self::$is_less_than_wp_4 ) {
-			// For <= WP 3.9.12 compatibility - filters seem to get left hanging around.
+			// For <= WP 3.9.13 compatibility - filters seem to get left hanging around.
 			foreach( $unfc_normalize->term_filters as $filter ) {
 				remove_filter( $filter, array( $unfc_normalize, 'tl_normalizer' ), $unfc_normalize->priority );
 			}

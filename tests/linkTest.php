@@ -9,6 +9,7 @@ class Tests_UNFC_Link extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
+	static $pre_wp_filter = null;
 
 	public static function wpSetUpBeforeClass() {
 		global $unfc_normalize;
@@ -25,11 +26,17 @@ class Tests_UNFC_Link extends WP_UnitTestCase {
 		set_current_screen( $pagenow );
 
 		//add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+
+		global $wp_filter;
+		self::$pre_wp_filter = $wp_filter;
 	}
 
 	public static function wpTearDownAfterClass() {
 		global $unfc_normalize;
 		list( $unfc_normalize->dont_js, $unfc_normalize->dont_filter, $unfc_normalize->no_normalizer ) = self::$normalizer_state;
+
+		global $wp_filter;
+		$wp_filter = self::$pre_wp_filter;
 	}
 
 	function setUp() {
