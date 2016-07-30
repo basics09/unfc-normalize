@@ -38,6 +38,7 @@ class UNFC_Normalize {
 	// Trying to choose the earliest filter available, in 'db' context, so other filters can assume normalized input.
 	var $post_filters = array(
 		'pre_post_content', 'pre_post_title', 'pre_post_excerpt', /*'pre_post_password',*/ 'pre_post_name', 'pre_post_meta_input', 'pre_post_trackback_url',
+		'sanitize_file_name',
 	);
 
 	var $comment_filters = array(
@@ -431,7 +432,7 @@ class UNFC_Normalize {
 					add_filter( 'sanitize_option_date_format', array( $this, 'sanitize_option_option' ), $this->priority, 3 );
 				}
 				if ( 'time_format' === $this->base ) {
-					$this->added_filters['$time_format'] = true;
+					$this->added_filters['time_format'] = true;
 
 					add_filter( 'sanitize_option_time_format', array( $this, 'sanitize_option_option' ), $this->priority, 3 );
 				}
@@ -499,13 +500,16 @@ class UNFC_Normalize {
 				// TODO: other filters??
 
 				// Allow easy add of extra filters. (If directly added then Normalizer polyfill may not load.)
-				$extra_filters = array();
-				$extra_filters = apply_filters( 'unfc_extra_filters', $extra_filters );
+				$extra_filters = apply_filters( 'unfc_extra_filters', array() );
 				if ( $extra_filters ) {
-					$this->added_filters['extra_filters'] = true;
-
-					foreach( $extra_filters as $filter ) {
-						add_filter( $filter, array( $this, 'normalize' ), $this->priority );
+					if ( is_string( $extra_filters ) ) {
+						$extra_filters = array( $extra_filters );
+					}
+					if ( is_array( $extra_filters ) ) {
+						$this->added_filters['extra_filters'] = true;
+						foreach( $extra_filters as $filter ) {
+							add_filter( $filter, array( $this, 'normalize' ), $this->priority );
+						}
 					}
 				}
 

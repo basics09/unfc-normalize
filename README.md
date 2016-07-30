@@ -29,7 +29,8 @@ the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/mas
 Text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
 For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
-For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130).
+For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://coretrac.wordpress.org/ticket/30130)
+and the Make WP Core comment on [May 17 feature projects chat and prompt](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
 
 For existing data, the plugin includes an administration tool to scan and normalize the database.
 **Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
@@ -45,11 +46,33 @@ The project is on [github](https://github.com/gitlost/unfc-normalize).
 
 ## Installation ##
 
-1. Upload the zip file from this plugin on your plugins page or search for "UNFC Nörmalize" and install it directly from the repository
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Done!
+Install in the standard way via the 'Plugins' menu in WordPress and then activate. No further action is needed.
 
 ## Frequently Asked Questions ##
+
+### How can I normalize extra stuff? ###
+
+You can add normalization to anything that passes its content through a filter. The canonical way is to use the `unfc_extra_filters` filter which returns an array of filter names -
+for instance, in your theme's `functions.php` file, add:
+
+`<?php
+function mytheme_unfc_extra_filters( $extra_filters ) {
+	$extra_filters[] = 'myfilter';
+	return $extra_filters;
+}
+add_filter( 'unfc_extra_filters', 'mytheme_unfc_extra_filters' );
+`
+
+Note that the `unfc_extra_filters` filter is only called in the administration backend. You can also add a filter directly, to be called in the frontend or backend, by referencing the
+global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer` polyfill is loaded if you don't have the PHP `Intl` extension installed:
+
+`<?php
+global $unfc_normalize;
+if ( ! function_exists( 'normalizer_is_normalized' ) ) { // If the "Intl" extension is not installed...
+	$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
+}
+add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
+`
 
 ## Screenshots ##
 
