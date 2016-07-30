@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/nfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/nfc-normalize?branch=master)
+[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)
 # UNFC Nörmalize #
 **Contributors:** [gitlost](https://profiles.wordpress.org/gitlost), [zodiac1978](https://profiles.wordpress.org/zodiac1978)  
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  

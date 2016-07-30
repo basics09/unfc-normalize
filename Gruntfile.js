@@ -33,7 +33,7 @@ module.exports = function( grunt ) { //The wrapper function
 				options: {
 					'screenshot_url': 'https://ps.w.org/{plugin}/assets/{screenshot}.png',
 					'post_convert': function ( readme ) {
-						readme = '[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/nfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/nfc-normalize?branch=master)\n' + readme;
+						readme = '[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)\n' + readme;
 						return readme;
 					}
 				}
