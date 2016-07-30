@@ -9,7 +9,7 @@ module.exports = function( grunt ) { //The wrapper function
 		// The uglify task and its configurations
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+				banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 			},
 			build: {
 				files: [ {
@@ -69,6 +69,45 @@ module.exports = function( grunt ) { //The wrapper function
 			},
 		},
 
+		compress: {
+			main: {
+				options: {
+					archive: 'dist/<%= pkg.name %>-<%= pkg.version %>.zip',
+					mode: 'zip'
+				},
+				files: [
+					{
+						src: [
+							'../unfc-normalize/class-unfc-db_check-list-table.php',
+							'../unfc-normalize/class-unfc-list-table.php',
+							'../unfc-normalize/class-unfc-normalize.php',
+							'../unfc-normalize/debug.php',
+							'../unfc-normalize/readme.txt',
+							'../unfc-normalize/unfc-normalize.php',
+							'../unfc-normalize/js/ie8.js',
+							'../unfc-normalize/js/ie8.min.js',
+							'../unfc-normalize/js/unfc-normalize.js',
+							'../unfc-normalize/js/unfc-normalize.min.js',
+							'../unfc-normalize/languages/unfc-normalize-fr_FR.mo',
+							'../unfc-normalize/languages/unfc-normalize-fr_FR.po',
+							'../unfc-normalize/languages/unfc-normalize.pot',
+							'../unfc-normalize/rangyinputs/rangyinputs-jquery.js',
+							'../unfc-normalize/rangyinputs/rangyinputs-jquery-src.js',
+							'../unfc-normalize/rangyinputs/README.md',
+							'../unfc-normalize/Symfony/LICENSE',
+							'../unfc-normalize/Symfony/Normalizer.php',
+							'../unfc-normalize/Symfony/unfc_regex_alts.php',
+							'../unfc-normalize/Symfony/Resources/unidata/canonicalComposition.php',
+							'../unfc-normalize/Symfony/Resources/unidata/canonicalDecomposition.php',
+							'../unfc-normalize/Symfony/Resources/unidata/combiningClass.php',
+							'../unfc-normalize/unorm/LICENSE.md',
+							'../unfc-normalize/unorm/lib/unorm.js'
+						]
+					}
+				]
+			}
+		},
+
 		phpunit: {
 			classes: {
 				dir: 'tests/'
@@ -86,7 +125,7 @@ module.exports = function( grunt ) { //The wrapper function
 	} );
 
 	// Default task(s), executed when you run 'grunt'
-	grunt.registerTask( 'default', [ 'uglify', 'wp_readme_to_markdown', 'makepot' ] );
+	grunt.registerTask( 'default', [ 'uglify', 'wp_readme_to_markdown', 'makepot', 'compress' ] );
 
 	// Creating a custom task
 	grunt.registerTask( 'test', [ 'jshint', 'phpunit' ] );

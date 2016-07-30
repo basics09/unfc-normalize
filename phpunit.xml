@@ -30,11 +30,9 @@
 				<file>tools/gen_mnme_regex.php</file>
 				<file>tools/gen_unfc_regex_alts.php</file>
 				<file>tools/gen_unfc_ins.php</file>
+				<file>tools/gen_unidata.php</file>
 				<file>tools/list.php</file>
 			</exclude>
 		</whitelist>
 	</filter>
-	<logging>
-		<log type="coverage-clover" target="clover.xml"/>
-	</logging>
 </phpunit>
