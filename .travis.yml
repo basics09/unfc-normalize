@@ -36,7 +36,7 @@ before_script:
 script: 
 - PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib phpunit
 
-after_script:
+after_success:
 - echo $TRAVIS_PHP_VERSION
 - echo $WP_VERSION
 - test $TRAVIS_PHP_VERSION = '7' && $WP_VERSION = 'latest' && (PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib phpunit --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash))
