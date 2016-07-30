@@ -4,7 +4,7 @@
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  
 **Requires at least:** 3.9.13  
 **Tested up to:** 4.5.3  
-**Stable tag:** 0.9.1  
+**Stable tag:** 1.0.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -26,11 +26,11 @@ which includes the PHP class `Normalizer`.
 However the plugin works without the PHP Internationalization extension being installed, as it uses (a modified version of)
 the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer).
 
-Text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
+Also text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
 For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
 For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://coretrac.wordpress.org/ticket/30130)
-and the Make WP Core comment on [May 17 feature projects chat and prompt](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
+and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
 
 For existing data, the plugin includes an administration tool to scan and normalize the database.
 **Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
@@ -73,6 +73,9 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 ## Screenshots ##
 
 ## Changelog ##
+
+### 1.0.0 ###
+* Initial release.
 
 ### 0.9.1 ###
 * Fix bad serialized data corruption on db check.
