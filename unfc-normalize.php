@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! defined( 'UNFC_VERSION' ) ) {
 	// These need to be synced with "readme.txt".
-	define( 'UNFC_VERSION', '0.9.1' );
+	define( 'UNFC_VERSION', '0.9.1' ); // Sync also "package.json" and "language/unfc-normalize.pot".
 	define( 'UNFC_WP_AT_LEAST_VERSION', '3.9.13' );
 	define( 'UNFC_WP_UP_TO_VERSION', '4.5.3' );
 }
