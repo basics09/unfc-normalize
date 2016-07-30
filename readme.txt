@@ -54,24 +54,20 @@ Install in the standard way via the 'Plugins' menu in WordPress and then activat
 You can add normalization to anything that passes its content through a filter. The canonical way is to use the `unfc_extra_filters` filter which returns an array of filter names -
 for instance, in your theme's `functions.php` file, add:
 
-`<?php
-function mytheme_unfc_extra_filters( $extra_filters ) {
-	$extra_filters[] = 'myfilter';
-	return $extra_filters;
-}
-add_filter( 'unfc_extra_filters', 'mytheme_unfc_extra_filters' );
-`
+	function mytheme_unfc_extra_filters( $extra_filters ) {
+		$extra_filters[] = 'myfilter';
+		return $extra_filters;
+	}
+	add_filter( 'unfc_extra_filters', 'mytheme_unfc_extra_filters' );
 
 Note that the `unfc_extra_filters` filter is only called in the administration backend. You can also add a filter directly, to be called in the frontend or backend, by referencing the
 global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer` polyfill is loaded if you don't have the PHP `Intl` extension installed:
 
-`<?php
-global $unfc_normalize;
-if ( ! function_exists( 'normalizer_is_normalized' ) ) { // If the "Intl" extension is not installed...
-	$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
-}
-add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
-`
+	global $unfc_normalize;
+	if ( ! function_exists( 'normalizer_is_normalized' ) ) { // If the "Intl" extension is not installed...
+		$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
+	}
+	add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
 
 == Screenshots ==
 
