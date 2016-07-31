@@ -149,4 +149,26 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 		$out = unfc_list_pluck( $list, 'id' );
 		$this->assertSame( array( 0 => 1, 1 => 2, 3 => 4 ), $out );
 	}
+
+	/**
+	 * @ticket unfc_utf8_ranges
+	 */
+    function test_utf8_ranges() {
+		$arr = array(
+			/**/
+			array( 0, 0xa, '[\x00-\x0a]' ),
+			array( 0x80, 0x85, '\xc2[\x80-\x85]' ),
+			array( 0x800, 0x850, '\xe0(?:\xa0[\x80-\xbf]|\xa1[\x80-\x90])' ),
+			array( 0x10000, 0x10040, '\xf0\x90(?:\x80[\x80-\xbf]|\x81\x80)' ),
+			/**/
+		);
+
+		foreach ( $arr as $item ) {
+			list( $c1, $c2, $expected ) = $item;
+			$ranges = array();
+			unfc_utf8_ranges( $ranges, $c1, $c2 );
+			$actual = unfc_utf8_regex_alts( $ranges );
+			$this->assertSame( $expected, $actual );
+		}
+	}
 }
