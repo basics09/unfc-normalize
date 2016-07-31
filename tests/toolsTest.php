@@ -131,23 +131,8 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 
 		$out = unfc_utf8_rand_str();
         $this->assertTrue( ! isset( $out[ strspn( $out, $ASCII ) ] ) );
-	}
-
-	/**
-	 * @ticket unfc_list_pluck
-	 */
-    function test_list_pluck() {
-		$obj1 = new stdclass;
-		$obj1->id = 1;
-		$obj2 = new stdclass;
-		$obj2->id = 2;
-		$obj3 = new stdclass;
-		$obj4 = new stdclass;
-		$obj4->id = 4;
-
-		$list = array( $obj1, $obj2, $obj3, $obj4 );
-		$out = unfc_list_pluck( $list, 'id' );
-		$this->assertSame( array( 0 => 1, 1 => 2, 3 => 4 ), $out );
+		$out = unfc_utf8_rand_str( 1000, 0x10000 );
+        $this->assertTrue( unfc_is_valid_utf8( $out ) );
 	}
 
 	/**
@@ -170,5 +155,66 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 			$actual = unfc_utf8_regex_alts( $ranges );
 			$this->assertSame( $expected, $actual );
 		}
+	}
+
+	/**
+	 * @ticket unfc_unicode_fmt
+	 */
+    function test_unicode_fmt() {
+		$arr = array(
+			/**/
+			array( 0, '0x0', '\x00' ),
+			array( 0xa, '0xa', '\x0a' ),
+			array( 0x80, '0x80', '\x80' ),
+			array( 0xff, '0xff', '\xff' ),
+			array( 0x800, '0x800', '\x{800}' ),
+			array( 0x10000, '0x10000', '\x{10000}' ),
+			/**/
+		);
+
+		foreach ( $arr as $item ) {
+			list( $c, $expected, $expected_preg ) = $item;
+			$actual = unfc_unicode_fmt( $c );
+			$this->assertSame( $expected, $actual );
+			$actual_preg = unfc_unicode_preg_fmt( $c );
+			$this->assertSame( $expected_preg, $actual_preg );
+		}
+	}
+
+	/**
+	 * @ticket unfc_get_cb
+	 */
+    function test_get_cb() {
+		$in = "\rasdfasdf\n\r";
+		$expected = "\rasdfasdf\n";
+		$out = unfc_get_cb( $in );
+		$this->assertSame( $expected, $out );
+	}
+
+	/**
+	 * @ticket unfc_array_map_recursive
+	 */
+    function test_array_map_recursive() {
+		$arr = array( 'a' => array( 'b' => array( 'c' => 'a', 'd' => 'b' ), 'e' => 'c' ), 'f' => 'd', 'g' => array( 'h' => 'e' ) ); 
+		$expected = array( 'a' => array( 'b' => array( 'c' => 'A', 'd' => 'B' ), 'e' => 'C' ), 'f' => 'D', 'g' => array( 'h' => 'E' ) );
+		$out = unfc_array_map_recursive( 'strtoupper', $arr );
+		$this->assertSame( $expected, $out );
+	}
+
+	/**
+	 * @ticket unfc_list_pluck
+	 */
+    function test_list_pluck() {
+		$obj1 = new stdclass;
+		$obj1->id = 1;
+		$obj2 = new stdclass;
+		$obj2->id = 2;
+		$obj3 = new stdclass;
+		$obj4 = new stdclass;
+		$obj4->id = 4;
+
+		$list = array( $obj1, $obj2, $obj3, $obj4 );
+		$out = unfc_list_pluck( $list, 'id' );
+		$this->assertSame( array( 0 => 1, 1 => 2, 3 => 4 ), $out );
 	}
 }

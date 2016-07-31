@@ -1191,7 +1191,10 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$option_id1 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option1') ORDER BY option_id ASC" ) );
 		$num_updates++;
 		add_option( 'option3', array( 'key1' => 'val3' . $decomposed_str1 ) );
-		$option_id2 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option3') ORDER BY option_id ASC" ) );
+		$option_id3 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option3') ORDER BY option_id ASC" ) );
+		$num_updates++;
+		add_option( 'option4', array( 'key1' => array( 'key2' => 'val4' . $decomposed_str1 ) ) );
+		$option_id4 = intval( $wpdb->get_var( "SELECT option_id FROM {$wpdb->options} WHERE option_name IN ('option4') ORDER BY option_id ASC" ) );
 		$num_updates++;
 
 		add_site_option( 'option1', 'val1' . $decomposed_str1 );
@@ -1292,6 +1295,27 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		remove_filter( 'unfc_batch_limit', array( $this, 'unfc_batch_limit_filter' ) );
 		remove_filter( 'pre_option_link_manager_enabled', '__return_true', 10 );
+
+		self::clear_func_args();
+
+		$_REQUEST = array();
+		$_REQUEST['unfc_db_check_normalize_all'] = 'unfc_db_check_normalize_all';
+		$_REQUEST['_wpnonce_normalize_all'] = wp_create_nonce( UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' );
+		$this->assertTrue( 1 === wp_verify_nonce( $_REQUEST['_wpnonce_normalize_all'], UNFC_DB_CHECK_MENU_SLUG . '-normalize_all' ) );
+
+		$_SERVER['REQUEST_URI'] = 'http://example.org/wp-admin/tools.php?page=' . UNFC_DB_CHECK_MENU_SLUG;
+
+		$_REQUEST['unfc_type'] = 'post:asdf';
+
+		try {
+			do_action( 'load-' . $hook_suffix );
+		} catch ( WPDieException $e ) {
+			unset( $e );
+		}
+		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
+		$args = self::$func_args['wp_die'][0]['args'];
+		$this->assertSame( 1, count( $args ) );
+		$this->assertTrue( false !== stripos( $args[0][1], 'nothing' ) );
 
 		global $wpdb;
 		$ready = $wpdb->ready;
