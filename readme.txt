@@ -73,6 +73,12 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 
 == Changelog ==
 
+= 1.0.1 =
+* First release for wordpress.org repository.
+* Add assets.
+* Include "class-unfc-list_table.php" in .pot file (for forward/backward compat).
+* Remove unused variable in UNFC_DB_Check_Slugs_List_Table.
+
 = 1.0.0 =
 * Initial release.
 
