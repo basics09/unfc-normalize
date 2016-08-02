@@ -3,7 +3,7 @@
  * Plugin Name: UNFC Nörmalize
  * Plugin URI: https://github.com/gitlost/unfc-normalize
  * Description: Normalizes UTF-8 input to Normalization Form C.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: gitlost
  * Author URI: https://profiles.wordpress.org/gitlost
  * License: GPLv2
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! defined( 'UNFC_VERSION' ) ) {
 	// These need to be synced with "readme.txt".
-	define( 'UNFC_VERSION', '1.0.0' ); // Sync also "package.json" and "language/unfc-normalize.pot".
+	define( 'UNFC_VERSION', '1.0.1' ); // Sync also "package.json" and "language/unfc-normalize.pot".
 	define( 'UNFC_WP_AT_LEAST_VERSION', '3.9.13' );
 	define( 'UNFC_WP_UP_TO_VERSION', '4.5.3' );
 }

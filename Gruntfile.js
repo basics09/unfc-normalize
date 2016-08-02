@@ -45,7 +45,7 @@ module.exports = function( grunt ) { //The wrapper function
 				options: {
 					cwd: '',                          // Directory of files to internationalize.
 					domainPath: '/languages',         // Where to save the POT file.
-					exclude: [ 'perf/', 'tests/', 'class-unfc-list-table.php' ], // List of files or directories to ignore.
+					exclude: [ 'perf/', 'tests/' ],   // List of files or directories to ignore.
 					include: [],                      // List of files or directories to include.
 					mainFile: 'unfc-normalize.php',   // Main project file.
 					potComments: '',                  // The copyright at the beginning of the POT file.

@@ -26,6 +26,9 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 
 	var $query_vars = array( 'page' => UNFC_DB_CHECK_MENU_SLUG ); // Added to with query vars. Used for printing hidden inputs for table form.
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct( $args = array() ) {
 		parent::__construct( array(
 				'ajax' => true,
@@ -311,6 +314,10 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
  * List of non-normalized items, up to UNFC_DB_CHECK_LIST_LIMIT.
  */
 class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
+
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->all_items = &self::$unfc_normalize->db_check_items; // Will be sorted so use reference to avoid copy.
@@ -400,8 +407,9 @@ class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
  */
 class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 
-	var $idx = 0; // Index into all items array - set in overridden display_rows() method.
-
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->all_items = &self::$unfc_normalize->db_check_slugs; // Will be sorted so use reference to avoid copy.

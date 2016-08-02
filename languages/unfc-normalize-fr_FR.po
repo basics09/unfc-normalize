@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.0\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-07-31 00:38+0100\n"
-"PO-Revision-Date: 2016-07-31 00:38+0100\n"
+"POT-Creation-Date: 2016-08-02 06:26+0100\n"
+"PO-Revision-Date: 2016-08-02 06:38+0100\n"
 "Last-Translator: gitlost <gitlost@gitlostbonger.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -22,106 +22,208 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: class-unfc-db_check-list-table.php:45
+#: class-unfc-db_check-list-table.php:48
 msgid "Post, Page"
 msgstr "Article, Page"
 
-#: class-unfc-db_check-list-table.php:46
+#: class-unfc-db_check-list-table.php:49
 msgid "Comment"
 msgstr "Commentaire"
 
-#: class-unfc-db_check-list-table.php:47
+#: class-unfc-db_check-list-table.php:50
 msgid "Category, Tag"
 msgstr "Catégorie, Étiquette"
 
-#: class-unfc-db_check-list-table.php:48
+#: class-unfc-db_check-list-table.php:51
 msgid "User"
 msgstr "Utilisateur"
 
-#: class-unfc-db_check-list-table.php:49
+#: class-unfc-db_check-list-table.php:52
 msgid "Options"
 msgstr "Options"
 
-#: class-unfc-db_check-list-table.php:50
+#: class-unfc-db_check-list-table.php:53
 msgid "Settings"
 msgstr "Réglages"
 
-#: class-unfc-db_check-list-table.php:51
+#: class-unfc-db_check-list-table.php:54
 msgid "Link"
 msgstr "Lien"
 
 #. translators: %s: menu item name
-#: class-unfc-db_check-list-table.php:175
+#: class-unfc-db_check-list-table.php:178
 msgid "Edit the menu containing this menu item"
 msgstr "Modifier le menu contenant cette entrée du menu"
 
 #. translators: %s: post title
 #. translators: %s: taxonomy term name
-#: class-unfc-db_check-list-table.php:181
-#: class-unfc-db_check-list-table.php:200
+#: class-unfc-db_check-list-table.php:184
+#: class-unfc-db_check-list-table.php:203
 msgid "&#8220;%s&#8221; (Edit)"
 msgstr "&laquo;&nbsp;%s&nbsp;&raquo; (Modifier)"
 
-#: class-unfc-db_check-list-table.php:186
+#: class-unfc-db_check-list-table.php:189
 msgid "Edit this comment"
 msgstr "Éditer ce commentaire"
 
-#: class-unfc-db_check-list-table.php:190
+#: class-unfc-db_check-list-table.php:193
 msgid "Edit this user"
 msgstr "Éditer cet utilisateur"
 
 #. translators: %s: link name
-#: class-unfc-db_check-list-table.php:210
+#: class-unfc-db_check-list-table.php:213
 msgid "Edit &#8220;%s&#8221;"
 msgstr "Modifier &laquo;&nbsp;%s&nbsp;&raquo;"
 
-#: class-unfc-db_check-list-table.php:334
-#: class-unfc-db_check-list-table.php:434
+#: class-unfc-db_check-list-table.php:341
+#: class-unfc-db_check-list-table.php:442
 msgid "Title"
 msgstr "Titre"
 
-#: class-unfc-db_check-list-table.php:335
-#: class-unfc-db_check-list-table.php:435
+#: class-unfc-db_check-list-table.php:342
+#: class-unfc-db_check-list-table.php:443
 msgid "Type"
 msgstr "Type"
 
-#: class-unfc-db_check-list-table.php:336
+#: class-unfc-db_check-list-table.php:343
 msgid "Field (1st detected only)"
 msgstr "Champ (1er détecté seulement)"
 
-#: class-unfc-db_check-list-table.php:421
+#: class-unfc-db_check-list-table.php:429
 msgid "Normalize"
 msgstr "Normaliser"
 
-#: class-unfc-db_check-list-table.php:436
+#: class-unfc-db_check-list-table.php:444
 msgid "Slug"
 msgstr "Identifiant"
 
-#: class-unfc-db_check-list-table.php:437
+#: class-unfc-db_check-list-table.php:445
 msgid "Decoded"
 msgstr "Décodé"
 
-#: class-unfc-db_check-list-table.php:438
+#: class-unfc-db_check-list-table.php:446
 msgid "If Normalized"
 msgstr "Si normalisé"
 
-#: class-unfc-db_check-list-table.php:439
+#: class-unfc-db_check-list-table.php:447
 msgid "Normalized Decoded"
 msgstr "Normalisé décodé"
 
-#: class-unfc-db_check-list-table.php:466
+#: class-unfc-db_check-list-table.php:474
 msgid "Select %s"
 msgstr "Selectionner %s"
 
-#: class-unfc-db_check-list-table.php:502
-#: class-unfc-db_check-list-table.php:519
+#: class-unfc-db_check-list-table.php:510
+#: class-unfc-db_check-list-table.php:527
 msgid "Not normalizable!"
 msgstr "Non-normalisable&nbsp;!"
 
-#: class-unfc-db_check-list-table.php:507
-#: class-unfc-db_check-list-table.php:524
+#: class-unfc-db_check-list-table.php:515
+#: class-unfc-db_check-list-table.php:532
 msgid "No difference!"
 msgstr "Aucune différence&nbsp;!"
+
+#: class-unfc-list-table.php:172
+msgid "List View"
+msgstr "Vue en liste"
+
+#: class-unfc-list-table.php:173
+msgid "Excerpt View"
+msgstr "Liste avec extraits"
+
+#: class-unfc-list-table.php:344
+msgid "No items found."
+msgstr "Aucun élément trouvé."
+
+#: class-unfc-list-table.php:472
+msgid "Select bulk action"
+msgstr "Sélectionnez l&rsquo;action groupée"
+
+#: class-unfc-list-table.php:474
+msgid "Bulk Actions"
+msgstr "Actions groupées"
+
+#: class-unfc-list-table.php:484
+msgid "Apply"
+msgstr "Appliquer"
+
+#: class-unfc-list-table.php:534 class-unfc-list-table.php:1335
+msgid "Show more details"
+msgstr "Afficher plus de détails"
+
+#: class-unfc-list-table.php:597
+msgid "Filter by date"
+msgstr "Filtrer par date"
+
+#: class-unfc-list-table.php:599
+msgid "All dates"
+msgstr "Toutes les dates"
+
+#. translators: 1: month name, 2: 4-digit year
+#: class-unfc-list-table.php:612
+msgid "%1$s %2$d"
+msgstr "%1$s %2$d"
+
+#: class-unfc-list-table.php:664
+msgid "%s comment"
+msgid_plural "%s comments"
+msgstr[0] "(%s commentaire)"
+msgstr[1] "(%s commentaires)"
+
+#: class-unfc-list-table.php:665
+msgid "%s approved comment"
+msgid_plural "%s approved comments"
+msgstr[0] "%s commentaire approuvé"
+msgstr[1] "%s commentaires approuvés"
+
+#: class-unfc-list-table.php:666
+msgid "%s pending comment"
+msgid_plural "%s pending comments"
+msgstr[0] "%s commentaire en attente"
+msgstr[1] "%s commentaires en attente"
+
+#: class-unfc-list-table.php:671 class-unfc-list-table.php:683
+#: class-unfc-list-table.php:696
+msgid "No comments"
+msgstr "Pas de commentaire"
+
+#: class-unfc-list-table.php:683
+msgid "No approved comments"
+msgstr "Aucun commentaire approuvé"
+
+#: class-unfc-list-table.php:696
+msgid "No pending comments"
+msgstr "Aucun commentaire en attente"
+
+#: class-unfc-list-table.php:773 class-unfc-list-table.php:1360
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] "%s élément"
+msgstr[1] "%s éléments"
+
+#: class-unfc-list-table.php:809
+msgid "First page"
+msgstr "Première page"
+
+#: class-unfc-list-table.php:819
+msgid "Previous page"
+msgstr "Page précédente"
+
+#: class-unfc-list-table.php:826 class-unfc-list-table.php:829
+msgid "Current Page"
+msgstr "Page actuelle"
+
+#: class-unfc-list-table.php:842
+msgid "Next page"
+msgstr "Page suivante"
+
+#: class-unfc-list-table.php:852
+msgid "Last page"
+msgstr "Dernière page"
+
+#: class-unfc-list-table.php:1080
+msgid "Select All"
+msgstr "Tout sélectionner"
 
 #: class-unfc-normalize.php:218
 msgid ""
@@ -456,6 +558,11 @@ msgstr "gitlost"
 msgid "https://profiles.wordpress.org/gitlost"
 msgstr "https://profiles.wordpress.org/gitlost"
 
+#: class-unfc-list-table.php:835
+msgctxt "paging"
+msgid "%1$s of %2$s"
+msgstr "%1$s sur %2$s"
+
 #~ msgid "http://gitlostbonger.com"
 #~ msgstr "http://gitlostbonger.com"
 
@@ -499,9 +606,6 @@ msgstr "https://profiles.wordpress.org/gitlost"
 
 #~ msgid "Field"
 #~ msgstr "Champ"
-
-#~ msgid "No items selected."
-#~ msgstr "Aucun élément sélectionné."
 
 #~ msgid "Edit"
 #~ msgstr "Modifier"
@@ -560,57 +664,6 @@ msgstr "https://profiles.wordpress.org/gitlost"
 
 #~ msgid "Oops."
 #~ msgstr "Oops."
-
-#, fuzzy
-#~ msgid "Select bulk action"
-#~ msgstr "Sélectionnez l&rsquo;action groupée"
-
-#, fuzzy
-#~ msgid "Bulk Actions"
-#~ msgstr "Actions groupées"
-
-#, fuzzy
-#~ msgid "Show more details"
-#~ msgstr "Afficher plus de détails"
-
-#, fuzzy
-#~ msgid "%1$s %2$d"
-#~ msgstr ""
-#~ "Compatibilité avec WordPress %1$s&nbsp;: %2$d%% (%3$d votes &laquo;&nbsp;"
-#~ "ça marche&nbsp;&raquo; sur un total de %4$d)"
-
-#, fuzzy
-#~ msgid "No approved comments"
-#~ msgstr "Aucun commentaire approuvé"
-
-#, fuzzy
-#~ msgid "No pending comments"
-#~ msgstr "Aucun commentaire en attente"
-
-#, fuzzy
-#~ msgid "First page"
-#~ msgstr "Première page"
-
-#, fuzzy
-#~ msgid "Previous page"
-#~ msgstr "Page précédente"
-
-#, fuzzy
-#~ msgid "Current Page"
-#~ msgstr "Page actuelle"
-
-#, fuzzy
-#~ msgid "Next page"
-#~ msgstr "Page suivante"
-
-#, fuzzy
-#~ msgid "Last page"
-#~ msgstr "Dernière page"
-
-#, fuzzy
-#~ msgctxt "paging"
-#~ msgid "%1$s of %2$s"
-#~ msgstr "%1$s sur %2$s"
 
 #~ msgid "AIM"
 #~ msgstr "AIM"
