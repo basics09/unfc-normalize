@@ -183,16 +183,7 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 
 		do_action( 'init' );
 
-		UNFC_Normalize::$doing_ajax = true;
-
 		do_action( 'admin_init' );
-
-		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_bulk', array( $unfc, 'wp_ajax_unfc_db_check_list_bulk' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_page', array( $unfc, 'wp_ajax_unfc_db_check_list_page' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_sort', array( $unfc, 'wp_ajax_unfc_db_check_list_sort' ) ) );
-		$this->assertSame( 10, has_filter( 'wp_ajax_unfc_db_check_list_screen_options', array( $unfc, 'wp_ajax_unfc_db_check_list_screen_options' ) ) );
-
-		UNFC_Normalize::$doing_ajax = null;
 
 		UNFC_Normalize::$not_compat = true;
 		UNFC_Normalize::$plugin_basename = WP_PLUGIN_DIR . '/normalizer/unfc-normalize.php';

@@ -24,6 +24,9 @@ if ( ! defined( 'UNFC_VERSION' ) ) {
 	define( 'UNFC_VERSION', '1.0.1' ); // Sync also "package.json" and "language/unfc-normalize.pot".
 	define( 'UNFC_WP_AT_LEAST_VERSION', '3.9.13' );
 	define( 'UNFC_WP_UP_TO_VERSION', '4.5.3' );
+
+	// Handy now that other *.php stuff has been moved into subdir "includes".
+	define( 'UNFC_FILE', __FILE__ );
 }
 
 load_plugin_textdomain( 'unfc-normalize', false, basename( dirname( __FILE__ ) ) . '/languages' );
@@ -32,7 +35,7 @@ global $unfc_normalize; // The single instance.
 
 // Where the magic (and the tragic) happens.
 if ( ! class_exists( 'UNFC_Normalize' ) ) {
-	require dirname( __FILE__ ) . '/class-unfc-normalize.php';
+	require dirname( __FILE__ ) . '/includes/class-unfc-normalize.php';
 }
 
 $unfc_normalize = new UNFC_Normalize();

@@ -8,7 +8,9 @@ $dirdirname = dirname( $dirname );
 
 error_log( "(===begin " . $basename );
 
+define( 'ABSPATH', $dirname . '/' );
 define( 'WP_DEBUG', true );
+
 require $dirdirname . '/tools/functions.php';
 require $dirdirname . '/Symfony/unfc_regex_alts.php';
 

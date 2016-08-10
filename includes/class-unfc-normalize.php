@@ -8,7 +8,7 @@ define( 'UNFC_DB_CHECK_PER_PAGE', 'unfc_normalize_db_check_per_page' ); // User 
 define( 'UNFC_DB_CHECK_ITEM_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when scanning.
 define( 'UNFC_DB_CHECK_NORMALIZE_BATCH_LIMIT', 4096 ); // Database batch size - number of database requests to do in one go when normalizing.
 define( 'UNFC_DB_CHECK_LIST_LIMIT', 1000 ); // Initial default number of items to display in listing.
-define( 'UNFC_DB_CHECK_TITLE_MAX_LEN', 100 ); // Truncate titles if greater than this length (in UTF-8 chars).
+define( 'UNFC_DB_CHECK_TITLE_MAX_LEN', 100 ); // Truncate displaying of titles if greater than this length (in UTF-8 chars).
 define( 'UNFC_DB_CHECK_ITEMS_LIST_SEL', '#unfc_db_check_items_list' ); // Selector for items listing.
 define( 'UNFC_DB_CHECK_SLUGS_LIST_SEL', '#unfc_db_check_slugs_list' ); // Selector for percent-encoded slugs listing.
 
@@ -23,8 +23,8 @@ define( 'UNFC_DB_CHECK_SELECT_ERROR', 6 );
 class UNFC_Normalize {
 
 	// Handy in themselves and to have for testing (can switch on/off). Set in __construct().
-	static $dirname = null; // dirname( __FILE__ ).
-	static $plugin_basename = null; // plugin_basename( __FILE__ ).
+	static $dirname = null; // dirname( UNFC_FILE ).
+	static $plugin_basename = null; // plugin_basename( UNFC_FILE ).
 	static $doing_ajax = null; // defined( 'DOING_AJAX' ) && DOING_AJAX.
 	static $have_set_group_concat_max_len = false; // Whether have set the MySQL group_concat_max_len variable for the session.
 
@@ -185,10 +185,10 @@ class UNFC_Normalize {
 	function __construct() {
 
 		if ( null === self::$dirname ) {
-			self::$dirname = dirname( __FILE__ );
+			self::$dirname = dirname( UNFC_FILE );
 		}
 		if ( null === self::$plugin_basename ) {
-			self::$plugin_basename = plugin_basename( __FILE__ );
+			self::$plugin_basename = plugin_basename( UNFC_FILE );
 		}
 		if ( null === self::$doing_ajax ) {
 			self::$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
@@ -235,14 +235,7 @@ class UNFC_Normalize {
 	 * Called on 'admin_init' action.
 	 */
 	function admin_init() {
-		if ( $this->check_version() && $this->is_blog_utf8() ) {
-			if ( self::$doing_ajax ) {
-				add_action( 'wp_ajax_unfc_db_check_list_bulk', array( $this, 'wp_ajax_unfc_db_check_list_bulk' ) );
-				add_action( 'wp_ajax_unfc_db_check_list_page', array( $this, 'wp_ajax_unfc_db_check_list_page' ) );
-				add_action( 'wp_ajax_unfc_db_check_list_sort', array( $this, 'wp_ajax_unfc_db_check_list_sort' ) );
-				add_action( 'wp_ajax_unfc_db_check_list_screen_options', array( $this, 'wp_ajax_unfc_db_check_list_screen_options' ) );
-			}
-		}
+		$this->check_version();
 	}
 
 	/**
@@ -801,19 +794,19 @@ class UNFC_Normalize {
 		$rangyinputs_suffix = defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG ? '-src' : '';
 
 		// Load IE8 Array.prototype.reduceRight polyfill for unorm.
-		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", __FILE__ ), array(), UNFC_VERSION );
+		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", UNFC_FILE ), array(), UNFC_VERSION );
 
 		global $wp_scripts; // For < 4.2 compat, don't use wp_script_add_data().
 		$wp_scripts->add_data( 'unfc-ie8', 'conditional', 'lt IE 9' );
 
 		// Load the javascript normalize polyfill https://github.com/walling/unorm
-		wp_enqueue_script( 'unfc-unorm', plugins_url( "unorm/lib/unorm.js", __FILE__ ), array( 'unfc-ie8' ), '1.4.1' ); // Note unorm doesn't come with minified so don't use.
+		wp_enqueue_script( 'unfc-unorm', plugins_url( "unorm/lib/unorm.js", UNFC_FILE ), array( 'unfc-ie8' ), '1.4.1' ); // Note unorm doesn't come with minified so don't use.
 
 		// Load the getSelection/setSelection jquery plugin https://github.com/timdown/rangyinputs
-		wp_enqueue_script( 'unfc-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", __FILE__ ), array( 'jquery' ), '1.2.0' );
+		wp_enqueue_script( 'unfc-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", UNFC_FILE ), array( 'jquery' ), '1.2.0' );
 
 		// Our script. Normalizes on paste in tinymce and in admin input/textareas and in some media stuff and in front-end input/textareas.
-		wp_enqueue_script( 'unfc-normalize', plugins_url( "js/unfc-normalize{$suffix}.js", __FILE__ ), array( 'jquery', 'unfc-rangyinputs', 'unfc-unorm' ), UNFC_VERSION );
+		wp_enqueue_script( 'unfc-normalize', plugins_url( "js/unfc-normalize{$suffix}.js", UNFC_FILE ), array( 'jquery', 'unfc-rangyinputs', 'unfc-unorm' ), UNFC_VERSION );
 
 		// Our parameters.
 		$params = array(
@@ -1281,7 +1274,7 @@ class UNFC_Normalize {
 	 */
 	function db_check_print_items_list() {
 		if ( ! class_exists( 'UNFC_DB_Check_Items_List_Table' ) ) {
-			require self::$dirname . '/class-unfc-db_check-list-table.php';
+			require self::$dirname . '/includes/class-unfc-db_check-list-table.php';
 		}
 		if ( $this->db_check_num_items > count( $this->db_check_items ) ) {
 			$h2 = sprintf(
@@ -1345,7 +1338,7 @@ class UNFC_Normalize {
 	 */
 	function db_check_print_slugs_list() {
 		if ( ! class_exists( 'UNFC_DB_Check_Slugs_List_Table' ) ) {
-			require self::$dirname . '/class-unfc-db_check-list-table.php';
+			require self::$dirname . '/includes/class-unfc-db_check-list-table.php';
 		}
 		if ( $this->db_check_num_slugs > count( $this->db_check_slugs ) ) {
 			$h2 = sprintf(
@@ -1389,10 +1382,10 @@ class UNFC_Normalize {
 		if ( isset( $_REQUEST['unfc_db_check_slugs'] ) ) {
 			return 'unfc_db_check_slugs';
 		}
-		if ( isset( $_REQUEST['action'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action'] ) {
+		if ( isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action'] ) {
 			return 'unfc_db_check_normalize_slugs';
 		}
-		if ( isset( $_REQUEST['action2'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action2'] ) {
+		if ( isset( $_REQUEST['action2'] ) && is_string( $_REQUEST['action2'] ) && 'unfc_db_check_normalize_slugs' === $_REQUEST['action2'] ) {
 			return 'unfc_db_check_normalize_slugs';
 		}
 		if ( isset( $_REQUEST['screen-options-apply'] ) && isset( $_REQUEST['wp_screen_options'] ) && is_array( $_REQUEST['wp_screen_options'] ) ) {
@@ -1604,7 +1597,7 @@ class UNFC_Normalize {
 					if ( $have_field ) {
 						if ( $ret['num_items'] < $list_limit ) {
 							$title = $obj->{$this->db_title_cols[ $type ]};
-							if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
+							if ( mb_strlen( $title, 'UTF-8' ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
 								$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc-normalize' );
 							}
 							$ret['items'][] = array(
@@ -2040,7 +2033,7 @@ class UNFC_Normalize {
 						if ( ! ( $this->no_normalizer ? unfc_normalizer_is_normalized( $decoded ) : normalizer_is_normalized( $decoded ) ) ) {
 							if ( $ret['num_slugs'] < $list_limit ) {
 								$title = $obj->title;
-								if ( mb_strlen( $title ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
+								if ( mb_strlen( $title, 'UTF-8' ) > UNFC_DB_CHECK_TITLE_MAX_LEN ) {
 									$title = mb_substr( $title, 0, UNFC_DB_CHECK_TITLE_MAX_LEN, 'UTF-8' ) . __( '...', 'unfc-normalize' );
 								}
 								$ret['slugs'][] = array(
