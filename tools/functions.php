@@ -384,7 +384,7 @@ function unfc_parse_unicode_data( $file, $callback ) {
 			if ( $last === substr( $name, $last_len_minus ) ) {
 				$last_cp = hexdec( $parts[0] );
 				for ( $cp = $first_cp + 1; $cp <= $last_cp; $cp++ ) {
-					if ( false === $callback( $codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) ) {
+					if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) ) ) {
 						error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
 					}
 				}
@@ -398,7 +398,7 @@ function unfc_parse_unicode_data( $file, $callback ) {
 				$in_interval = true;
 				$first_cp = $cp;
 			}
-			if ( false === $callback( $codepoints, $cp, $name, $parts, $in_interval, $first_cp, 0 /*$last_cp*/ ) ) {
+			if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, 0 /*$last_cp*/ ) ) ) {
 				error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
 			}
 		}
