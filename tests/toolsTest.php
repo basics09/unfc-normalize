@@ -75,6 +75,74 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
     }
 
 	/**
+	 * @ticket unfc_utf8_ranges_from_codepoints
+	 */
+    function test_utf8_ranges_from_codepoints() {
+		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( array( 0x9, 0x0a, 0xb ) ) );
+		$this->assertSame( '[\x09-\x0b]', $out );
+		$out_utf16 = unfc_unicode_regex_chars_from_codepoints( array( 0x9, 0x0a, 0xb ) );
+		$this->assertSame( '\x09-\x0b', $out_utf16 );
+
+		$codepoints = array(
+			0x9, 0xa, 0xb, 0xc, 0xd, 0x20,
+		);
+
+		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( $codepoints ) );
+		$this->assertSame( '[\x09-\x0d\x20]', $out );
+
+		$codepoints = array_merge( $codepoints, array( 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa9, 0xaa ) );
+		sort( $codepoints );
+		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( $codepoints ) );
+		$this->assertSame( '[\x09-\x0d\x20]|\xc2[\xa1-\xa7\xa9\xaa]', $out );
+
+		$codepoints = array_merge( $codepoints, array( 0x42, 0x43, 0x5f ) );
+		sort( $codepoints );
+		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( $codepoints ) );
+		$this->assertSame( '[\x09-\x0d\x20\x42\x43\x5f]|\xc2[\xa1-\xa7\xa9\xaa]', $out );
+
+		$codepoints = array_merge( $codepoints, array( 0xe, 0xf, 0x21, 0x22, 0x24 ) );
+		sort( $codepoints );
+		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( $codepoints ) );
+		$this->assertSame( '[\x09-\x0f\x20-\x22\x24\x42\x43\x5f]|\xc2[\xa1-\xa7\xa9\xaa]', $out );
+	}
+
+	/**
+	 * @ticket unfc_utf8_parse_unicode_data
+	 */
+    function test_utf8_parse_unicode_data() {
+		$file = 'tests/UCD-9.0.0/UnicodeData.txt';
+
+		$codepoints = unfc_parse_unicode_data( $file, __CLASS__ . '::parse_unicode_data_cb' );
+		$this->assertFalse( empty( $codepoints['Z'] ) );
+		sort( $codepoints['Z'] );
+		$out_utf8 = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( $codepoints['Z'] ) );
+		$this->assertSame( '\x20|\xc2\xa0|\xe1\x9a\x80|\xe2(?:\x80[\x80-\x8a\xa8\xa9\xaf]|\x81\x9f)|\xe3\x80\x80', $out_utf8 );
+		$out_utf16 = unfc_unicode_regex_chars_from_codepoints( $codepoints['Z'] );
+		$this->assertSame( '\x20\xa0\x{1680}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}', $out_utf16 );
+		$str = " \x20\xe2\x80\x89";
+		$this->assertSame( preg_match( '/' . $out_utf8 . '/', $str ), preg_match( '/[' . $out_utf16 . ']/u', $str ) );
+	}
+
+	static function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) {
+		$general_cat = $parts[2];
+		if ( strlen( $general_cat ) > 1 ) {
+			$general_cat_super = $general_cat[0];
+		} else {
+			$general_cat_super = null;
+		}
+		if ( ! isset( $codepoints[ $general_cat ] ) ) {
+			$codepoints[ $general_cat ] = array();
+		}
+		$codepoints[ $general_cat ][] = $cp;
+		if ( $general_cat_super ) {
+			if ( ! isset( $general_cat_super ) ) {
+				$codepoints[ $general_cat_super ] = array();
+			}
+			$codepoints[ $general_cat_super ][] = $cp;
+		}
+	}
+
+	/**
 	 * @ticket unfc_u_equivalence
 	 */
     function test_u_equivalence() {

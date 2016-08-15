@@ -197,40 +197,7 @@ foreach ( $out_idxs as $idx ) {
 
 	// Calculate the UTF-8 byte sequence ranges from the unicode codepoints.
 
-	$ranges = array();
-	$tmp_codepoints = $codepoints[ $idx ];
-	$last = array_shift( $tmp_codepoints );
-	$first = $last;
-	$carry = null;
-	foreach ( $tmp_codepoints as $codepoint ) {
-		if ( $codepoint === $last + 1 ) {
-			$carry = $codepoint;
-		} else {
-			if ( null === $carry ) {
-				$ranges[] = unfc_utf8_ints( $last );
-			} else {
-				if ( $first + 1 === $carry ) {
-					$ranges[] = unfc_utf8_ints( $first );
-					$ranges[] = unfc_utf8_ints( $carry );
-				} else {
-					unfc_utf8_ranges( $ranges, $first, $carry );
-				}
-				$carry = null;
-			}
-			$first = $codepoint;
-		}
-		$last = $codepoint;
-	}
-	if ( null === $carry ) {
-		$ranges[] = unfc_utf8_ints( $last );
-	} else {
-		if ( $first + 1 === $carry ) {
-			$ranges[] = unfc_utf8_ints( $first );
-			$ranges[] = unfc_utf8_ints( $carry );
-		} else {
-			unfc_utf8_ranges( $ranges, $first, $carry );
-		}
-	}
+	$ranges = unfc_utf8_ranges_from_codepoints( $codepoints[ $idx ] );
 	//error_log( "ranges=" . print_r( unfc_array_map_recursive( 'unfc_utf8_preg_fmt', $ranges ), true ) );
 
 	// Generate the regular expression alternatives.
@@ -262,33 +229,8 @@ if ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || ! empty( $_SERVER['UNFC_DEBUG'] ) 
 	$out[] = '';
 	$out[] = 'if ( ( defined( \'WP_DEBUG\' ) && WP_DEBUG ) ) {';
 	foreach ( $out_idxs as $idx ) {
-		$regex_alts = '';
-
-		// Unicode (UTF-16) regular expression alternatives.
-
-		$tmp_codepoints = $codepoints[ $idx ];
-		$last = array_shift( $tmp_codepoints );
-		$first = $last;
-		$carry = null;
-		foreach ( $tmp_codepoints as $codepoint ) {
-			if ( $codepoint === $last + 1 ) {
-				$carry = $codepoint;
-			} else {
-				if ( null === $carry ) {
-					$regex_alts .= unfc_unicode_preg_fmt( $last );
-				} else {
-					$regex_alts .= unfc_unicode_preg_fmt( $first ) . ( $first + 1 === $carry ? '' : '-' ) . unfc_unicode_preg_fmt( $carry );
-					$carry = null;
-				}
-				$first = $codepoint;
-			}
-			$last = $codepoint;
-		}
-		if ( null === $carry ) {
-			$regex_alts .= unfc_unicode_preg_fmt( $last );
-		} else {
-			$regex_alts .= unfc_unicode_preg_fmt( $first ) . ( $first + 1 === $carry ? '' : '-' ) . unfc_unicode_preg_fmt( $carry );
-		}
+		// Unicode (UTF-16) regular expression charset.
+		$regex_alts = unfc_unicode_regex_chars_from_codepoints( $codepoints[ $idx ] );
 
 		$IDX = strtoupper( $idx );
 		$out[] = '';

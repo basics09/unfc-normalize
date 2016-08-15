@@ -57,21 +57,25 @@ if ( version_compare( substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789
 	if ( version_compare( PHP_VERSION, '5.3.4', '<' ) ) {
 		// If verbs unavailable...
 		if ( version_compare( substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) ), '7.3', '<' ) ) {
+			// Typically PHP 5.2.4 only (with or without UTF-8 mode).
 			function unfc_is_valid_utf8( $str ) {
 				return 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ); // Very slow for PHP < 7.
 			}
 		} else {
+			// Typically when UTF-8 mode unavailable and PHP < 5.3.4, ie 5.2.5-17 (last), 5.3.0-3.
 			function unfc_is_valid_utf8( $str ) {
 				return 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ); // Very slow for PHP < 7.
 			}
 		}
 	} else {
+		// Typically when UTF-8 mode unavailable and PHP >= 5.3.4; or when built against PCRE 8.32, ie PHP 5.3.24-29 (last), 5.4.14-40, 5.5.0-9.
 		function unfc_is_valid_utf8( $str ) {
 			// See https://core.trac.wordpress.org/ticket/29717#comment:11
 			return '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' );
 		}
 	}
 } else {
+	// Typically all PHPs with UTF-8 mode available except 5.2.4 and those built against PCRE 8.32.
 	function unfc_is_valid_utf8( $str ) {
 		return 1 === preg_match( '//u', $str ); // Original Normalizer validity check.
 	}

@@ -228,7 +228,7 @@ class UNFC_Normalize {
 	 * Helper to test if using UTF-8.
 	 */
 	function is_blog_utf8() {
-		return in_array( get_option( 'blog_charset' ), array( 'UTF-8', 'utf-8', 'utf8', 'UTF8' ) );
+		return in_array( get_option( 'blog_charset' ), array( 'UTF-8', 'utf-8', 'utf8', 'UTF8' ), true );
 	}
 
 	/**

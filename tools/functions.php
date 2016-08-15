@@ -198,13 +198,19 @@ function unfc_utf8_preg_fmt_range_entry( $range_entry ) {
 function unfc_utf8_trie( &$trie, $range, $idx = 0, $parent = null, $fmt = null ) {
 	$cnt = count( $range );
 
-	if ( $idx === $cnt - 1 && $parent ) {
-		// If at lowest index, append formatted range to parent rather than add trie.
-		if ( is_array( $parent[ $fmt ] ) ) {
-			$parent[ $fmt ] = '';
+	if ( $idx === $cnt - 1 ) {
+		if ( $parent ) {
+			// If at lowest index, append formatted range to parent rather than add trie.
+			if ( is_array( $parent[ $fmt ] ) ) {
+				$parent[ $fmt ] = '';
+			}
+			$parent[ $fmt ] .= unfc_utf8_preg_fmt_range_entry( $range[ $idx ] );
+		} else {
+			if ( ! isset( $trie[''] ) ) {
+				$trie[''] = '';
+			}
+			$trie[''] .= unfc_utf8_preg_fmt_range_entry( $range[ $idx ] );
 		}
-		$parent[ $fmt ] .= unfc_utf8_preg_fmt_range_entry( $range[ $idx ] );
-
 	} elseif ( $idx < $cnt && is_array( $trie ) ) {
 		// Create key entry (trie).
 		$fmt = unfc_utf8_preg_fmt_range_entry( $range[ $idx ] );
@@ -257,10 +263,148 @@ function unfc_utf8_regex_alts( $ranges ) {
 		}
 
 		unfc_utf8_trie( $trie, $range, $idx );
-		//error_log( "loop trie=" . print_r( $trie, true ) );
 	}
 
 	return implode( '|', unfc_utf8_trie_regex_alts( $trie ) );
+}
+
+/**
+ * Calculate the UTF-8 byte sequence ranges from unicode codepoints.
+ */
+function unfc_utf8_ranges_from_codepoints( $codepoints ) {
+	$ranges = array();
+
+	$last = array_shift( $codepoints );
+	$first = $last;
+	$carry = null;
+	foreach ( $codepoints as $codepoint ) {
+		if ( $codepoint === $last + 1 ) {
+			$carry = $codepoint;
+		} else {
+			if ( null === $carry ) {
+				$ranges[] = unfc_utf8_ints( $last );
+			} else {
+				if ( $first + 1 === $carry ) {
+					$ranges[] = unfc_utf8_ints( $first );
+					$ranges[] = unfc_utf8_ints( $carry );
+				} else {
+					unfc_utf8_ranges( $ranges, $first, $carry );
+				}
+				$carry = null;
+			}
+			$first = $codepoint;
+		}
+		$last = $codepoint;
+	}
+	if ( null === $carry ) {
+		$ranges[] = unfc_utf8_ints( $last );
+	} else {
+		if ( $first + 1 === $carry ) {
+			$ranges[] = unfc_utf8_ints( $first );
+			$ranges[] = unfc_utf8_ints( $carry );
+		} else {
+			unfc_utf8_ranges( $ranges, $first, $carry );
+		}
+	}
+
+	return $ranges;
+}
+
+
+/**
+ * Calculate the Unicode (UTF-16) alternatives from unicode codepoints.
+ */
+function unfc_unicode_regex_chars_from_codepoints( $codepoints ) {
+	$regex_alts = '';
+
+	$last = array_shift( $codepoints );
+	$first = $last;
+	$carry = null;
+	foreach ( $codepoints as $codepoint ) {
+		if ( $codepoint === $last + 1 ) {
+			$carry = $codepoint;
+		} else {
+			if ( null === $carry ) {
+				$regex_alts .= unfc_unicode_preg_fmt( $last );
+			} else {
+				$regex_alts .= unfc_unicode_preg_fmt( $first ) . ( $first + 1 === $carry ? '' : '-' ) . unfc_unicode_preg_fmt( $carry );
+				$carry = null;
+			}
+			$first = $codepoint;
+		}
+		$last = $codepoint;
+	}
+	if ( null === $carry ) {
+		$regex_alts .= unfc_unicode_preg_fmt( $last );
+	} else {
+		$regex_alts .= unfc_unicode_preg_fmt( $first ) . ( $first + 1 === $carry ? '' : '-' ) . unfc_unicode_preg_fmt( $carry );
+	}
+
+	return $regex_alts;
+}
+
+/**
+ * Parse the Unicode data file http://www.unicode.org/Public/9.0.0/ucd/UnicodeData.txt
+ * Calls the $callback to collect codepoints of interest in the passed-in $codepoints array, which is returned.
+ * In particular, deals with intervals, calling the $callback for each codepoint in the interval.
+ */
+function unfc_parse_unicode_data( $file, $callback ) {
+
+	// Read the file.
+
+	if ( false === ( $get = file_get_contents( $file ) ) ) {
+		error_log( "unfc_parse_unicode_data: failed to read file '$file'" );
+		return false;
+	}
+
+	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+
+	$first = 'First>';
+	$first_len_minus = -strlen( $first );
+	$last = 'Last>';
+	$last_len_minus = -strlen( $last );
+
+	// Parse the file.
+
+	$codepoints = array();
+	$line_num = 0;
+	$in_interval = false;
+	$first_cp = 0;
+	foreach ( $lines as $line ) {
+		$line_num++;
+		$line = trim( $line );
+		if ( '' === $line ) {
+			continue;
+		}
+		$parts = array_map( 'trim', explode( ';', $line ) );
+		
+		$name = $parts[1];
+
+		if ( $in_interval ) {
+			if ( $last === substr( $name, $last_len_minus ) ) {
+				$last_cp = hexdec( $parts[0] );
+				for ( $cp = $first_cp + 1; $cp <= $last_cp; $cp++ ) {
+					if ( false === $callback( $codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) ) {
+						error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
+					}
+				}
+			} else {
+				error_log( "unfc_parse_unicode_data: invalid first/last pair line_num=$line_num" );
+			}
+			$in_interval = false;
+		} else {
+			$cp = hexdec( $parts[0] );
+			if ( $first === substr( $name, $first_len_minus ) ) {
+				$in_interval = true;
+				$first_cp = $cp;
+			}
+			if ( false === $callback( $codepoints, $cp, $name, $parts, $in_interval, $first_cp, 0 /*$last_cp*/ ) ) {
+				error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
+			}
+		}
+	}
+
+	return $codepoints;
 }
 
 /**

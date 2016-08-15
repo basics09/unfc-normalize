@@ -11,7 +11,7 @@ $basename = basename( __FILE__ );
 $dirname = dirname( __FILE__ );
 $dirdirname = dirname( $dirname );
 $subdirname = basename( $dirname );
-$outdirname = 'Symfony/Resources/unidata';
+$outdirname = $argc && ! empty( $argv[1] ) ? $argv[1] : 'Symfony/Resources/unidata';
 
 require $dirname . '/functions.php';
 
@@ -61,36 +61,11 @@ foreach ( $lines as $line ) {
 	}
 }
 
-// Open the main unicode file.
+// Callback for Unicode data file parser.
+function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) {
+	global $exclusions, $combining_classes, $canonical_compositions, $canonical_decompositions, $compatibility_decompositions;
 
-$filename ='/tests/UCD-9.0.0/UnicodeData.txt';
-$file = $dirdirname . $filename;
-error_log( "$basename: reading file=$file" );
-
-// Read the file.
-
-if ( false === ( $get = file_get_contents( $file ) ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read unicode data file "%s"', 'unfc-normalize' ), $file );
-	error_log( $error );
-	return $error;
-}
-
-$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
-
-// Parse the file, populating the various arrays.
-
-$combining_classes = $canonical_compositions = $canonical_decompositions = $compatibility_decompositions = array();
-$line_num = 0;
-foreach ( $lines as $line ) {
-	$line_num++;
-	$line = trim( $line );
-	if ( '' === $line ) {
-		continue;
-	}
-	$parts = explode( ';', $line );
-	
-	$code = unfc_utf8_chr( hexdec( $parts[0] ) );
+	$code = unfc_utf8_chr( $cp );
 
 	$combining_class = intval( $parts[3] );
 	if ( $combining_class ) {
@@ -119,6 +94,21 @@ foreach ( $lines as $line ) {
 
 		$compatibility_decompositions[ $code ] = $decomp;
 	}
+}
+
+$combining_classes = $canonical_compositions = $canonical_decompositions = $compatibility_decompositions = array();
+
+// Parse the main unicode file.
+
+$filename = '/tests/UCD-9.0.0/UnicodeData.txt';
+$file = $dirdirname . $filename;
+error_log( "$basename: reading file=$file" );
+
+if ( false === unfc_parse_unicode_data( $file, 'parse_unicode_data_cb' ) ) {
+	/* translators: %s: file name */
+	$error = sprintf( __( 'Could not read unicode data file "%s"', 'unfc-normalize' ), $file );
+	error_log( $error );
+	return $error;
 }
 
 do {
