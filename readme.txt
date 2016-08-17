@@ -2,8 +2,8 @@
 Contributors: gitlost, zodiac1978
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC
 Requires at least: 3.9.13
-Tested up to: 4.5.3
-Stable tag: 1.0.1
+Tested up to: 4.6
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,7 @@ data, and is fallible.
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.0.9, and on WP 3.9.13 to 4.5.3.
+The plugin should run on PHP 5.2.17 to 7.0.9, and on WP 3.9.13 to 4.6.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -72,6 +72,10 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 == Screenshots ==
 
 == Changelog ==
+
+= 1.0.2 =
+* Move all .php files bar main to includes subdir. Remove unused ajax.
+* Fix single-byte trie. Move regex alts to tools/functions.php.
 
 = 1.0.1 =
 * First release for wordpress.org repository.
