@@ -215,11 +215,20 @@ class UNFC_Normalize {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( self::$plugin_basename );
-			wp_die( __( 'The plugin "UNFC Normalize" is not compatible with your system and can\'t be activated.', 'unfc-normalize' ) );
+			/* translators: %s: url to admin plugins page. */
+			wp_die( sprintf(
+				__( 'The plugin "UNFC Normalize" is not compatible with your system and can\'t be activated. <a href="%s">Return to Plugins page.</a>', 'unfc-normalize' ),
+				esc_url( self_admin_url( 'plugins.php' ) )
+			) );
 		} else {
 			if ( ! self::tested_wp_version() ) {
-				$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-				add_action( $admin_notices_filter, array( __CLASS__, 'untested_notice' ) );
+				global $wp_version;
+				$admin_notices = array( array( 'warning', sprintf(
+					/* translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress version tested; %3$s: user's current WordPress version. */
+					__( '<strong>Warning: untested!</strong> The plugin "UNFC Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc-normalize' ),
+					UNFC_WP_AT_LEAST_VERSION, UNFC_WP_UP_TO_VERSION, $wp_version
+				) ) );
+				self::add_admin_notices( $admin_notices );
 			}
 		}
 	}
@@ -236,6 +245,54 @@ class UNFC_Normalize {
 	 */
 	function admin_init() {
 		$this->check_version();
+		$admin_notices_action = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
+		add_action( $admin_notices_action, array( __CLASS__, 'admin_notices' ) );
+	}
+
+	/**
+	 * Called on 'network_admin_notices', 'user_admin_notices' or 'admin_notices' action.
+	 * Output any messages.
+	 */
+	static function admin_notices() {
+
+		$admin_notices = get_transient( 'unfc_admin_notices' );
+		if ( false !== $admin_notices ) {
+			delete_transient( 'unfc_admin_notices' );
+		}
+		if ( $admin_notices ) {
+
+			foreach ( $admin_notices as $admin_notice ) {
+				list( $type, $notice ) = $admin_notice;
+				if ( 'error' === $type ) {
+					?>
+						<div class="notice error is-dismissible">
+							<p><?php echo $notice; ?></p>
+						</div>
+					<?php
+				} elseif ( 'updated' === $type ) {
+					?>
+						<div class="notice updated is-dismissible">
+							<p><?php echo $notice; ?></p>
+						</div>
+					<?php
+				} else {
+					?>
+						<div class="notice notice-<?php echo $type; ?> is-dismissible">
+							<p><?php echo $notice; ?></p>
+						</div>
+					<?php
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add any admin notices as transient.
+	 */
+	static function add_admin_notices( $admin_notices ) {
+		if ( $admin_notices ) {
+			set_transient( 'unfc_admin_notices', $admin_notices, 5 * MINUTE_IN_SECONDS );
+		}
 	}
 
 	/**
@@ -246,8 +303,8 @@ class UNFC_Normalize {
 		if ( ! self::compatible_version() ) {
 			if ( is_plugin_active( self::$plugin_basename ) ) {
 				deactivate_plugins( self::$plugin_basename );
-				$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-				add_action( $admin_notices_filter, array( $this, 'disabled_notice' ) );
+				$admin_notices_action = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
+				add_action( $admin_notices_action, array( $this, 'disabled_notice' ) );
 				if ( isset( $_GET['activate'] ) ) {
 					unset( $_GET['activate'] );
 				}
@@ -261,7 +318,7 @@ class UNFC_Normalize {
 	 * Called on 'network_admin_notices', 'user_admin_notices' or 'admin_notices' action.
 	 */
 	function disabled_notice() {
-		$error_message  = '<div id="message" class="updated is-dismissible">';
+		$error_message  = '<div id="message" class="notice error is-dismissible">';
 		$error_message .= '<p><strong>' . __( 'Plugin deactivated!', 'unfc-normalize' ) . '</strong> ';
 		$error_message .= esc_html__( 'The plugin "UNFC Normalize" is not compatible with your system and has been deactivated.', 'unfc-normalize' );
 		$error_message .= '</p></div>';
@@ -275,30 +332,6 @@ class UNFC_Normalize {
 
 		// Totally compat! (Famous last words.)
 		return ! self::$not_compat; // For testing.
-	}
-
-	/**
-	 * Called on 'network_admin_notices', 'user_admin_notices' or 'admin_notices' action.
-	 */
-	static function untested_notice() {
-		global $wp_version;
-		$untested_wp = ! self::tested_wp_version();
-		?>
-		<div class="notice notice-warning is-dismissible">
-			<p>
-				<strong><?php _e( 'Warning: untested!', 'unfc-normalize' ); ?></strong>
-			</p>
-			<?php if ( $untested_wp ) { ?>
-				<p>
-					<?php printf(
-						/* translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress version tested; %3$s: user's current WordPress version. */
-						__( 'The plugin "UNFC Normalize" has only been tested on WordPress Versions %1$s to %2$s. You have WordPress Version %3$s.', 'unfc-normalize' ),
-						UNFC_WP_AT_LEAST_VERSION, UNFC_WP_UP_TO_VERSION, $wp_version
-					); ?>
-				</p>
-			<?php } ?>
-		</div>
-		<?php
 	}
 
 	/**
@@ -981,7 +1014,7 @@ class UNFC_Normalize {
 				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1005,7 +1038,7 @@ class UNFC_Normalize {
 
 			$this->db_check_normalize_all( $admin_notices );
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1029,7 +1062,7 @@ class UNFC_Normalize {
 				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1067,7 +1100,7 @@ class UNFC_Normalize {
 				}
 			}
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1101,7 +1134,7 @@ class UNFC_Normalize {
 				}
 			}
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1125,7 +1158,7 @@ class UNFC_Normalize {
 				$redirect = add_query_arg( array( 'unfc_trans' => $transient_key ), $redirect );
 			}
 
-			$this->db_check_add_admin_notices( $admin_notices );
+			self::add_admin_notices( $admin_notices );
 
 			wp_redirect( esc_url_raw( $redirect ) );
 			if ( defined( 'UNFC_TESTING' ) && UNFC_TESTING ) { // Allow for testing.
@@ -1144,12 +1177,9 @@ class UNFC_Normalize {
 			} else {
 				// If have invalid transient...
 				if ( $this->db_check_transient( false /*start_with*/, false /*dont_get*/, true /*dont_set*/ ) ) {
-					$this->db_check_add_admin_notices( array( array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) ) ) );
+					self::add_admin_notices( array( array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_TRANS_ERROR ) ) ) );
 				}
 			}
-
-			$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-			add_action( $admin_notices_filter, array( $this, 'admin_notices' ) );
 		}
 	}
 
@@ -1465,52 +1495,6 @@ class UNFC_Normalize {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Called on 'network_admin_notices', 'user_admin_notices' or 'admin_notices' action.
-	 * Output any messages.
-	 */
-	function admin_notices() {
-
-		$admin_notices = get_transient( 'unfc_admin_notices' );
-		if ( false !== $admin_notices ) {
-			delete_transient( 'unfc_admin_notices' );
-		}
-		if ( $admin_notices ) {
-
-			foreach ( $admin_notices as $admin_notice ) {
-				list( $type, $notice ) = $admin_notice;
-				if ( 'error' === $type ) {
-					?>
-						<div class="notice error is-dismissible">
-							<p><?php echo $notice; ?></p>
-						</div>
-					<?php
-				} elseif ( 'updated' === $type ) {
-					?>
-						<div class="notice updated is-dismissible">
-							<p><?php echo $notice; ?></p>
-						</div>
-					<?php
-				} else {
-					?>
-						<div class="notice notice-<?php echo $type; ?> is-dismissible">
-							<p><?php echo $notice; ?></p>
-						</div>
-					<?php
-				}
-			}
-		}
-	}
-
-	/**
-	 * Add any admin notices as transient.
-	 */
-	function db_check_add_admin_notices( $admin_notices ) {
-		if ( $admin_notices ) {
-			set_transient( 'unfc_admin_notices', $admin_notices, 5 * MINUTE_IN_SECONDS );
-		}
 	}
 
 	/**
