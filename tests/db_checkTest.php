@@ -728,6 +728,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$out = wp_set_current_user( 1 ); // Need manage_options cap to add load-XXX
 
 		do_action( 'init' );
+		do_action( 'admin_init' );
 
 		do_action( 'admin_menu' );
 

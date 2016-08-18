@@ -88,6 +88,7 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 
 		global $wp_scripts;
 		$old_wp_scripts = $wp_scripts;
+		$wp_scripts = new WP_Scripts;
 
 		do_action( 'init' );
 
@@ -102,7 +103,7 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 		$this->assertTrue( false !== strpos( $out, 'unfc-normalize' ) );
 		$this->assertTrue( false !== strpos( $out, 'unfc_normalize.' ) );
 
-		$wp_scripts = $old_wp_scripts;
+		$wp_scripts = new WP_Scripts;
 
 		global $pagenow;
 		$pagenow = 'index.php';
@@ -122,6 +123,8 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 		$this->assertTrue( false !== strpos( $out, 'rangyinputs-jquery' ) );
 		$this->assertTrue( false !== strpos( $out, 'unfc-normalize' ) );
 		$this->assertTrue( false !== strpos( $out, 'unfc_normalize.' ) );
+
+		$wp_scripts = $old_wp_scripts;
 	}
 
 	/**
@@ -234,9 +237,12 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 		$unfc = new UNFC_Normalize();
 		$this->assertFalse( UNFC_Normalize::tested_wp_version() );
 
+		do_action( 'init' );
+
+		do_action( 'admin_init' );
+
 		$unfc->activation_check();
 		$admin_notices_filter = is_network_admin() ? 'network_admin_notices' : ( is_user_admin() ? 'user_admin_notices' : 'admin_notices' );
-		$this->assertSame( 10, has_filter( $admin_notices_filter, array( 'UNFC_Normalize', 'untested_notice' ) ) );
 
 		ob_start();
 		do_action( $admin_notices_filter );
