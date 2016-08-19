@@ -77,6 +77,8 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 ### 1.0.2 ###
 * Move all .php files bar main to includes subdir. Remove unused ajax.
 * Fix single-byte trie. Move regex alts to tools/functions.php.
+* Fix untested admin notice. Adjust tests for untested admin_notice change. Fix some test bleed ($wp_scripts).
+* WP 4.6 compatible.
 
 ### 1.0.1 ###
 * First release for wordpress.org repository.
