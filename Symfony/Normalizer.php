@@ -120,7 +120,7 @@ class UNFC_Normalizer // gitlost
 			if (!unfc_is_valid_utf8($s)) {
 				return false;
 			}
-			if (1 !== preg_match(UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
+			if (1 !== preg_match( '/[\xcc-\xf4]/', $s) || 1 !== preg_match(UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
 				return true;
 			}
 
