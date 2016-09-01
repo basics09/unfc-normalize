@@ -1,6 +1,6 @@
 {
   "name": "unfc-normalize",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Normalizes UTF-8 input to Normalization Form C.",
   "repository": {
     "type": "git",

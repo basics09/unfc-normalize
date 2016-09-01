@@ -3,7 +3,7 @@ Contributors: gitlost, zodiac1978
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC
 Requires at least: 3.9.13
 Tested up to: 4.6
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,7 @@ data, and is fallible.
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.0.9, and on WP 3.9.13 to 4.6.
+The plugin should run on PHP 5.2.17 to 7.0.10, and on WP 3.9.13 to 4.6.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -73,6 +73,11 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 
 == Changelog ==
 
+= 1.0.3 =
+* For PHP 5 performance do preliminary preg_match on isNormalized. 
+* Improve comments in Normalizer.php, tabs -> 4 spaces, UNFC_REGEX_IS_INVALID_UTF8_XXX invert & rename.
+* Fix untested admin notice and adjust tests. Fix some test bleed ($wp_scripts).
+
 = 1.0.2 =
 * Move all .php files bar main to includes subdir. Remove unused ajax.
 * Fix single-byte trie. Move regex alts to tools/functions.php.
@@ -94,3 +99,8 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 
 = 0.9.0 =
 * Initial version after renaming from tl-normalize.
+
+== Upgrade Notice ==
+
+= 1.0.3 =
+Improved PHP 5 performance on isNormalized() check.

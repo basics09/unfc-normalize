@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.2\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-09-01 20:01+0100\n"
-"PO-Revision-Date: 2016-09-01 20:02+0100\n"
+"POT-Creation-Date: 2016-09-01 20:44+0100\n"
+"PO-Revision-Date: 2016-09-01 20:45+0100\n"
 "Last-Translator: gitlost <gitlost@gitlostbonger.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
