@@ -66,10 +66,10 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			// Enable if using intl built with icu less than 56.1
 			self::$new_8_0_0_regex = '/' . implode( '|', array_map( __CLASS__.'::chr', self::$new_8_0_0 ) ) . '/';
 		}
-		// Always set for the mo as icu for Unicode 9.0.0 not yet released as of 15 Jul 2016.
+		// Always set for the mo as icu for Unicode 9.0.0 not yet released as of September 2016.
 		self::$new_9_0_0_regex = '/' . implode( '|', array_map( __CLASS__.'::chr', self::$new_9_0_0 ) ) . '/';
 
-		self::$pcre_version = substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '01234567890.-' ) );
+		self::$pcre_version = substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) );
 
 		// Normalizer::isNormalized() returns an integer on HHVM and a boolean on PHP
 		list( self::$true, self::$false ) = defined( 'HHVM_VERSION' ) ? array( 1, 0 ) : array( true, false );
@@ -341,7 +341,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		$last9_c1s = array();
 		$last_x = 0;
 		$in_part1 = false;
-		global $line_num;
         foreach ( $t as $line_num => $line ) {
 			$line_num++;
 			if ( '@Part' === substr( $line, 0, 5 ) ) {
@@ -486,9 +485,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
 			$this->assertTrue( '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' ) );
 		}
-		$this->assertTrue( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
+		$this->assertTrue( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8_NOVERBS, $str ) );
 		if ( version_compare( self::$pcre_version, '7.3', '>=' ) ) { // Verbs available.
-			$this->assertTrue( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ) );
+			$this->assertTrue( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
 		}
 	}
 
@@ -526,9 +525,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
 			$this->assertFalse( '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' ) );
 		}
-		$this->assertFalse( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
+		$this->assertFalse( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8_NOVERBS, $str ) );
 		if ( version_compare( self::$pcre_version, '7.3', '>=' ) ) { // Verbs available.
-			$this->assertFalse( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ) );
+			$this->assertFalse( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
 		}
 	}
 
@@ -569,7 +568,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
 				$this->assertFalse( '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' ) );
 			}
-			$this->assertFalse( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
+			$this->assertFalse( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) );
 		}
 	}
 

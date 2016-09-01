@@ -471,7 +471,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: tools/gen_combining_class.php:36 tools/gen_unfc_ins.php:132
-#: tools/gen_unfc_regex_alts.php:135
+#: tools/gen_unfc_regex_alts.php:137
 #. translators: %s: file name
 msgid "Could not read derived combining class file \"%s\""
 msgstr ""
@@ -482,12 +482,12 @@ msgstr ""
 msgid "Could not read unicode data file \"%s\""
 msgstr ""
 
-#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:31
+#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:33
 #. translators: %s: file name
 msgid "Could not read UCD derived normalization properties file \"%s\""
 msgstr ""
 
-#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:120
+#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:122
 #. translators: %s: file name
 msgid ""
 "Missing NO or MAYBE codepoints in UCD derived normalization properties file "

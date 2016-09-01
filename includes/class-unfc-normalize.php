@@ -215,8 +215,8 @@ class UNFC_Normalize {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( self::$plugin_basename );
-			/* translators: %s: url to admin plugins page. */
 			wp_die( sprintf(
+				/* translators: %s: url to admin plugins page. */
 				__( 'The plugin "UNFC Normalize" is not compatible with your system and can\'t be activated. <a href="%s">Return to Plugins page.</a>', 'unfc-normalize' ),
 				esc_url( self_admin_url( 'plugins.php' ) )
 			) );

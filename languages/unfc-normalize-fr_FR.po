@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UNFC Nörmalize 1.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-08-24 18:28+0100\n"
-"PO-Revision-Date: 2016-08-24 18:28+0100\n"
+"POT-Creation-Date: 2016-09-01 20:01+0100\n"
+"PO-Revision-Date: 2016-09-01 20:02+0100\n"
 "Last-Translator: gitlost <gitlost@gitlostbonger.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -508,7 +508,7 @@ msgstr[1] "%s identifiants n&rsquo;ont pas normalisé, échoué à normaliser."
 
 #. translators: %s: file name
 #: tools/gen_combining_class.php:36 tools/gen_unfc_ins.php:132
-#: tools/gen_unfc_regex_alts.php:135
+#: tools/gen_unfc_regex_alts.php:137
 msgid "Could not read derived combining class file \"%s\""
 msgstr ""
 "Impossible de lire le fichier dérivé de classe combinante &laquo;&nbsp;"
@@ -522,14 +522,14 @@ msgstr ""
 "Impossible de lire le fichier de données unicode &laquo;&nbsp;%s&nbsp;&raquo;"
 
 #. translators: %s: file name
-#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:31
+#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:33
 msgid "Could not read UCD derived normalization properties file \"%s\""
 msgstr ""
 "Impossible de lire le fichier UCD dérivé de propriétés de normalisation "
 "&laquo;&nbsp;%s&nbsp;&raquo;"
 
 #. translators: %s: file name
-#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:120
+#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:122
 msgid ""
 "Missing NO or MAYBE codepoints in UCD derived normalization properties file "
 "\"%s\""

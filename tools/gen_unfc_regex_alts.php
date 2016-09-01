@@ -14,6 +14,8 @@ $subdirname = basename( $dirname );
 
 require $dirname . '/functions.php';
 
+$prefix = $argc && ! empty( $argv[1] ) ? $argv[1] : 'UNFC_';
+
 if ( ! function_exists( '__' ) ) {
 	function __( $str, $td ) { return $str; }
 }
@@ -219,8 +221,8 @@ $out[] = ' */';
 foreach ( $out_idxs as $idx ) {
 	$IDX = strtoupper( $idx );
 	$out[] = '';
-	$out[] = "define( 'UNFC_REGEX_ALTS_{$IDX}', '" . $regex_alts[ $idx ] . "' );";
-	$out[] = "define( 'UNFC_REGEX_{$IDX}', '/' . UNFC_REGEX_ALTS_{$IDX} . '/' );";
+	$out[] = "define( '{$prefix}REGEX_ALTS_{$IDX}', '" . $regex_alts[ $idx ] . "' );";
+	$out[] = "define( '{$prefix}REGEX_{$IDX}', '/' . {$prefix}REGEX_ALTS_{$IDX} . '/' );";
 }
 
 if ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || ! empty( $_SERVER['UNFC_DEBUG'] ) ) { // Set via command line "UNFC_DEBUG=1 php __FILE__".
@@ -234,8 +236,8 @@ if ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || ! empty( $_SERVER['UNFC_DEBUG'] ) 
 
 		$IDX = strtoupper( $idx );
 		$out[] = '';
-		$out[] = "\t" . "define( 'UNFC_REGEX_ALTS_{$IDX}_U', '" . $regex_alts . "' );";
-		$out[] = "\t" . "define( 'UNFC_REGEX_{$IDX}_U', '/[' . UNFC_REGEX_ALTS_{$IDX}_U . ']/u' );";
+		$out[] = "\t" . "define( '{$prefix}REGEX_ALTS_{$IDX}_U', '" . $regex_alts . "' );";
+		$out[] = "\t" . "define( '{$prefix}REGEX_{$IDX}_U', '/[' . {$prefix}REGEX_ALTS_{$IDX}_U . ']/u' );";
 
 		$out[] = '';
 		$out[] = "\t" . "global \$unfc_{$idx};";

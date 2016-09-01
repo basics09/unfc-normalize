@@ -48,7 +48,7 @@ foreach ( $ret as $i => $strarr ) {
 		error_log( "bad result valids [ $i ]" );
 		return;
 	}
-	if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ) ) ) {
+	if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) ) ) {
 		error_log( "bad match valids invalid2 [ $i ]" );
 		error_log( "str=" . bin2hex( $str ) );
 		return;
@@ -74,7 +74,7 @@ foreach ( $ret as $i => $strarr ) {
 		error_log( "bad result invalids [ $i ]" );
 		return;
 	}
-	if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ) ) ) {
+	if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) ) ) {
 		error_log( "bad match invalids invalid2 [ $i ]" );
 		error_log( "str=" . bin2hex( $str ) );
 		return;
@@ -128,12 +128,12 @@ if ( $check ) {
 				error_log( "str=" . bin2hex( $str ) );
 				return;
 			}
-			if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) ) ) {
+			if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8_NOVERB, $str ) ) ) {
 				error_log( "bad match invalid $idx [ $i ]" );
 				error_log( "str=" . bin2hex( $str ) );
 				return;
 			}
-			if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str ) ) ) {
+			if ( ( 1 === preg_match( UNFC_REGEX_IS_VALID_UTF8, $str ) ) !== ( 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ) ) ) {
 				error_log( "bad match invalid2 $idx [ $i ]" );
 				error_log( "str=" . bin2hex( $str ) );
 				return;
@@ -174,11 +174,11 @@ for ( $i = 0; $i < $loop_num; $i++ ) {
 			$tots_h[ $idx ] += microtime( true );
 
 			$tots_i[ $idx ] += -microtime( true );
-			1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str );
+			0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8_NOVERB, $str );
 			$tots_i[ $idx ] += microtime( true );
 
 			$tots_s[ $idx ] += -microtime( true );
-			1 !== preg_match( UNFC_REGEX_IS_INVALID_UTF8_SKIP, $str );
+			0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str );
 			$tots_s[ $idx ] += microtime( true );
 
 			$tots_v[ $idx ] += -microtime( true );
