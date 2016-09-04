@@ -1637,7 +1637,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		$title2 = 'post2-title';
 		$content2 = 'post2-content' . $decomposed_str1;
-		$post_name2 = "post2-name-%c3%bc";
+		$post_name2 = "post2-name-%c3%bc"; // Not decomposed.
 
 		$post2 = $this->factory->post->create_and_get( array( 'post_title' => $title2, 'post_content' => $content2, 'post_type' => 'post', 'post_name' => $post_name2 ) );
 		$this->assertTrue( is_object( $post2 ) );
@@ -1744,6 +1744,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( count( $items ) - count( $_REQUEST['item'] ), $die['args']['num_slugs'] );
 		$this->assertNotContains( $title1, unfc_list_pluck( $die['args']['slugs'], 'title' ) ); // Can't use id as could be same between types.
+		$this->assertContains( $post_name1, (array) get_post_meta( $post1->ID, '_wp_old_slug' ) );
 
 		ob_start();
 		do_action( $hook_suffix );
@@ -1781,6 +1782,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$die = self::$func_args['wp_die'][0];
 		$this->assertSame( 2, $die['args']['num_slugs'] );
 		$this->assertSame( $unfc_normalize->db_check_error_msg( UNFC_DB_CHECK_SYNC_ERROR ), $die['args'][0][1] );
+		$this->assertContains( $post_name3, (array) get_post_meta( $post3->ID, '_wp_old_slug' ) );
 
 		self::clear_func_args();
 
@@ -1798,6 +1800,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( false !== stripos( $die['args'][0][1], 'nothing' ) );
 		$this->assertSame( 'warning', $die['args'][1][0] );
 		$this->assertTrue( false !== stripos( $die['args'][1][1], '1' ) );
+		$this->assertNotContains( $post_name2, (array) get_post_meta( $post2->ID, '_wp_old_slug' ) ); // Slug was normalized (%c3%b2).
 
 		self::clear_func_args();
 

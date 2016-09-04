@@ -2216,6 +2216,20 @@ class UNFC_Normalize {
 							$admin_notices[] = array( 'error', $this->db_check_error_msg( UNFC_DB_CHECK_DB_ERROR ) );
 							return false;
 						}
+						if ( 'post' === $type ) {
+							// Create '_wp_old_slug'.
+							$post = get_post( $id );
+							if ( $post instanceof WP_Post ) {
+								$post_before = clone $post;
+								// Allow for post being cached.
+								if ( $post->post_name === $obj->post_name ) { // Stale.
+									$post->post_name = $data[ 'post_name' ];
+								} else {
+									$post_before->post_name = $obj->post_name;
+								}
+								wp_check_for_changed_slugs( $id, $post, $post_before );
+							}
+						}
 						$num_updates++;
 						unset( $this->db_check_slugs[ $idx ] );
 						$this->db_check_num_slugs--;
