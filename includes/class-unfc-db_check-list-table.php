@@ -471,7 +471,10 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 	protected function column_cb( $item ) {
 		$value = $item['id'] . ':' . $item['type'] . ':' . $item['idx'];
 		?>
-		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>"><?php printf( __( 'Select %s', 'unfc-normalize' ), $item['title'] ); ?></label>
+		<label class="screen-reader-text" for="cb-select-<?php echo $item['id']; ?>">
+		<?php /* translators: %s: item title */ ?>
+		<?php printf( __( 'Select %s', 'unfc-normalize' ), htmlspecialchars( $item['title'], ENT_NOQUOTES, $this->blog_charset ) ); ?>
+		</label>
 		<input id="cb-select-<?php echo $item['id']; ?>" type="checkbox" name="item[]" value="<?php echo esc_attr( $value ); ?>" />
 		<?php
 	}

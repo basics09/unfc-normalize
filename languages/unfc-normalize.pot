@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.3\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
 "POT-Creation-Date: 2016-07-30 18:01:12+00:00\n"
 "MIME-Version: 1.0\n"
@@ -111,17 +111,18 @@ msgstr ""
 msgid "Normalized Decoded"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:474
+#: includes/class-unfc-db_check-list-table.php:476
+#. translators: %s: item title
 msgid "Select %s"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:510
-#: includes/class-unfc-db_check-list-table.php:527
+#: includes/class-unfc-db_check-list-table.php:513
+#: includes/class-unfc-db_check-list-table.php:530
 msgid "Not normalizable!"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:515
-#: includes/class-unfc-db_check-list-table.php:532
+#: includes/class-unfc-db_check-list-table.php:518
+#: includes/class-unfc-db_check-list-table.php:535
 msgid "No difference!"
 msgstr ""
 
@@ -406,7 +407,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-unfc-normalize.php:1805
-#: includes/class-unfc-normalize.php:2235
+#: includes/class-unfc-normalize.php:2249
 msgid "Nothing updated!"
 msgstr ""
 
@@ -435,51 +436,52 @@ msgstr[1] ""
 msgid "<strong>No</strong> non-normalized percent-encoded slugs detected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:2233
+#: includes/class-unfc-normalize.php:2247
 #. translators: %s: formatted number of slugs normalized.
 msgid "%s slug normalized."
 msgid_plural "%s slugs normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2240
+#: includes/class-unfc-normalize.php:2254
 #. translators: %s: formatted number of items locked.
 msgid "%s slug not normalized, somebody is editing it."
 msgid_plural "%s slugs not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2246
+#: includes/class-unfc-normalize.php:2260
 #. translators: %s: formatted number of slugs not found.
 msgid "%s slug not normalized, no longer exists."
 msgid_plural "%s slugs not normalized, no longer exist."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2252
+#: includes/class-unfc-normalize.php:2266
 #. translators: %s: formatted number of slugs not non-normalized.
 msgid "%s slug not normalized, no longer non-normalized."
 msgid_plural "%s slugs not normalized, no longer non-normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2258
+#: includes/class-unfc-normalize.php:2272
 #. translators: %s: formatted number of slugs that failed to normalize.
 msgid "%s slug not normalized, failed to normalize."
 msgid_plural "%s slugs not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
+#: tools/gen_cat_regex_alts.php:50 tools/gen_mnme_regex.php:34
+#: tools/gen_script_regex_alts.php:50 tools/gen_trans_latin_ascii.php:59
+#: tools/gen_unidata.php:109
+#. translators: %s: file name
+msgid "Could not read unicode data file \"%s\""
+msgstr ""
+
 #: tools/gen_combining_class.php:36 tools/gen_unfc_ins.php:132
 #: tools/gen_unfc_regex_alts.php:137
 #. translators: %s: file name
 msgid "Could not read derived combining class file \"%s\""
-msgstr ""
-
-#: tools/gen_mn_regex.php:30 tools/gen_mnme_regex.php:31
-#: tools/gen_unidata.php:109
-#. translators: %s: file name
-msgid "Could not read unicode data file \"%s\""
 msgstr ""
 
 #: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:33

@@ -26,10 +26,13 @@
 				<file>Symfony/NormalizerO.php</file>
 				<file>Symfony/NormalizerS.php</file>
 				<file>Symfony/unfc_ins.php</file>
+				<file>tools/gen_cat_regex_alts.php</file>
 				<file>tools/gen_combining_class.php</file>
 				<file>tools/gen_mnme_regex.php</file>
-				<file>tools/gen_unfc_regex_alts.php</file>
+				<file>tools/gen_script_regex_alts.php</file>
+				<file>tools/gen_trans_latin_ascii.php</file>
 				<file>tools/gen_unfc_ins.php</file>
+				<file>tools/gen_unfc_regex_alts.php</file>
 				<file>tools/gen_unidata.php</file>
 				<file>tools/list.php</file>
 			</exclude>
