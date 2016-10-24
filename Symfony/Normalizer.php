@@ -47,7 +47,7 @@ define( 'UNFC_REGEX_IS_INVALID_UTF8_NOVERBS',
 	/sx'
 );
 
-// PCRE UTF-8 mode was not PCRE RFC 3629 compliant until PCRE 7.3, and then there was a compliance regression for PCRE 8.32 due to an over-enthusiastic interpretation of noncharacters.
+// PCRE UTF-8 mode was not RFC 3629 compliant until PCRE 7.3, and then there was a compliance regression for PCRE 8.32 due to an over-enthusiastic interpretation of noncharacters.
 // See https://www.ietf.org/rfc/rfc3629.txt
 // See http://vcs.pcre.org/pcre/code/tags/pcre-8.32/pcre_valid_utf8.c?r1=1032&r2=1098 for the regression.
 // See http://www.unicode.org/versions/corrigendum9.html for the clarification.

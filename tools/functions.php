@@ -10,7 +10,7 @@ define( 'UNFC_UTF8_MAX', 0x10ffff ); // Maximum legal unicode codepoint in UTF-8
  * Based on https://github.com/symfony/polyfill/blob/master/tests/Intl/Normalizer/NormalizerTest.php NormalizerTest::chr().
  */
 function unfc_utf8_chr( $c ) {
-	if ( $c > UNFC_UTF8_MAX ) {
+	if ( $c > UNFC_UTF8_MAX || $c < 0 ) {
 		$c = UNFC_UTF8_MAX;
 	}
 	if ( $c < 0x80 ) {
@@ -31,7 +31,7 @@ function unfc_utf8_chr( $c ) {
  * Based on https://github.com/symfony/polyfill/blob/master/tests/Intl/Normalizer/NormalizerTest.php NormalizerTest::chr().
  */
 function unfc_utf8_ints( $c ) {
-	if ( $c > UNFC_UTF8_MAX ) {
+	if ( $c > UNFC_UTF8_MAX || $c < 0 ) {
 		$c = UNFC_UTF8_MAX;
 	}
 	if ( $c < 0x80 ) {
@@ -274,6 +274,9 @@ function unfc_utf8_regex_alts( $ranges ) {
 function unfc_utf8_ranges_from_codepoints( $codepoints ) {
 	$ranges = array();
 
+	if ( ! $codepoints ) {
+		return $ranges;
+	}
 	$last = array_shift( $codepoints );
 	$first = $last;
 	$carry = null;
@@ -310,6 +313,40 @@ function unfc_utf8_ranges_from_codepoints( $codepoints ) {
 	return $ranges;
 }
 
+/**
+ * Calculate the Unicode (UTF-16) ranges from unicode codepoints.
+ */
+function unfc_unicode_ranges_from_codepoints( $codepoints ) {
+	$ranges = array();
+
+	if ( ! $codepoints ) {
+		return $ranges;
+	}
+	$last = array_shift( $codepoints );
+	$first = $last;
+	$carry = null;
+	foreach ( $codepoints as $codepoint ) {
+		if ( $codepoint === $last + 1 ) {
+			$carry = $codepoint;
+		} else {
+			if ( null === $carry ) {
+				$ranges[] = $last;
+			} else {
+				$ranges[] = array( $first, $carry );
+				$carry = null;
+			}
+			$first = $codepoint;
+		}
+		$last = $codepoint;
+	}
+	if ( null === $carry ) {
+		$ranges[] = $last;
+	} else {
+		$ranges[] = array( $first, $carry );
+	}
+
+	return $ranges;
+}
 
 /**
  * Calculate the Unicode (UTF-16) alternatives from unicode codepoints.
@@ -342,6 +379,23 @@ function unfc_unicode_regex_chars_from_codepoints( $codepoints ) {
 
 	return $regex_alts;
 }
+
+// Parts fields of Unicode data file http://www.unicode.org/Public/9.0.0/ucd/UnicodeData.txt
+define( 'UNFC_UCD_CODEPOINT', 0 );
+define( 'UNFC_UCD_NAME', 1 );
+define( 'UNFC_UCD_GENERAL_CATEGORY', 2 );
+define( 'UNFC_UCD_CANONICAL_COMBINING_CLASS', 3 );
+define( 'UNFC_UCD_BIDI_CLASS', 4 );
+define( 'UNFC_UCD_DECOMPOSITION_TYPE_MAPPING', 5 );
+define( 'UNFC_UCD_NUMERIC_TYPE_VAL1', 6 );
+define( 'UNFC_UCD_NUMERIC_TYPE_VAL2', 7 );
+define( 'UNFC_UCD_NUMERIC_TYPE_VAL3', 8 );
+define( 'UNFC_UCD_BIDI_MIRRORED', 9 );
+define( 'UNFC_UCD_UNICODE_1_NAME', 10 );
+define( 'UNFC_UCD_ISO_COMMENT', 11 );
+define( 'UNFC_UCD_SIMPLE_UPPERCASE_MAPPING', 12 );
+define( 'UNFC_UCD_SIMPLE_LOWERCASE_MAPPING', 13 );
+define( 'UNFC_UCD_SIMPLE_TITLECASE_MAPPING', 14 );
 
 /**
  * Parse the Unicode data file http://www.unicode.org/Public/9.0.0/ucd/UnicodeData.txt
@@ -378,7 +432,7 @@ function unfc_parse_unicode_data( $file, $callback ) {
 		}
 		$parts = array_map( 'trim', explode( ';', $line ) );
 		
-		$name = $parts[1];
+		$name = isset( $parts[1] ) ? $parts[1] : null;
 
 		if ( $in_interval ) {
 			if ( $last === substr( $name, $last_len_minus ) ) {
@@ -400,6 +454,64 @@ function unfc_parse_unicode_data( $file, $callback ) {
 			}
 			if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, 0 /*$last_cp*/ ) ) ) {
 				error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
+			}
+		}
+	}
+
+	return $codepoints;
+}
+
+/**
+ * Parse the Scripts file http://www.unicode.org/Public/9.0.0/ucd/Scripts.txt
+ * Calls the $callback to collect codepoints of interest in the passed-in $codepoints array, which is returned.
+ * In particular, deals with intervals, calling the $callback for each codepoint in the interval.
+ */
+function unfc_parse_scripts( $file, $callback ) {
+
+	// Read the file.
+
+	if ( false === ( $get = file_get_contents( $file ) ) ) {
+		error_log( "unfc_parse_scripts: failed to read file '$file'" );
+		return false;
+	}
+
+	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+
+	// Parse the file.
+
+	$codepoints = array();
+	$line_num = 0;
+	foreach ( $lines as $line ) {
+		$line_num++;
+		$line = trim( $line );
+		if ( '' === $line || '#' === $line[0] ) {
+			continue;
+		}
+		$parts = explode( ';', $line );
+		if ( 2 !== count( $parts ) ) {
+			continue;
+		}
+
+		if ( 0 < ( $pos = strpos( $parts[1], '#' ) ) ) {
+			$parts[2] = trim( substr( $parts[1], $pos + 1 ) );
+			$parts[1] = substr( $parts[1], 0, $pos - 1 );
+		}
+		$script = trim( $parts[1] );
+
+		$code = trim( $parts[0] );
+		$codes = explode( '..', $code );
+		if ( count( $codes ) > 1 ) {
+			$first_cp = hexdec( $codes[0] );
+			$last_cp = hexdec( $codes[1] );
+			for ( $cp = $first_cp; $cp <= $last_cp; $cp++ ) {
+				if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $script, $parts, true /*$in_interval*/, $first_cp, $last_cp ) ) ) {
+					error_log( "unfc_parse_scripts: user func fail line_num=$line_num" );
+				}
+			}
+		} else {
+			$cp = hexdec( $code );
+			if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $script, $parts, false /*$in_interval*/, 0 /*$first_cp*/, 0 /*$last_cp*/ ) ) ) {
+				error_log( "unfc_parse_scripts: user func fail line_num=$line_num" );
 			}
 		}
 	}

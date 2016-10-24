@@ -379,7 +379,7 @@ class UNFC_Normalize {
 					}
 
 					// New meta data (add new custom field metabox) uses 'metakeyselect'/'metakeyinput' and 'metavalue' fields of $_POST.
-					if ( isset( $_POST['metavalue'] ) && '' !== $_POST['metavalue'] ) {
+					if ( isset( $_POST['metavalue'] ) && is_string( $_POST['metavalue'] ) && '' !== $_POST['metavalue'] ) {
 						$metakey = ! empty( $_POST['metakeyselect'] ) && '#NONE#' !== $_POST['metakeyselect'] ? $_POST['metakeyselect']
 										: ( ! empty( $_POST['metakeyinput'] ) ? $_POST['metakeyinput'] : '' );
 						if ( '' !== $metakey ) {
@@ -1649,7 +1649,7 @@ class UNFC_Normalize {
 		$batch_limit = $this->get_batch_limit( __FUNCTION__ );
 
 		$type = $subtype = '';
-		if ( ! empty( $_REQUEST['unfc_type'] ) ) {
+		if ( ! empty( $_REQUEST['unfc_type'] ) && is_string( $_REQUEST['unfc_type'] ) ) {
 			list( $type, $subtype ) = $this->parse_type( $_REQUEST['unfc_type'] );
 		}
 		if ( $type ) {
@@ -1984,7 +1984,7 @@ class UNFC_Normalize {
 		$list_limit = $this->get_list_limit( UNFC_DB_CHECK_SLUGS_LIST_SEL );
 
 		$type = $subtype = '';
-		if ( ! empty( $_REQUEST['unfc_type'] ) ) {
+		if ( ! empty( $_REQUEST['unfc_type'] ) && is_string( $_REQUEST['unfc_type'] ) ) {
 			list( $type, $subtype ) = $this->parse_type( $_REQUEST['unfc_type'] );
 		}
 		if ( $type ) {
