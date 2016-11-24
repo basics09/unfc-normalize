@@ -321,9 +321,6 @@ class UNFC_DB_Check_Items_List_Table extends UNFC_DB_Check_List_Table {
 	public function __construct() {
 		parent::__construct();
 		$this->all_items = &self::$unfc_normalize->db_check_items; // Will be sorted so use reference to avoid copy.
-		if ( self::$unfc_normalize->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
-			self::$unfc_normalize->load_unfc_normalizer_class();
-		}
 		if ( ! self::$unfc_normalize->dont_js ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_print_footer_scripts' ) );
 		}
@@ -415,6 +412,9 @@ class UNFC_DB_Check_Slugs_List_Table extends UNFC_DB_Check_List_Table {
 		$this->all_items = &self::$unfc_normalize->db_check_slugs; // Will be sorted so use reference to avoid copy.
 		if ( ! self::$unfc_normalize->dont_js ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_print_footer_scripts' ) );
+		}
+		if ( self::$unfc_normalize->no_normalizer || ! function_exists( 'normalizer_is_normalized' ) ) {
+			self::$unfc_normalize->load_unfc_normalizer_class();
 		}
 	}
 
