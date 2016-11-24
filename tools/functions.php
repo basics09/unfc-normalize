@@ -65,7 +65,7 @@ function unfc_utf8_4range( &$ranges, $ints1, $ints2, $i = 0 ) {
 		array( array( 0x00, 0x00, 0x00, 0x00 ), array( 0x00, 0x00, 0x00, 0x7f ) ),
 	);
 
-	if ( $i === 3 ) {
+	if ( 3 === $i ) {
 		$ranges[] = unfc_utf8_range( $ints1, $ints2, $i );
 		return $ranges;
 	}
