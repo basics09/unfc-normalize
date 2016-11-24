@@ -77,17 +77,17 @@ msgstr ""
 msgid "Edit &#8220;%s&#8221;"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:341
+#: includes/class-unfc-db_check-list-table.php:338
 #: includes/class-unfc-db_check-list-table.php:442
 msgid "Title"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:342
+#: includes/class-unfc-db_check-list-table.php:339
 #: includes/class-unfc-db_check-list-table.php:443
 msgid "Type"
 msgstr ""
 
-#: includes/class-unfc-db_check-list-table.php:343
+#: includes/class-unfc-db_check-list-table.php:340
 msgid "Field (1st detected only)"
 msgstr ""
 
@@ -471,8 +471,11 @@ msgid_plural "%s slugs not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
-#: tools/gen_cat_regex_alts.php:50 tools/gen_mnme_regex.php:34
-#: tools/gen_script_regex_alts.php:50 tools/gen_trans_latin_ascii.php:59
+#: tools/gen_cat_regex_alts.php:61 tools/gen_latin_ascii_missing.php:36
+#: tools/gen_latin_ascii_missing.php:404 tools/gen_mnme_regex.php:34
+#: tools/gen_remove_accents_missing.php:53
+#: tools/gen_remove_accents_ranges.php:48
+#: tools/gen_script_test_combining.php:44 tools/gen_trans_latin_ascii.php:63
 #: tools/gen_unidata.php:109
 #. translators: %s: file name
 msgid "Could not read unicode data file \"%s\""
@@ -482,6 +485,11 @@ msgstr ""
 #: tools/gen_unfc_regex_alts.php:137
 #. translators: %s: file name
 msgid "Could not read derived combining class file \"%s\""
+msgstr ""
+
+#: tools/gen_script_regex_alts.php:58
+#. translators: %s: file name
+msgid "Could not read scripts file \"%s\""
 msgstr ""
 
 #: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:33
