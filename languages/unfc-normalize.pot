@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.4\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
 "POT-Creation-Date: 2016-07-30 18:01:12+00:00\n"
 "MIME-Version: 1.0\n"

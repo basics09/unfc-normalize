@@ -2,8 +2,8 @@
 Contributors: gitlost, zodiac1978
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC
 Requires at least: 3.9.13
-Tested up to: 4.6.1
-Stable tag: 1.0.4
+Tested up to: 4.7.0
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,7 @@ data, and is fallible.
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.0.10, and on WP 3.9.13 to 4.6.1.
+The plugin should run on PHP 5.2.17 to 7.0.13, and on WP 3.9.13 to 4.7.0.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -73,6 +73,12 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 
 == Changelog ==
 
+= 1.0.5 =
+* Do load of normalizer in slugs list constructor not items list. Fixes slugs listing crash when Intl extension not installed.
+* Ignore case when checking charset (UNFC_Normalize::is_blog_utf8()).
+* WP coding standards (yoda style in unfc_utf8_4range()).
+* WP 4.7.0 compatible.
+
 = 1.0.4 =
 * Add _wp_old_slug on normalizing slugs.
 * Escape title in screen reader label in db check.
@@ -105,6 +111,9 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 * Initial version after renaming from tl-normalize.
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Fixes fatal error on check slugs listing in DB check tool when Intl extension not available.
 
 = 1.0.4 =
 Now adds _wp_old_slug on normalizing slugs so old links will work.

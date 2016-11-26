@@ -2,10 +2,10 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.4\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
-"POT-Creation-Date: 2016-09-10 06:38+0100\n"
-"PO-Revision-Date: 2016-09-10 06:39+0100\n"
+"POT-Creation-Date: 2016-11-24 22:55+0000\n"
+"PO-Revision-Date: 2016-11-24 22:56+0000\n"
 "Last-Translator: gitlost <gitlost@gitlostbonger.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -75,17 +75,17 @@ msgstr "Éditer cet utilisateur"
 msgid "Edit &#8220;%s&#8221;"
 msgstr "Modifier &laquo;&nbsp;%s&nbsp;&raquo;"
 
-#: includes/class-unfc-db_check-list-table.php:341
+#: includes/class-unfc-db_check-list-table.php:338
 #: includes/class-unfc-db_check-list-table.php:442
 msgid "Title"
 msgstr "Titre"
 
-#: includes/class-unfc-db_check-list-table.php:342
+#: includes/class-unfc-db_check-list-table.php:339
 #: includes/class-unfc-db_check-list-table.php:443
 msgid "Type"
 msgstr "Type"
 
-#: includes/class-unfc-db_check-list-table.php:343
+#: includes/class-unfc-db_check-list-table.php:340
 msgid "Field (1st detected only)"
 msgstr "Champ (1er détecté seulement)"
 
@@ -508,8 +508,11 @@ msgstr[0] "%s identifiant n&rsquo;a pas normalisé, échoué à normaliser."
 msgstr[1] "%s identifiants n&rsquo;ont pas normalisé, échoué à normaliser."
 
 #. translators: %s: file name
-#: tools/gen_cat_regex_alts.php:50 tools/gen_mnme_regex.php:34
-#: tools/gen_script_regex_alts.php:50 tools/gen_trans_latin_ascii.php:59
+#: tools/gen_cat_regex_alts.php:61 tools/gen_latin_ascii_missing.php:36
+#: tools/gen_latin_ascii_missing.php:404 tools/gen_mnme_regex.php:34
+#: tools/gen_remove_accents_missing.php:53
+#: tools/gen_remove_accents_ranges.php:48
+#: tools/gen_script_test_combining.php:44 tools/gen_trans_latin_ascii.php:63
 #: tools/gen_unidata.php:109
 msgid "Could not read unicode data file \"%s\""
 msgstr ""
@@ -522,6 +525,11 @@ msgid "Could not read derived combining class file \"%s\""
 msgstr ""
 "Impossible de lire le fichier dérivé de classe combinante &laquo;&nbsp;"
 "%s&nbsp;&raquo;"
+
+#. translators: %s: file name
+#: tools/gen_script_regex_alts.php:58
+msgid "Could not read scripts file \"%s\""
+msgstr "Impossible de lire le fichier de scripts &laquo;&nbsp;%s&nbsp;&raquo;"
 
 #. translators: %s: file name
 #: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:33
