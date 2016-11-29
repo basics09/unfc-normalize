@@ -256,14 +256,22 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	function test_comments() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
 
+		$post1 = $this->factory->post->create_and_get( array( 'post_title' => 'title1', 'post_content' => 'content1', 'post_type' => 'post' ) );
+		$this->assertTrue( is_object( $post1 ) );
+
+		// Need for get_comments_number() call in comments_bubble() (doesn't pass post_id).
+		global $post;
+		$old_post = $post;
+		$post = $post1;
+
 		ob_start();
-		$list_table->comments_bubble( 0, 0 );
+		$list_table->comments_bubble( $post1->ID, 0 );
 		$out = ob_get_clean();
 		$this->assertNotEmpty( $out );
 		$this->assertTrue( false !== stripos( $out, 'no comments' ) );
 
 		ob_start();
-		$list_table->comments_bubble( 0, 2 );
+		$list_table->comments_bubble( $post1->ID, 2 );
 		$out = ob_get_clean();
 		$this->assertNotEmpty( $out );
 		$this->assertTrue( false !== stripos( $out, 'no approved' ) );
@@ -272,13 +280,15 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 		add_filter( 'get_comments_number', array( $this, 'filter_get_comments_number' ), 10, 2 );
 
 		ob_start();
-		$list_table->comments_bubble( 1, 1 );
+		$list_table->comments_bubble( $post1->ID, 1 );
 		$out = ob_get_clean();
 		$this->assertNotEmpty( $out );
 		$this->assertTrue( false !== stripos( $out, '3 approved' ) );
 		$this->assertTrue( false !== stripos( $out, '1 pending' ) );
 
 		remove_filter( 'get_comments_number', array( $this, 'filter_get_comments_number' ), 10 );
+
+		$post = $old_post;
 	}
 
 	function filter_get_comments_number( $count, $post_id ) {
