@@ -111,7 +111,7 @@ function unfc_print_r_limit_cb( $str ) {
  */
 function unfc_print_r_hex( $var ) {
 	if ( is_array( $var ) ) {
-		return print_r( array_map( 'unfc_print_r_hex', $var ), true );
+		return trim( print_r( array_map( 'unfc_print_r_hex', $var ), true ) );
 	}
 	return unfc_print_r_limit_cb( unfc_bin2hex( $var ) );
 }
@@ -126,24 +126,23 @@ function unfc_dump( $var, $format = false ) {
 	$ret = ob_get_clean();
 	if ( $format ) {
 		$ret = preg_replace( '/ refcount\(\d+\)$/m', '', $ret );
-		$ret = str_replace( "=>\n", "=>", $ret );
+		$ret = preg_replace( '/ refcount\(\d+\)/m', ' ', $ret );
+		$ret = preg_replace( '/=>[ \n]+/', '=> ', $ret );
 	}
 	return $ret;
 }
 
 /**
- * Hex dump a variable.
+ * Hex dump a variable if string.
  */
 function unfc_bin2hex( $var ) {
 	$ret = '';
-	if ( ! isset( $var ) ) {
-		$ret .= '(unset)';
-	} elseif ( is_null( $var ) ) {
+	if ( ! isset( $var ) || is_null( $var ) ) {
 		$ret .= '(null)';
 	} elseif ( is_array( $var ) || is_object( $var ) ) {
 		$ret .= '(' . gettype( $var ) . ')';
 		foreach ( (array) $var as $k => $v ) {
-			$ret .= ';' . $k . '=' . unfc_bin2hex( $v );
+			$ret .= ';' . $k . '=' . ( is_scalar( $v ) ? unfc_bin2hex( $v ) : print_r( $v, true ) );
 		}
 	} elseif ( is_string( $var ) ) {
 		$ret .= bin2hex( $var );
