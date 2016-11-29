@@ -24,10 +24,10 @@ For best performance [install](http://php.net/manual/en/intl.installation.php) (
 the [PHP Internationalization extension `Intl`](http://php.net/manual/en/intro.intl.php),
 which includes the PHP class `Normalizer`.
 
-However the plugin works without the PHP Internationalization extension being installed, as it uses (a modified version of)
+However the plugin works without the PHP `Intl` extension being installed, as it uses (a modified version of)
 the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer).
 
-Also text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
+Also text pasted into (most) inputs is normalized immediately using the JavaScript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
 For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
 = Background =
@@ -35,7 +35,7 @@ For browsers without normalization support, the [unorm polyfill](https://github.
 For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://coretrac.wordpress.org/ticket/30130)
 and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
 
-The plugin also works around the Safari-specific issues raised by WP Trac ticket [#22363 Accents in attachment filenames should be sanitized](https://core.trac.wordpress.org/ticket/22363).
+The plugin also works around the Safari-specific issues raised by the WP Trac ticket [#22363 Accents in attachment filenames should be sanitized](https://core.trac.wordpress.org/ticket/22363).
 
 = Scanner =
 
@@ -45,7 +45,7 @@ This is especially important if your database contains non-normalized serialized
 [Database Search and Replace Script in PHP](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/) to deal with serialized
 data, and is fallible.
 
-= Tailends =
+= And =
 
 A google-cheating schoolboy French translation is supplied.
 
@@ -78,6 +78,10 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 		$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
 	}
 	add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
+
+= Does it have a tool to normalize the filenames of files already uploaded using Chrome or Firefox on macOS (OS X) prior to its enabling?
+
+No, it doesn't yet, alas. Such files would have to re-uploaded. However if (enough - or more like any) interest were expressed...
 
 == Screenshots ==
 
