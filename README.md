@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)
+[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)[![WordPress plugin](https://img.shields.io/wordpress/plugin/v/unfc-normalize.svg)](https://wordpress.org/plugins/unfc-normalize/)
 # UNFC Nörmalize #
 **Contributors:** [gitlost](https://profiles.wordpress.org/gitlost), [zodiac1978](https://profiles.wordpress.org/zodiac1978)  
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  
@@ -83,16 +83,16 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 ## Screenshots ##
 
 ### 1. Before and after: pasting non-normalized text into a post's title and content. ###
-![Before and after: pasting non-normalized text into a post's title and content.](https://ps.w.org/unfc-nörmalize/assets/screenshot-1.png)
+![Before and after: pasting non-normalized text into a post's title and content.](https://ps.w.org/unfc-normalize/assets/screenshot-1.png)
 
 ### 2. Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari). ###
-![Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari).](https://ps.w.org/unfc-nörmalize/assets/screenshot-2.png)
+![Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari).](https://ps.w.org/unfc-normalize/assets/screenshot-2.png)
 
 ### 3. Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works). ###
-![Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works).](https://ps.w.org/unfc-nörmalize/assets/screenshot-3.png)
+![Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works).](https://ps.w.org/unfc-normalize/assets/screenshot-3.png)
 
 ### 4. The database scan administration tool. ###
-![The database scan administration tool.](https://ps.w.org/unfc-nörmalize/assets/screenshot-4.png)
+![The database scan administration tool.](https://ps.w.org/unfc-normalize/assets/screenshot-4.png)
 
 
 ## Changelog ##
