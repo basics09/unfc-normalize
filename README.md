@@ -19,6 +19,8 @@ It adds WP filters to normalize UTF-8 data coming into the system to the
 [de facto web standard Normalization Form C](https://www.w3.org/International/docs/charmod-norm/#choice-of-normalization-form "Choice of Normalization Form").
 The Unicode Consortium report is at [Unicode Normalization Forms](http://www.unicode.org/reports/tr15/).
 
+### Polyfills ###
+
 For best performance [install](http://php.net/manual/en/intl.installation.php) (if possible)
 the [PHP Internationalization extension `Intl`](http://php.net/manual/en/intro.intl.php),
 which includes the PHP class `Normalizer`.
@@ -29,14 +31,22 @@ the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/mas
 Also text pasted into inputs is normalized immediately using the javascript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
 For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
+### Background ###
+
 For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://coretrac.wordpress.org/ticket/30130)
 and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
+
+The plugin also works around the Safari-specific issues raised by WP Trac ticket [#22363 Accents in attachment filenames should be sanitized](https://core.trac.wordpress.org/ticket/22363).
+
+### Scanner ###
 
 For existing data, the plugin includes an administration tool to scan and normalize the database.
 **Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
 This is especially important if your database contains non-normalized serialized data, as this plugin uses the same suck-and-see technique as interconnect/it's
 [Database Search and Replace Script in PHP](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/) to deal with serialized
 data, and is fallible.
+
+### Tailends ###
 
 A google-cheating schoolboy French translation is supplied.
 
@@ -72,12 +82,27 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 
 ## Screenshots ##
 
+### 1. Before and after: pasting non-normalized text into a post's title and content. ###
+![Before and after: pasting non-normalized text into a post's title and content.](https://ps.w.org/unfc-nörmalize/assets/screenshot-1.png)
+
+### 2. Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari). ###
+![Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari).](https://ps.w.org/unfc-nörmalize/assets/screenshot-2.png)
+
+### 3. Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works). ###
+![Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works).](https://ps.w.org/unfc-nörmalize/assets/screenshot-3.png)
+
+### 4. The database scan administration tool. ###
+![The database scan administration tool.](https://ps.w.org/unfc-nörmalize/assets/screenshot-4.png)
+
+
 ## Changelog ##
 
 ### 1.0.5 ###
 * Do load of normalizer in slugs list constructor not items list. Fixes slugs listing crash when Intl extension not installed.
 * Ignore case when checking charset (UNFC_Normalize::is_blog_utf8()).
 * WP coding standards (yoda style in unfc_utf8_4range()).
+* Add screenshots.
+* Some extra unittests.
 * WP 4.7.0 compatible.
 
 ### 1.0.4 ###
