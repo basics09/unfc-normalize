@@ -33,8 +33,10 @@ module.exports = function( grunt ) { //The wrapper function
 				options: {
 					'screenshot_url': 'https://ps.w.org/unfc-normalize/assets/{screenshot}.png',
 					'post_convert': function ( readme ) {
-						readme = '[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)[![WordPress plugin](https://img.shields.io/wordpress/plugin/v/unfc-normalize.svg)](https://wordpress.org/plugins/unfc-normalize/)\n' + readme;
-						return readme;
+						return '[![Build Status](https://travis-ci.org/gitlost/unfc-normalize.png?branch=master)](https://travis-ci.org/gitlost/unfc-normalize)\n'
+							+ '[![codecov.io](http://codecov.io/github/gitlost/unfc-normalize/coverage.svg?branch=master)](http://codecov.io/github/gitlost/unfc-normalize?branch=master)\n'
+							+ '[![WordPress plugin](https://img.shields.io/wordpress/plugin/v/unfc-normalize.svg)](https://wordpress.org/plugins/unfc-normalize/)\n'
+							+ readme;
 					}
 				}
 			}

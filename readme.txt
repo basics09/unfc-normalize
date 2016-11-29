@@ -79,16 +79,16 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 	}
 	add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
 
-= Does it have a tool to normalize the filenames of files already uploaded using Chrome or Firefox on macOS (OS X) prior to its enabling?
+= Does it have a tool to normalize the filenames of files uploaded prior to its enabling?
 
-No, it doesn't yet, alas. Such files would have to re-uploaded. However if (enough - or more like any) interest were expressed...
+No, it doesn't. Alas, such files would have to re-uploaded. However if (enough - or more like any) interest were expressed...
 
 == Screenshots ==
 
 1. Before and after: pasting non-normalized text into a post's title and content.
-2. Uploading a file on macOS with Firefox and then viewing with Safari without UNFC Nörmalize (broken in Safari).
-3. Uploading a file on macOS with Firefox and then viewing with Safari with UNFC Nörmalize enabled (whee it works).
-4. The database scan administration tool.
+2. Before: uploading a file on macOS with Firefox and then viewing with Safari (broken in Safari).
+3. After: uploading a file on macOS with Firefox and then viewing with Safari (whee it works).
+4. Front page of the database scan administration tool.
 
 == Changelog ==
 
