@@ -3,7 +3,9 @@
  * Lists.
  */
 
-require dirname( __FILE__ ) . '/class-unfc-list-table.php'; // Our (almost-)clone of WP_List_Table.
+if ( ! class_exists( 'UNFC_List_Table' ) ) {
+	require dirname( __FILE__ ) . '/class-unfc-list-table.php'; // Our (almost-)clone of WP_List_Table.
+}
 
 /**
  * UNFC Nörmalize Database Check parent class.
