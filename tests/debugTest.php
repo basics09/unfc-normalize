@@ -47,7 +47,7 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 
 		$var = array( "a", true, 1010, 1.2, null );
 		$output = unfc_dump( $var, true /*$format*/ );
-		$this->assertSame( "array(5) {\n  [0]=> string(1) \"a\"\n  [1]=> bool(true)\n  [2]=> int(1010)\n  [3]=> float(1.2)\n  [4]=> NULL\n}\n", $output );
+		$this->assertRegExp( '/array\(5\) {\n  \[0\]=> string\(1\) "a"\n  \[1\]=> bool\(true\)\n  \[2\]=> (?:int|long)\(1010\)\n  \[3\]=> (?:float|double)\(1\.2\)\n  \[4\]=> NULL\n}\n/', $output );
 
 		$output = unfc_bin2hex( array( __CLASS__, 'test_print_r' ) );
 		$this->assertSame( "(array);0=" . bin2hex( 'Tests_UNFC_Debug' ) . ";1=" . bin2hex( 'test_print_r' ), $output );

@@ -7,9 +7,6 @@
  */
 class Tests_UNFC_List_Table extends WP_UnitTestCase {
 
-	function setUp() {
-	}
-
     /**
 	 * @ticket unfc_list_table_list_table
      */
