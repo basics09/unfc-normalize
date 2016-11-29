@@ -1,13 +1,13 @@
 <?php
 /**
- * This is WP_List_Table as of WP 4.6 renamed to UNFC_List_Table.
+ * This is WP_List_Table as of WP 4.7.0 renamed to UNFC_List_Table.
  * Doing this for back/forward compatibility as WP_List_Table is private.
  * For backward compatibility check for the availibility of WP_Screen::render_screen_reader_content().
  * Parent of UNFC_DB_Check_List_Table in "class-unfc-db_check-list-table.php".
  */
 
 /**
- * Administration API: UNFC_List_Table class
+ * Administration API: UNFC_List_Table class // gitlost
  *
  * @package WordPress
  * @subpackage List_Table
@@ -20,7 +20,7 @@
  * @since 3.1.0
  * @access private
  */
-class UNFC_List_Table {
+class UNFC_List_Table { // gitlost
 	protected $wp_less_than_4_4 = false; // gitlost. Set in __construct().
 
 	/**
@@ -260,19 +260,19 @@ class UNFC_List_Table {
 	 * @abstract
 	 */
 	public function ajax_user_can() {
-		die( 'function UNFC_List_Table::ajax_user_can() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::ajax_user_can() must be over-ridden in a sub-class.' ); // gitlost
 	}
 
 	/**
 	 * Prepares the list of items for displaying.
-	 * @uses UNFC_List_Table::set_pagination_args()
+	 * @uses UNFC_List_Table::set_pagination_args() // gitlost
 	 *
 	 * @since 3.1.0
 	 * @access public
 	 * @abstract
 	 */
 	public function prepare_items() {
-		die( 'function UNFC_List_Table::prepare_items() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::prepare_items() must be over-ridden in a sub-class.' ); // gitlost
 	}
 
 	/**
@@ -294,7 +294,7 @@ class UNFC_List_Table {
 			$args['total_pages'] = ceil( $args['total_items'] / $args['per_page'] );
 
 		// Redirect if page number is invalid and headers are not already sent.
-		if ( ! headers_sent() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) && $args['total_pages'] > 0 && $this->get_pagenum() > $args['total_pages'] ) {
+		if ( ! headers_sent() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) && $args['total_pages'] > 0 && $this->get_pagenum() > $args['total_pages'] ) { // gitlost for BC don't use wp_doing_ajax().
 			wp_redirect( add_query_arg( 'paged', $args['total_pages'] ) );
 			exit;
 		}
@@ -371,7 +371,7 @@ class UNFC_List_Table {
 <p class="search-box">
 	<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo $text; ?>:</label>
 	<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
-	<?php submit_button( $text, 'button', '', false, array( 'id' => 'search-submit' ) ); ?>
+	<?php submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ); ?>
 </p>
 <?php
 	}
@@ -446,7 +446,7 @@ class UNFC_List_Table {
 	 */
 	protected function bulk_actions( $which = '' ) {
 		if ( is_null( $this->_actions ) ) {
-			$no_new_actions = $this->_actions = $this->get_bulk_actions();
+			$this->_actions = $this->get_bulk_actions();
 			/**
 			 * Filters the list table Bulk Actions drop-down.
 			 *
@@ -460,7 +460,6 @@ class UNFC_List_Table {
 			 * @param array $actions An array of the available bulk actions.
 			 */
 			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions );
-			$this->_actions = array_intersect_assoc( $this->_actions, $no_new_actions );
 			$two = '';
 		} else {
 			$two = '2';
@@ -881,7 +880,7 @@ class UNFC_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		die( 'function UNFC_List_Table::get_columns() must be over-ridden in a sub-class.' );
+		die( 'function UNFC_List_Table::get_columns() must be over-ridden in a sub-class.' ); // gitlost
 	}
 
 	/**
@@ -932,7 +931,7 @@ class UNFC_List_Table {
 	}
 
 	/**
-	 * Public wrapper for UNFC_List_Table::get_default_primary_column_name().
+	 * Public wrapper for UNFC_List_Table::get_default_primary_column_name(). // gitlost
 	 *
 	 * @since 4.4.0
 	 * @access public
@@ -958,7 +957,7 @@ class UNFC_List_Table {
 		// If the primary column doesn't exist fall back to the
 		// first non-checkbox column.
 		if ( ! isset( $columns[ $default ] ) ) {
-			$default = UNFC_List_Table::get_default_primary_column_name();
+			$default = UNFC_List_Table::get_default_primary_column_name(); // gitlost
 		}
 
 		/**
@@ -1164,7 +1163,7 @@ class UNFC_List_Table {
 	}
 
 	/**
-	 * Get a list of CSS classes for the UNFC_List_Table table tag.
+	 * Get a list of CSS classes for the UNFC_List_Table table tag. // gitlost
 	 *
 	 * @since 3.1.0
 	 * @access protected
