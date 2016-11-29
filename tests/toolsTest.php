@@ -107,6 +107,36 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @ticket unfc_unicode_ranges_from_codepoints
+	 */
+    function test_unicode_ranges_from_codepoints() {
+		$out = unfc_unicode_ranges_from_codepoints( array( 0x9, 0x0a, 0xb ) );
+		$this->assertSame( array( array( 0x9, 0xb ) ), $out );
+
+		$codepoints = array(
+			0x9, 0xa, 0xb, 0xc, 0xd, 0x20,
+		);
+
+		$out = unfc_unicode_ranges_from_codepoints( $codepoints );
+		$this->assertSame( array( array( 0x9, 0xd ), 0x20 ), $out );
+
+		$codepoints = array_merge( $codepoints, array( 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa9, 0xaa ) );
+		sort( $codepoints );
+		$out = unfc_unicode_ranges_from_codepoints( $codepoints );
+		$this->assertSame( array( array( 0x9, 0xd ), 0x20, array( 0xa1, 0xa7 ), array( 0xa9, 0xaa ) ), $out );
+
+		$codepoints = array_merge( $codepoints, array( 0x42, 0x43, 0x5f ) );
+		sort( $codepoints );
+		$out = unfc_unicode_ranges_from_codepoints( $codepoints );
+		$this->assertSame( array( array( 0x9, 0xd ), 0x20, array( 0x42, 0x43 ), 0x5f, array( 0xa1, 0xa7 ), array( 0xa9, 0xaa ) ), $out );
+
+		$codepoints = array_merge( $codepoints, array( 0xe, 0xf, 0x21, 0x22, 0x24, 0x44, 0x60, 0xa8 ) );
+		sort( $codepoints );
+		$out = unfc_unicode_ranges_from_codepoints( $codepoints );
+		$this->assertSame( array( array( 0x9, 0xf ), array( 0x20, 0x22 ), 0x24, array( 0x42, 0x44 ), array( 0x5f, 0x60 ), array( 0xa1, 0xaa ) ), $out );
+	}
+
+	/**
 	 * @ticket unfc_utf8_parse_unicode_data
 	 */
     function test_utf8_parse_unicode_data() {
@@ -124,7 +154,7 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	static function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) {
-		$general_cat = $parts[2];
+		$general_cat = $parts[UNFC_UCD_GENERAL_CATEGORY];
 		if ( strlen( $general_cat ) > 1 ) {
 			$general_cat_super = $general_cat[0];
 		} else {
@@ -140,6 +170,27 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 			}
 			$codepoints[ $general_cat_super ][] = $cp;
 		}
+	}
+
+	/**
+	 * @ticket unfc_utf8_parse_scripts
+	 */
+    function test_utf8_parse_scripts() {
+		$file = 'tests/UCD-9.0.0/Scripts.txt';
+
+		$codepoints = unfc_parse_scripts( $file, __CLASS__ . '::parse_scripts_cb' );
+		$this->assertFalse( empty( $codepoints['Latin'] ) );
+		$this->assertFalse( empty( $codepoints['Greek'] ) );
+	}
+
+	static function parse_scripts_cb( &$codepoints, $cp, $script, $parts, $in_interval, $first_cp, $last_cp ) {
+		if ( 'Latin' !== $script && 'Greek' !== $script ) {
+			return;
+		}
+		if ( ! isset( $codepoints[ $script ] ) ) {
+			$codepoints[ $script ] = array();
+		}
+		$codepoints[ $script ][] = $cp;
 	}
 
 	/**

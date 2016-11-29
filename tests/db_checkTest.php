@@ -193,9 +193,9 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$post2 = $this->factory->post->create_and_get( array( 'post_title' => 'post2-title', 'post_type' => 'post' ) );
 		$post3 = $this->factory->post->create_and_get( array( 'post_title' => 'post3-title', 'post_type' => 'post' ) );
 
-		$comment1_1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
-		$comment1_2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_author' => 'comment1-author' . $decomposed_str1 ) );
-		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->post_id, 'comment_author' => 'comment2-author', 'comment_content' => 'comment2-content' ) );
+		$comment1_1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->ID, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
+		$comment1_2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->ID, 'comment_author' => 'comment1-author' . $decomposed_str1 ) );
+		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->ID, 'comment_author' => 'comment2-author', 'comment_content' => 'comment2-content' ) );
 
 		global $unfc_normalize;
 		$admin_notices = array();
@@ -208,7 +208,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		// Meta.
 
-		$comment3_id = $this->factory->comment->create( array( 'comment_post_ID' => $post3->post_id, 'comment_author' => 'comment3-author', 'comment_content' => 'comment3-content' ) );
+		$comment3_id = $this->factory->comment->create( array( 'comment_post_ID' => $post3->ID, 'comment_author' => 'comment3-author', 'comment_content' => 'comment3-content' ) );
 
 		$meta1_id = add_comment_meta( $comment1_1_id, 'meta_key1', 'meta_value1' . $decomposed_str1 );
 		$meta2_id = add_comment_meta( $comment2_id, 'meta_key2', 'meta_value2' . $decomposed_str1 );
@@ -874,9 +874,9 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$this->assertTrue( is_int( $post2->ID ) );
 		$num_items++;
 
-		$comment1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
+		$comment1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->ID, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
 		$num_items++;
-		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->post_id, 'comment_author' => 'comment2-author', 'comment_content' => '' ) );
+		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->ID, 'comment_author' => 'comment2-author', 'comment_content' => '' ) );
 
 		$user1_id = $this->factory->user->create( array( 'user_login' => 'user1_login', 'display_name' => 'display1' . $decomposed_str1 ) );
 		$num_items++;
@@ -1158,10 +1158,10 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 
 		$meta3_id = add_post_meta( $post3->ID, 'meta_key3', 'meta_value3' );
 
-		$comment1_1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
+		$comment1_1_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->ID, 'comment_content' => 'comment1-content' . $decomposed_str1 ) );
 		$num_updates++;
-		$comment1_2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->post_id, 'comment_author' => 'comment1-author' . $decomposed_str1 ) );
-		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->post_id, 'comment_author' => 'comment2-author', 'comment_content' => '' ) );
+		$comment1_2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post1->ID, 'comment_author' => 'comment1-author' . $decomposed_str1 ) );
+		$comment2_id = $this->factory->comment->create( array( 'comment_post_ID' => $post2->ID, 'comment_author' => 'comment2-author', 'comment_content' => '' ) );
 		$num_updates++;
 
 		$user1_id = $this->factory->user->create( array( 'user_login' => 'user1_login', 'display_name' => 'display1' . $decomposed_str1 ) );
