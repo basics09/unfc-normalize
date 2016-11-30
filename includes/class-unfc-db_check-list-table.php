@@ -176,7 +176,6 @@ class UNFC_DB_Check_List_Table extends UNFC_List_Table {
 				$menu_id = $this->get_menu_id( $item['id'] );
 				if ( $menu_id ) {
 					$url = admin_url( 'nav-menus.php?action=edit&menu=' . $menu_id );
-					/* translators: %s: menu item name */
 					$aria_label_html = sprintf( ' aria-label="%s"', esc_attr( __( 'Edit the menu containing this menu item', 'unfc-normalize' ) ) );
 				}
 			} else {
