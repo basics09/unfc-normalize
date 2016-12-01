@@ -79,7 +79,7 @@ global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer
 	}
 	add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
 
-= Does it have a tool to normalize the filenames of files uploaded prior to its enabling?
+= Does it have a tool to normalize the filenames of files uploaded prior to its enabling? =
 
 No, it doesn't. Alas, such files would have to re-uploaded. However if (enough - or more like any) interest were expressed...
 
