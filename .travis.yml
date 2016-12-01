@@ -11,26 +11,29 @@ php:
 - 5.6
 
 env:
+- WP_VERSION=nightly
 - WP_VERSION=latest
 - WP_VERSION=4.6.1
-- WP_VERSION=4.5.3
-- WP_VERSION=4.4.4
-- WP_VERSION=4.3.5
-- WP_VERSION=4.2.9
-- WP_VERSION=4.1.12
-- WP_VERSION=4.0.12
+- WP_VERSION=4.5.4
+- WP_VERSION=4.4.5
+- WP_VERSION=4.3.6
+- WP_VERSION=4.2.10
+- WP_VERSION=4.1.13
+- WP_VERSION=4.0.13
 - WP_VERSION=3.9.13
 
 matrix:
   exclude:
     - php: 7
-      env: WP_VERSION=4.2.9
+      env: WP_VERSION=4.2.10
     - php: 7
-      env: WP_VERSION=4.1.12
+      env: WP_VERSION=4.1.13
     - php: 7
-      env: WP_VERSION=4.0.12
+      env: WP_VERSION=4.0.13
     - php: 7
       env: WP_VERSION=3.9.13
+  allow_failures:
+    - env: WP_VERSION=nightly
 
 install:
 - npm install grunt-cli
