@@ -3,8 +3,7 @@ language: php
 sudo: false
 
 php:
-- 7.1
-- 7.0
+- 7
 - 5.2
 - 5.3
 - 5.4
@@ -25,21 +24,13 @@ env:
 
 matrix:
   exclude:
-    - php: 7.1
+    - php: 7
       env: WP_VERSION=4.2.10
-    - php: 7.1
+    - php: 7
       env: WP_VERSION=4.1.13
-    - php: 7.1
+    - php: 7
       env: WP_VERSION=4.0.13
-    - php: 7.1
-      env: WP_VERSION=3.9.13
-    - php: 7.0
-      env: WP_VERSION=4.2.10
-    - php: 7.0
-      env: WP_VERSION=4.1.13
-    - php: 7.0
-      env: WP_VERSION=4.0.13
-    - php: 7.0
+    - php: 7
       env: WP_VERSION=3.9.13
   allow_failures:
     - env: WP_VERSION=nightly
