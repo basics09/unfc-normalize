@@ -346,7 +346,7 @@ class UNFC_Normalize {
 	 * Called on 'init' action.
 	 */
 	function init() {
-		unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
+		//unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
 
 		$this->base = '';
 		// TODO: Reset $this->added_filters ??
@@ -558,7 +558,7 @@ class UNFC_Normalize {
 			}
 		}
 
-		unfc_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
+		//unfc_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
 	}
 
 	/**

@@ -32,7 +32,7 @@ For browsers without normalization support, the [unorm polyfill](https://github.
 
 = Background =
 
-For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://coretrac.wordpress.org/ticket/30130)
+For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130)
 and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
 
 The plugin also works around the Safari-specific issues raised by the WP Trac ticket [#22363 Accents in attachment filenames should be sanitized](https://core.trac.wordpress.org/ticket/22363).
