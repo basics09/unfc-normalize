@@ -158,6 +158,14 @@ var unfc_normalize = unfc_normalize || {}; // Our namespace.
 				$msgs.hide();
 				$( 'h1', $db_check ).first().after( $msg );
 				unfc_normalize.makeNoticesDismissible( $db_check );
+				if ( $.browser && $.browser.safari ) {
+					// Safari apparently suspends rendering in a submit handler, so hack around it. See http://stackoverflow.com/a/1164177/664741
+					// Still no spinner, but better than nothing.
+					e.preventDefault();
+					$( '.spinner', $msg ).removeClass( 'is-active' ); // Hide as it doesn't spin.
+					$this.unbind( 'click' );
+					setTimeout( function() { $this.click(); }, 0 );
+				}
 			} );
 		}
 	};
@@ -170,12 +178,12 @@ var unfc_normalize = unfc_normalize || {}; // Our namespace.
 		if ( $db_check_list.length ) {
 			$form = $( 'form.unfc_db_check_list_form', $db_check_list );
 			if ( $form.length ) {
-				// Remove the "wp-admin/common.js" #17685 submit handler which doesn't apply here & is buggy anyway.
+				// Remove the "wp-admin/js/common.js" #17685 submit handler which doesn't apply here & is buggy anyway.
 				$form.off( 'submit' );
 				// Save some round-tripping to the server for nowt.
 				$( '#doaction, #doaction2', $db_check_list ).click( function ( e ) {
 					var $bulk_action = $( '#bulk-action-selector-' + ( 'doaction' === this.id ? 'top' : 'bottom' ) + ' option:selected', $db_check_list ),
-						action = $bulk_action.val(), $current_page = $( 'input#current-page-selector', $db_check_list ), $msg, $msgs, checkeds;
+						action = $bulk_action.val(), $msg, $msgs, checkeds;
 					if ( '-1' !== action ) {
 						checkeds = $.makeArray( $( 'input[name="item[]"]:checked', $db_check_list ).map( function () {
 							return this.value;

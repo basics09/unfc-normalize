@@ -21,7 +21,6 @@
 				<directory>perf</directory>
 				<directory>php-utf8</directory>
 				<directory>tests</directory>
-				<file>debug.php</file>
 				<file>Symfony/Normalizer2.php</file>
 				<file>Symfony/NormalizerO.php</file>
 				<file>Symfony/NormalizerS.php</file>

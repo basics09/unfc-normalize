@@ -6,9 +6,7 @@
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! defined( 'UNFC_DEBUG' ) ) define( 'UNFC_DEBUG', defined( 'WP_DEBUG' ) ? WP_DEBUG : false );
-
-if ( UNFC_DEBUG ) :
+if ( defined( 'UNFC_DEBUG' ) && UNFC_DEBUG ) :
 
 if ( ! defined( 'UNFC_DEBUG_PRINT_LIMIT' ) ) define( 'UNFC_DEBUG_PRINT_LIMIT', 256 );
 
@@ -31,6 +29,7 @@ function unfc_error_log() {
  */
 function unfc_debug_log() {
 	if ( ! UNFC_DEBUG ) return '';
+	if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) return '';
 	$func_get_args = func_get_args();
 	$ret = unfc_debug_trace( debug_backtrace(), $func_get_args );
 	$ret[0] = $ret[0] . "\n\t";

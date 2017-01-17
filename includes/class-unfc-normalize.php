@@ -346,7 +346,11 @@ class UNFC_Normalize {
 	 * Called on 'init' action.
 	 */
 	function init() {
-		//unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
+		// Debug functions - no-ops unless UNFC_DEBUG is set.
+		if ( ! function_exists( 'unfc_debug_log' ) ) {
+			require dirname( __FILE__ ) . '/debug.php';
+		}
+		unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
 
 		$this->base = '';
 		// TODO: Reset $this->added_filters ??
@@ -558,7 +562,7 @@ class UNFC_Normalize {
 			}
 		}
 
-		//unfc_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
+		unfc_debug_log( "base=", $this->base, ", added_filters=", $this->added_filters );
 	}
 
 	/**
@@ -823,8 +827,8 @@ class UNFC_Normalize {
 	 * Called on 'admin_enqueue_scripts' and 'wp_enqueue_scripts' actions.
 	 */
 	function enqueue_scripts() {
-		$suffix = defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG ? '' : '.min';
-		$rangyinputs_suffix = defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG ? '-src' : '';
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$rangyinputs_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '-src' : '';
 
 		// Load IE8 Array.prototype.reduceRight polyfill for unorm.
 		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", UNFC_FILE ), array(), UNFC_VERSION );
@@ -844,10 +848,10 @@ class UNFC_Normalize {
 		// Our parameters.
 		$params = array(
 			'please_wait_msg' => '<div class="notice notice-warning inline"><p>' . __( 'Please wait...', 'unfc-normalize' )
-									. '<span class="spinner is-active" style="float:none;margin-top:0;"></span></p></div>',
+									. '<span class="spinner is-active" style="float:none;margin-top:-2px;"></span></p></div>',
 			'no_items_selected_msg' => '<div class="notice notice-warning is-dismissible inline"><p>' . $this->db_check_error_msg( UNFC_DB_CHECK_SELECT_ERROR ) . '</p></div>',
 			'is' => array( // Gets around stringification of direct localize elements.
-				'script_debug' => defined( "SCRIPT_DEBUG" ) && SCRIPT_DEBUG,
+				'script_debug' => defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG && defined( 'UNFC_DEBUG' ) && UNFC_DEBUG,
 				'dont_paste' => $this->dont_paste,
 				'db_check_loaded' => $this->db_check_loaded,
 			),
@@ -2479,9 +2483,4 @@ class UNFC_Normalize {
 		$ret = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $key ) );
 		return $ret;
 	}
-}
-
-// Debug functions - no-ops unless WP_DEBUG is set.
-if ( ! function_exists( 'unfc_debug_log' ) ) {
-	require dirname( __FILE__ ) . '/debug.php';
 }

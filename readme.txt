@@ -2,8 +2,8 @@
 Contributors: gitlost, zodiac1978
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC
 Requires at least: 3.9.13
-Tested up to: 4.7.0
-Stable tag: 1.0.5
+Tested up to: 4.7.1
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,45 +11,33 @@ Normalizes UTF-8 input to Normalization Form C.
 
 == Description ==
 
-This is a souped-up version of the [Normalizer plugin](https://wordpress.org/plugins/normalizer/ "Normalizer - WordPress Plugins") by
-[Torsten Landsiedel](https://profiles.wordpress.org/zodiac1978/).
+This is a souped-up version of the [Normalizer plugin](https://wordpress.org/plugins/normalizer/ "Normalizer - WordPress Plugins") by [Torsten Landsiedel](https://profiles.wordpress.org/zodiac1978/).
 
-It adds WP filters to normalize UTF-8 data coming into the system to the
-[de facto web standard Normalization Form C](https://www.w3.org/International/docs/charmod-norm/#choice-of-normalization-form "Choice of Normalization Form").
-The Unicode Consortium report is at [Unicode Normalization Forms](http://www.unicode.org/reports/tr15/).
+It adds WP filters to normalize UTF-8 data coming into the system to the [de facto web standard Normalization Form C](https://www.w3.org/International/docs/charmod-norm/#choice-of-normalization-form "Choice of Normalization Form").  The Unicode Consortium report is at [Unicode Normalization Forms](http://www.unicode.org/reports/tr15/).
 
 = Polyfills =
 
-For best performance [install](http://php.net/manual/en/intl.installation.php) (if possible)
-the [PHP Internationalization extension `Intl`](http://php.net/manual/en/intro.intl.php),
-which includes the PHP class `Normalizer`.
+For best performance [install](http://php.net/manual/en/intl.installation.php) (if possible) the [PHP Internationalization extension `Intl`](http://php.net/manual/en/intro.intl.php), which includes the PHP class `Normalizer`.
 
-However the plugin works without the PHP `Intl` extension being installed, as it uses (a modified version of)
-the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer).
+However the plugin works without the PHP `Intl` extension being installed, as it uses (a modified version of) the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer).
 
-Also text pasted into (most) inputs is normalized immediately using the JavaScript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).
-For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
+Also text pasted into (most) inputs is normalized immediately using the JavaScript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).  For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
 = Background =
 
-For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130)
-and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
+For further info, see the WP Trac ticket [#30130 Normalize characters with combining marks to precomposed characters](https://core.trac.wordpress.org/ticket/30130) and this [Make WP Core comment](https://make.wordpress.org/core/2016/05/17/may-17-feature-projects-chat-and-prompt/#comment-30300).
 
 The plugin also works around the Safari-specific issues raised by the WP Trac ticket [#22363 Accents in attachment filenames should be sanitized](https://core.trac.wordpress.org/ticket/22363).
 
 = Scanner =
 
-For existing data, the plugin includes an administration tool to scan and normalize the database.
-**Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).
-This is especially important if your database contains non-normalized serialized data, as this plugin uses the same suck-and-see technique as interconnect/it's
-[Database Search and Replace Script in PHP](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/) to deal with serialized
-data, and is fallible.
+For existing data, the plugin includes an administration tool to scan and normalize the database.  **Important:** before using this tool to normalize, please [backup your database](https://codex.wordpress.org/WordPress_Backups).  This is especially important if your database contains non-normalized serialized data, as this plugin uses the same suck-and-see technique as interconnect/it's [Database Search and Replace Script in PHP](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/) to deal with serialized data, and is fallible.
 
 = And =
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.0.13, and on WP 3.9.13 to 4.7.0.
+The plugin should run on PHP 5.2.17 to 7.1, and on WP 3.9.13 to 4.7.1.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -61,8 +49,7 @@ Install in the standard way via the 'Plugins' menu in WordPress and then activat
 
 = How can I normalize extra stuff? =
 
-You can add normalization to anything that passes its content through a filter. The canonical way is to use the `unfc_extra_filters` filter which returns an array of filter names -
-for instance, in your theme's `functions.php` file, add:
+You can add normalization to anything that passes its content through a filter. The canonical way is to use the `unfc_extra_filters` filter which returns an array of filter names - for instance, in your theme's `functions.php` file, add:
 
 	function mytheme_unfc_extra_filters( $extra_filters ) {
 		$extra_filters[] = 'myfilter';
@@ -70,14 +57,15 @@ for instance, in your theme's `functions.php` file, add:
 	}
 	add_filter( 'unfc_extra_filters', 'mytheme_unfc_extra_filters' );
 
-Note that the `unfc_extra_filters` filter is only called in the administration backend. You can also add a filter directly, to be called in the frontend or backend, by referencing the
-global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer` polyfill is loaded if you don't have the PHP `Intl` extension installed:
+Note that the `unfc_extra_filters` filter is only called in the administration backend. You can also add a filter directly, to be called in the frontend or backend, by referencing the global PHP variable `unfc_normalize`, but you should ensure that the `Normalizer` polyfill is loaded if you don't have the PHP `Intl` extension installed:
 
 	global $unfc_normalize;
-	if ( ! function_exists( 'normalizer_is_normalized' ) ) { // If the "Intl" extension is not installed...
-		$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
+	if ( $unfc_normalize ) {
+		if ( ! function_exists( 'normalizer_is_normalized' ) ) { // If the "Intl" extension is not installed...
+			$unfc_normalize->load_unfc_normalizer_class(); // ...load the polyfill.
+		}
+		add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
 	}
-	add_filter( 'myfilter', array( $unfc_normalize, 'normalize' ), 6 /* Or whatever priority you choose */ );
 
 = Does it have a tool to normalize the filenames of files uploaded prior to its enabling? =
 
@@ -91,6 +79,11 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 4. Front page of the database scan administration tool.
 
 == Changelog ==
+
+= 1.0.6 =
+* Require explicit define of UNFC_DEBUG. Move load of debug file to 'init'.
+* Safari submit workaround.
+* WP 4.7.1 compatible.
 
 = 1.0.5 =
 * Do load of normalizer in slugs list constructor not items list. Fixes slugs listing crash when Intl extension not installed.
@@ -132,6 +125,9 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 * Initial version after renaming from tl-normalize.
 
 == Upgrade Notice ==
+
+= 1.0.6 =
+Less noisy when WP_DEBUG set.
 
 = 1.0.5 =
 Fixes fatal error on check slugs listing in DB check tool when Intl extension not available.
