@@ -13,9 +13,20 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 define( 'SUBDOMAIN_INSTALL', true );
 define( 'UNFC_TESTING', true );
-require $_tests_dir . '/includes/bootstrap.php';
 
 global $wp_version;
+if ( version_compare( $wp_version, '4.7.5', '<' ) ) {
+	/**
+	 * Migration fixer for PHPUnit 6
+	 * See https://core.trac.wordpress.org/ticket/39822
+	 */
+	if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
+		require __DIR__ . '/phpunit6-compat.php';
+	}
+}
+
+require $_tests_dir . '/includes/bootstrap.php';
+
 if ( version_compare( $wp_version, '4.1', '<' ) ) {
 	remove_action('init', 'wp_widgets_init', 1);
 }
