@@ -25,25 +25,7 @@ if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
 require $_tests_dir . '/includes/bootstrap.php';
 
 if ( ! class_exists( 'PHPUnit_Util_Test' ) ) {
-	class PHPUnit_Util_Test extends PHPUnit\Util\Test {
-
-		public static function getTickets( $className, $methodName ) {
-			$annotations = self::parseTestMethodAnnotations( $className, $methodName );
-
-			$tickets = array();
-
-			if ( isset( $annotations['class']['ticket'] ) ) {
-				$tickets = $annotations['class']['ticket'];
-			}
-
-			if ( isset( $annotations['method']['ticket'] ) ) {
-				$tickets = array_merge( $tickets, $annotations['method']['ticket'] );
-			}
-
-			return array_unique( $tickets );
-		}
-
-	}
+	require __DIR__ . '/phpunit6-compat2.php';
 }
 
 global $wp_version;
