@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: UNFC Nörmalize 1.0.6\n"
+"Project-Id-Version: UNFC Nörmalize 1.0.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/unfc-normalize\n"
 "POT-Creation-Date: 2016-07-30 18:01:12+00:00\n"
 "MIME-Version: 1.0\n"
@@ -257,213 +257,213 @@ msgid ""
 "been deactivated."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:850
+#: includes/class-unfc-normalize.php:851
 msgid "Please wait..."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:981 includes/class-unfc-normalize.php:1202
+#: includes/class-unfc-normalize.php:982 includes/class-unfc-normalize.php:1203
 msgid "UNFC Nörmalize Database Check"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:981
+#: includes/class-unfc-normalize.php:982
 msgid "UNFC Nörm Db Check"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:995 includes/class-unfc-normalize.php:1195
+#: includes/class-unfc-normalize.php:996 includes/class-unfc-normalize.php:1196
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1261
+#: includes/class-unfc-normalize.php:1262
 msgid "Rescan the Database"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1263
+#: includes/class-unfc-normalize.php:1264
 msgid "Scan the Database"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1271
+#: includes/class-unfc-normalize.php:1272
 msgid "You can scan the database for non-normalized data (nothing will be updated):"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1276
+#: includes/class-unfc-normalize.php:1277
 msgid ""
 "Scanning the database can take a long time depending on the amount and type "
 "of data you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1293
+#: includes/class-unfc-normalize.php:1294
 msgid ""
 "You can normalize the non-normalized data found in the database. The "
 "database <strong>will be updated</strong>."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1296
+#: includes/class-unfc-normalize.php:1297
 msgid ""
 "<strong>Important:</strong> before updating, please <a "
 "href=\"https://codex.wordpress.org/WordPress_Backups\">back up your "
 "database</a>."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1298
+#: includes/class-unfc-normalize.php:1299
 msgid "Normalize All"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1300
+#: includes/class-unfc-normalize.php:1301
 msgid ""
 "Normalizing can take a long time depending on the amount and type of data "
 "you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1316
+#: includes/class-unfc-normalize.php:1317
 #. translators: %1$s: formatted maximum number of non-normalized items listed;
 #. %2$s: formatted total number of non-normalized items found.
 msgid "First %1$s Non-Normalized Items of %2$s Found"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1320
+#: includes/class-unfc-normalize.php:1321
 msgid "Non-Normalized Items"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1346
+#: includes/class-unfc-normalize.php:1347
 msgid "Rescan Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1348
+#: includes/class-unfc-normalize.php:1349
 msgid "Scan Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1356
+#: includes/class-unfc-normalize.php:1357
 msgid ""
 "You can scan the database for slugs that could be percent-encoded from "
 "non-normalized data (nothing will be updated):"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1359
+#: includes/class-unfc-normalize.php:1360
 msgid "A list of posts and/or terms with suspect slugs will be displayed."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1364
+#: includes/class-unfc-normalize.php:1365
 msgid ""
 "Scanning the slugs can take a long time depending on the amount and type of "
 "data you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1380
+#: includes/class-unfc-normalize.php:1381
 #. translators: %1$s: formatted maximum number of non-normalized slugs listed;
 #. %2$s: formatted total number of non-normalized slugs found.
 msgid "First %1$s Non-Normalized Slugs of %2$s Found"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1384
+#: includes/class-unfc-normalize.php:1385
 msgid "Non-Normalized Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1509
+#: includes/class-unfc-normalize.php:1510
 msgid "Database error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1510
+#: includes/class-unfc-normalize.php:1511
 msgid "Meta data error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1511
+#: includes/class-unfc-normalize.php:1512
 msgid "Parameters error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1512
+#: includes/class-unfc-normalize.php:1513
 msgid "Transient has expired. Please re-scan."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1513
+#: includes/class-unfc-normalize.php:1514
 msgid "Data out of sync!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1514
+#: includes/class-unfc-normalize.php:1515
 msgid "No items selected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1589
-#: includes/class-unfc-normalize.php:2025
+#: includes/class-unfc-normalize.php:1590
+#: includes/class-unfc-normalize.php:2026
 msgid "..."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1626
+#: includes/class-unfc-normalize.php:1627
 #. translators: %s: formatted number of items detected.
 msgid "%s non-normalized item detected."
 msgid_plural "%s non-normalized items detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1629
+#: includes/class-unfc-normalize.php:1630
 msgid "<strong>No</strong> non-normalized data detected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1807
+#: includes/class-unfc-normalize.php:1808
 #. translators: %s: formatted number of items normalized.
 msgid "%s item normalized."
 msgid_plural "%s items normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1809
-#: includes/class-unfc-normalize.php:2253
+#: includes/class-unfc-normalize.php:1810
+#: includes/class-unfc-normalize.php:2254
 msgid "Nothing updated!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1814
+#: includes/class-unfc-normalize.php:1815
 #. translators: %s: formatted number of items locked.
 msgid "%s item not normalized, somebody is editing it."
 msgid_plural "%s items not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1820
+#: includes/class-unfc-normalize.php:1821
 #. translators: %s: formatted number of items that failed to normalize.
 msgid "%s item not normalized, failed to normalize."
 msgid_plural "%s items not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2059
+#: includes/class-unfc-normalize.php:2060
 #. translators: %s: formatted number of percent-encoded items detected.
 msgid "%s non-normalized percent-encoded slug detected."
 msgid_plural "%s non-normalized percent-encoded slugs detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2063
+#: includes/class-unfc-normalize.php:2064
 msgid "<strong>No</strong> non-normalized percent-encoded slugs detected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:2251
+#: includes/class-unfc-normalize.php:2252
 #. translators: %s: formatted number of slugs normalized.
 msgid "%s slug normalized."
 msgid_plural "%s slugs normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2258
+#: includes/class-unfc-normalize.php:2259
 #. translators: %s: formatted number of items locked.
 msgid "%s slug not normalized, somebody is editing it."
 msgid_plural "%s slugs not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2264
+#: includes/class-unfc-normalize.php:2265
 #. translators: %s: formatted number of slugs not found.
 msgid "%s slug not normalized, no longer exists."
 msgid_plural "%s slugs not normalized, no longer exist."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2270
+#: includes/class-unfc-normalize.php:2271
 #. translators: %s: formatted number of slugs not non-normalized.
 msgid "%s slug not normalized, no longer non-normalized."
 msgid_plural "%s slugs not normalized, no longer non-normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2276
+#: includes/class-unfc-normalize.php:2277
 #. translators: %s: formatted number of slugs that failed to normalize.
 msgid "%s slug not normalized, failed to normalize."
 msgid_plural "%s slugs not normalized, failed to normalize."

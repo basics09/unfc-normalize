@@ -1,6 +1,8 @@
 module.exports = function( grunt ) { //The wrapper function
 
 	require( 'load-grunt-tasks' )( grunt );
+	var shell = require( 'shelljs' );
+	var wp_tests_dir = '/var/www/wordpress-develop/tests/phpunit';
 
 	// Project configuration & task configuration
 	grunt.initConfig( {
@@ -110,14 +112,8 @@ module.exports = function( grunt ) { //The wrapper function
 			}
 		},
 
-		phpunit: {
-			classes: {
-				dir: 'tests/'
-			},
-			options: {
-				bin: 'PHPRC=. WP_TESTS_DIR=/var/www/wordpress-develop/tests/phpunit phpunit',
-				configuration: 'phpunit.xml'
-			}
+		qunit: {
+			all: [ 'tests/qunit/index.html' ]
 		},
 
 		clean: {
@@ -130,7 +126,11 @@ module.exports = function( grunt ) { //The wrapper function
 	grunt.registerTask( 'default', [ 'uglify', 'wp_readme_to_markdown', 'makepot', 'compress' ] );
 
 	// Creating a custom task
-	grunt.registerTask( 'test', [ 'jshint', 'phpunit' ] );
+	grunt.registerTask( 'phpunit', function () {
+		shell.exec( 'PHPRC=. WP_TESTS_DIR=' + ( process.env.WP_TESTS_DIR || wp_tests_dir ) + ' phpunit' );
+	} );
 
-	grunt.registerTask( 'test_build', [ 'clean', 'uglify' ] );
+	grunt.registerTask( 'test', [ 'jshint', 'phpunit', 'qunit' ] );
+
+	grunt.registerTask( 'test_qunit', [ 'jshint', 'qunit' ] );
 };

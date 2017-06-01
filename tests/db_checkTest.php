@@ -1262,7 +1262,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0]['args'];
 		$this->assertSame( 2, count( $args ) );
-		$this->assertTrue( false !== stripos( $args[0][1], $num_updates ) );
+		$this->assertTrue( false !== stripos( $args[0][1], (string) $num_updates ) );
 		$this->assertTrue( false !== stripos( $args[1][1], '1' ) ); // Locked.
 
 		self::clear_func_args();

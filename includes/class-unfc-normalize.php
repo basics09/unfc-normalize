@@ -348,8 +348,9 @@ class UNFC_Normalize {
 	function init() {
 		// Debug functions - no-ops unless UNFC_DEBUG is set.
 		if ( ! function_exists( 'unfc_debug_log' ) ) {
-			require dirname( __FILE__ ) . '/debug.php';
+			require self::$dirname . '/includes/debug.php';
 		}
+
 		unfc_debug_log( "dont_js=", $this->dont_js, ", dont_paste=", $this->dont_paste, ", dont_filter=", $this->dont_filter, ", no_normalizer=", $this->no_normalizer );
 
 		$this->base = '';
@@ -831,19 +832,19 @@ class UNFC_Normalize {
 		$rangyinputs_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '-src' : '';
 
 		// Load IE8 Array.prototype.reduceRight polyfill for unorm.
-		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", UNFC_FILE ), array(), UNFC_VERSION );
+		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", UNFC_FILE ), array(), UNFC_VERSION, true /*in_footer*/ );
 
 		global $wp_scripts; // For < 4.2 compat, don't use wp_script_add_data().
 		$wp_scripts->add_data( 'unfc-ie8', 'conditional', 'lt IE 9' );
 
 		// Load the javascript normalize polyfill https://github.com/walling/unorm
-		wp_enqueue_script( 'unfc-unorm', plugins_url( "unorm/lib/unorm.js", UNFC_FILE ), array( 'unfc-ie8' ), '1.4.1' ); // Note unorm doesn't come with minified so don't use.
+		wp_enqueue_script( 'unfc-unorm', plugins_url( "unorm/lib/unorm.js", UNFC_FILE ), array( 'unfc-ie8' ), '1.4.1', true /*in_footer*/ ); // Note unorm doesn't come with minified so don't use.
 
 		// Load the getSelection/setSelection jquery plugin https://github.com/timdown/rangyinputs
-		wp_enqueue_script( 'unfc-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", UNFC_FILE ), array( 'jquery' ), '1.2.0' );
+		wp_enqueue_script( 'unfc-rangyinputs', plugins_url( "rangyinputs/rangyinputs-jquery{$rangyinputs_suffix}.js", UNFC_FILE ), array( 'jquery' ), '1.2.0', true /*in_footer*/ );
 
 		// Our script. Normalizes on paste in tinymce and in admin input/textareas and in some media stuff and in front-end input/textareas.
-		wp_enqueue_script( 'unfc-normalize', plugins_url( "js/unfc-normalize{$suffix}.js", UNFC_FILE ), array( 'jquery', 'unfc-rangyinputs', 'unfc-unorm' ), UNFC_VERSION );
+		wp_enqueue_script( 'unfc-normalize', plugins_url( "js/unfc-normalize{$suffix}.js", UNFC_FILE ), array( 'jquery', 'unfc-rangyinputs', 'unfc-unorm' ), UNFC_VERSION, true /*in_footer*/ );
 
 		// Our parameters.
 		$params = array(

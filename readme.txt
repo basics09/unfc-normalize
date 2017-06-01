@@ -2,8 +2,8 @@
 Contributors: gitlost, zodiac1978
 Tags: Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC
 Requires at least: 3.9.13
-Tested up to: 4.7.1
-Stable tag: 1.0.6
+Tested up to: 4.8.0
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ For best performance [install](http://php.net/manual/en/intl.installation.php) (
 
 However the plugin works without the PHP `Intl` extension being installed, as it uses (a modified version of) the [Symfony `Normalizer` polyfill](https://github.com/symfony/polyfill/tree/master/src/Intl/Normalizer).
 
-Also text pasted into (most) inputs is normalized immediately using the JavaScript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize).  For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
+Also text pasted into (most) inputs is normalized immediately using the JavaScript [`normalize()` method](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize). For browsers without normalization support, the [unorm polyfill](https://github.com/walling/unorm) is used.
 
 = Background =
 
@@ -37,7 +37,7 @@ For existing data, the plugin includes an administration tool to scan and normal
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.1, and on WP 3.9.13 to 4.7.1.
+The plugin should run on PHP 5.2.17 to 7.1, and on WP 3.9.13 to 4.8.0.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -79,6 +79,10 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 4. Front page of the database scan administration tool.
 
 == Changelog ==
+
+= 1.0.7 (X Jun 2017) =
+* Update qunit; run in travis.
+* WP 4.8.0 compatible.
 
 = 1.0.6 =
 * Require explicit define of UNFC_DEBUG. Move load of debug file to 'init'.
@@ -125,6 +129,9 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 * Initial version after renaming from tl-normalize.
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+Tested with WordPress 4.8.0.
 
 = 1.0.6 =
 Less noisy when WP_DEBUG set.

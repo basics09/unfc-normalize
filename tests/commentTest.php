@@ -1,4 +1,8 @@
 <?php
+
+global $wp_version;
+error_log( "\nWordPress $wp_version\n" );
+
 /**
  * Test comment filters.
  *

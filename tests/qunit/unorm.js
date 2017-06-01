@@ -3,7 +3,7 @@ jQuery( function() {
 	module( 'unorm' );
 
 	test( 'Basic NFC Normalizations', function() {
-		var result, i;
+		var strs, i, str, result;
 
 		strs = [
 			'\u0303\u00d2\u055b',
