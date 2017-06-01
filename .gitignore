@@ -1,4 +1,11 @@
 .*.swp
-node_modules
 *.mo
-tests/UCD*
+*.patch
+*.pdf
+*.pl
+node_modules
+log
+Symfony/Normalizer2.php
+Symfony/NormalizerO.php
+Symfony/NormalizerS.php
+Symfony/unfc_ins.php
