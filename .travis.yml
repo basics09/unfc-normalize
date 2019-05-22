@@ -3,71 +3,26 @@ language: php
 sudo: false
 dist: trusty
 
-php:
-- 7.1
-- 7.0
-- 5.2
-  dist: precise
-- 5.3
-  dist: precise
-- 5.4
-- 5.5
-- 5.6
-
-env:
-- WP_VERSION=4.6.14
-- WP_VERSION=4.5.17
-- WP_VERSION=4.4.10
-- WP_VERSION=4.3.11
-- WP_VERSION=4.2.15
-- WP_VERSION=4.1.18
-- WP_VERSION=4.0.18
-- WP_VERSION=3.9.13
-
 matrix:
-  exclude:
+  include:
     - php: 7.1
-      env: WP_VERSION=4.6.14
-    - php: 7.1
-      env: WP_VERSION=4.5.17
-    - php: 7.1
+      env: WP_VERSION=4.6.6
+    - php: 7.0
+      env: WP_VERSION=4.5.9
+    - php: 5.6
       env: WP_VERSION=4.4.10
-    - php: 7.1
+    - php: 5.6
       env: WP_VERSION=4.3.11
-    - php: 7.1
+    - php: 5.5
       env: WP_VERSION=4.2.15
-    - php: 7.1
+    - php: 5.4
       env: WP_VERSION=4.1.18
-    - php: 7.1
+    - php: 5.3
       env: WP_VERSION=4.0.18
-    - php: 7.1
+      dist: precise
+    - php: 5.2
       env: WP_VERSION=3.9.13
-    - php: 7.0
-      env: WP_VERSION=4.2.15
-    - php: 7.0
-      env: WP_VERSION=4.1.18
-    - php: 7.0
-      env: WP_VERSION=4.0.18
-    - php: 7.0
-      env: WP_VERSION=3.9.13
-    - php: 5.3
-      env: WP_VERSION=4.2.15
-    - php: 5.3
-      env: WP_VERSION=4.1.18
-    - php: 5.3
-      env: WP_VERSION=4.0.18
-    - php: 5.4
-      env: WP_VERSION=4.5.17
-    - php: 5.4
-      env: WP_VERSION=4.4.10
-    - php: 5.4
-      env: WP_VERSION=4.3.11
-    - php: 5.5
-      env: WP_VERSION=4.5.8
-    - php: 5.5
-      env: WP_VERSION=4.3.11
-    - php: 5.5
-      env: WP_VERSION=4.1.18
+      dist: precise
 
 install:
 - npm install grunt-cli
