@@ -106,7 +106,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 		self::$unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && defined( 'INTL_ICU_VERSION' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
 		self::$REIWA = self::chr( 0x32FF ); // Unicode 12.1.0 addition - avoid for comparison to PHP Normalizer built against ICU < 64.2.
-		self::$ignore_REIWA = version_compare( INTL_ICU_VERSION, '64.2', '<' );
+		self::$ignore_REIWA = ! defined( 'INTL_ICU_VERSION' ) || version_compare( INTL_ICU_VERSION, '64.2', '<' );
 
 		global $argv;
 		$grep = preg_grep( '/--coverage/', $argv );
