@@ -138,6 +138,12 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 			),
 		);
 
+		global $wp_version;
+		if ( version_compare( $wp_version, '5.1', '>=' ) ) {
+			// Due to bug #46338 https://core.trac.wordpress.org/ticket/46338 make arrayish, defeating purpose.
+			$_POST['tax_input']['category'] = array( $_POST['tax_input']['category'] );
+		}
+
 		do_action( 'init' );
 
 		global $unfc_normalize;
@@ -153,8 +159,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 		$this->assertSame( UNFC_Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 
-		global $wp_version;
-		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
+		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
 			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta_input']['meta_input_key'] ), $out );
@@ -182,7 +187,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
 		global $wpdb;
 
-		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
+		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
 			$meta_input_key_id = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $id, 'meta_input_key' ) );
 			$this->assertTrue( is_numeric( $meta_input_key_id ) );
 			$this->assertTrue( $meta_input_key_id > 0 );
@@ -212,7 +217,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 		$out = edit_post();
 		$this->assertSame( $id, $out );
 
-		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
+		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
 			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta'][$meta_input_key_id]['value'] ), $out );

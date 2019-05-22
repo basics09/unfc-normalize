@@ -701,6 +701,9 @@ function unfc_utf8_rand_str( $len = 10000, $chr_max = 0x7f ) {
  * Get ICU version of loaded "intl" extension.
  */
 function unfc_icu_version() {
+	if ( defined( 'INTL_ICU_VERSION' ) ) { // Introduced PHP 5.3.6: https://bugs.php.net/bug.php?id=54561
+		return INTL_ICU_VERSION;
+	}
 	ob_start();
 	phpinfo( INFO_MODULES );
 	$lines = explode( "\n", ob_get_clean() );

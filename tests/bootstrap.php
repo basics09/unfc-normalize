@@ -18,7 +18,7 @@ define( 'UNFC_TESTING', true );
  * Migration fixer for PHPUnit 6
  * See https://core.trac.wordpress.org/ticket/39822
  */
-if ( class_exists( 'PHPUnit\Runner\Version' ) ) {
+if ( class_exists( 'PHPUnit\Runner\Version' ) && ! file_exists( $_tests_dir . '/includes/phpunit6-compat.php' ) && ! file_exists( $_tests_dir . '/includes/phpunit6/compat.php' ) ) {
 	require __DIR__ . '/phpunit6-compat.php';
 }
 

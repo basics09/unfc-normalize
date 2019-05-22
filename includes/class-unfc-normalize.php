@@ -194,6 +194,13 @@ class UNFC_Normalize {
 			self::$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 		}
 
+		// If running as wp-cli command, load and don't bother adding filters or javascript.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require self::$dirname . '/includes/class-unfc-normalize-command.php';
+			require self::$dirname . '/includes/command.php';
+			return;
+		}
+
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
 		// Don't run anything else in the plugin, if we're on an incompatible system.

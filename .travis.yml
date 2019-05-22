@@ -1,19 +1,20 @@
 language: php
 
 sudo: false
+dist: trusty
 
 php:
 - 7.1
 - 7.0
 - 5.2
+  dist: precise
 - 5.3
+  dist: precise
 - 5.4
 - 5.5
 - 5.6
 
 env:
-- WP_VERSION=nightly
-- WP_VERSION=latest
 - WP_VERSION=4.6.6
 - WP_VERSION=4.5.9
 - WP_VERSION=4.4.10
@@ -67,8 +68,6 @@ matrix:
       env: WP_VERSION=4.3.11
     - php: 5.5
       env: WP_VERSION=4.1.18
-  allow_failures:
-    - env: WP_VERSION=nightly
 
 install:
 - npm install grunt-cli

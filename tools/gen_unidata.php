@@ -4,25 +4,34 @@
  *
  * Output the various mapping classes used by the UNFC_Normalizer class to the "Symfony/Resources/unidata" directory.
  *
- * See http://www.unicode.org/Public/9.0.0/ucd/UnicodeData.txt and http://www.unicode.org/Public/9.0.0/ucd/CompositionExclusions.txt
+ * See http://www.unicode.org/Public/12.1.0/ucd/UnicodeData.txt, http://www.unicode.org/Public/12.1.0/ucd/CompositionExclusions.txt
+ * and http://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
  */
 
 $basename = basename( __FILE__ );
 $dirname = dirname( __FILE__ );
 $dirdirname = dirname( $dirname );
-$subdirname = basename( $dirname );
-$outdirname = $argc && ! empty( $argv[1] ) ? $argv[1] : 'Symfony/Resources/unidata';
 
 require $dirname . '/functions.php';
+
+$opts = getopt( 'v:sd:o:' );
+$version = isset( $opts['v'] ) ? $opts['v'] : '12.1.0'; // Unicode version number.
+$suffix = isset( $opts['s'] ); // If set will add Unicode version number as suffix to filename (before ".php" that is).
+$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $version ); // Where to load Unicode data files from.
+$outdirname = isset( $opts['o'] ) ? $opts['o'] : 'Symfony/Resources/unidata'; // Where to put output.
+
+$filename_suffix = $suffix ? ( '-' . $version ) : '';
 
 if ( ! function_exists( '__' ) ) {
 	function __( $str, $td ) { return $str; }
 }
 
+// First create the decomposition exclusion array.
+
 // Open the exclusions file.
 
-$filename = '/tests/UCD-9.0.0/CompositionExclusions.txt';
-$file = $dirdirname . $filename;
+$filename = $datadirname . '/CompositionExclusions.txt';
+$file = $dirdirname . '/' . $filename;
 error_log( "$basename: reading file=$file" );
 
 // Read the file.
@@ -61,9 +70,11 @@ foreach ( $lines as $line ) {
 	}
 }
 
+// Next create the combining class, canonical composition, canonical decomposition, compatibility decomposition and raw decomposition arrays.
+
 // Callback for Unicode data file parser.
 function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) {
-	global $exclusions, $combining_classes, $canonical_compositions, $canonical_decompositions, $compatibility_decompositions;
+	global $exclusions, $combining_classes, $canonical_compositions, $canonical_decompositions, $compatibility_decompositions, $raw_decompositions;
 
 	$code = unfc_utf8_chr( $cp );
 
@@ -93,15 +104,17 @@ function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, 
 		}
 
 		$compatibility_decompositions[ $code ] = $decomp;
+
+		$raw_decompositions[ $code ] = array( $decomp, $canonic );
 	}
 }
 
-$combining_classes = $canonical_compositions = $canonical_decompositions = $compatibility_decompositions = array();
+$combining_classes = $canonical_compositions = $canonical_decompositions = $compatibility_decompositions = $raw_decompositions = array();
 
 // Parse the main unicode file.
 
-$filename = '/tests/UCD-9.0.0/UnicodeData.txt';
-$file = $dirdirname . $filename;
+$filename = $datadirname . '/UnicodeData.txt';
+$file = $dirdirname . '/' . $filename;
 error_log( "$basename: reading file=$file" );
 
 if ( false === unfc_parse_unicode_data( $file, 'parse_unicode_data_cb' ) ) {
@@ -139,10 +152,69 @@ foreach ( $compatibility_decompositions as $code => $decomp ) {
 	}
 }
 
+// Lastly create the NFKC case folding array.
+
+// Open the derived normalization properties file.
+
+$filename = $datadirname . '/DerivedNormalizationProps.txt';
+$file = $dirdirname . '/' . $filename;
+error_log( "$basename: reading file=$file" );
+
+// Read the file.
+
+if ( false === ( $get = file_get_contents( $file ) ) ) {
+	/* translators: %s: file name */
+	$error = sprintf( __( 'Could not read derived normalization properties file "%s"', 'unfc-normalize' ), $file );
+	error_log( $error );
+	return $error;
+}
+
+$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+
+// Parse the file, creating array of NFKC_CF upper to lowercase codepoints.
+
+$kc_case_foldings = array();
+$in = false;
+$line_num = 0;
+foreach ( $lines as $line ) {
+	$line_num++;
+	$line = trim( $line );
+	if ( '' === $line ) {
+		continue;
+	}
+	if ( ! preg_match( '/^([0-9A-F]{4,}(?:\.\.[0-9A-F]{4,})?) *; NFKC_CF;([ 0-9A-F]+)/', $line, $matches ) ) {
+		continue;
+	}
+
+	$lower = trim( $matches[2] );
+	if ( '' !== $lower ) {
+		$lowers = explode( ' ', trim( $matches[2] ) );
+
+		$lowers = array_map( 'hexdec', $lowers );
+		$lowers = array_map( 'unfc_utf8_chr', $lowers );
+		$lower = implode( '', $lowers ); // Leave unnormalized.
+	}
+	$upper = $matches[1];
+	if (false !== strpos($upper, '..')) {
+		$range = explode( '..', $matches[1] );
+		$first_cp = hexdec( $range[0] );
+		$last_cp = hexdec( $range[1] );
+		for ( $cp = $first_cp; $cp <= $last_cp; $cp++ ) {
+			if ($cp < 0xE0000 || $cp > 0xE0FFF) { // Treat this block, which goes to zero-length string, specially to lessen file size.
+				$kc_case_foldings[ unfc_utf8_chr( $cp ) ] = $lower;
+			}
+		}
+	} else {
+		$kc_case_foldings[ unfc_utf8_chr( hexdec( $upper ) ) ] = $lower;
+	}
+}
+
 //error_log( "combining_classes(" . count( $combining_classes ) . ")=" . print_r( $combining_classes, true ) );
 //error_log( "canonical_compositions(" . count( $canonical_compositions ) . ")=" . print_r( $canonical_compositions, true ) );
 //error_log( "canonical_decompositions(" . count( $canonical_decompositions ) . ")=" . print_r( $canonical_decompositions, true ) );
 //error_log( "compatibility_decompositions(" . count( $compatibility_decompositions ) . ")=" . print_r( $compatibility_decompositions, true ) );
+//error_log( "raw_decompositions(" . count( $raw_decompositions ) . ")=" . print_r( $raw_decompositions, true ) );
+//error_log( "kc_case_foldings(" . count( $kc_case_foldings ) . ")=" . print_r( $kc_case_foldings, true ) );
 
 function out_esc( $str ) {
 	return str_replace( array( '\\', '\'' ), array( '\\\\', '\\\'', ), $str );
@@ -153,71 +225,81 @@ function out_esc( $str ) {
 $out = array();
 $out[] =  '<?php';
 $out[] = '';
-$out[] = 'static $data = array (';
+$out[] = 'return array(';
 
 foreach ( $combining_classes as $code => $class ) {
 	$out[] = '  \'' . $code . '\' => ' . $class . ',';
 }
 $out[] = ');';
 $out[] = '';
-$out[] = '$result =& $data;';
-$out[] = 'unset($data);';
-$out[] = '';
-$out[] = 'return $result;';
-$out[] = '';
 
-file_put_contents( $outdirname . '/combiningClass.php', implode( "\n", $out ) );
+file_put_contents( $outdirname . '/combiningClass' . $filename_suffix . '.php', implode( "\n", $out ) );
 
 $out = array();
 $out[] =  '<?php';
 $out[] = '';
-$out[] = 'static $data = array (';
+$out[] = 'return array(';
 
 foreach ( $canonical_compositions as $decomp => $code ) {
 	$out[] = '  \'' . $decomp . '\' => \'' . $code . '\',';
 }
 $out[] = ');';
 $out[] = '';
-$out[] = '$result =& $data;';
-$out[] = 'unset($data);';
-$out[] = '';
-$out[] = 'return $result;';
-$out[] = '';
 
-file_put_contents( $outdirname . '/canonicalComposition.php', implode( "\n", $out ) );
+file_put_contents( $outdirname . '/canonicalComposition' . $filename_suffix . '.php', implode( "\n", $out ) );
 
 $out = array();
 $out[] =  '<?php';
 $out[] = '';
-$out[] = 'static $data = array (';
+$out[] = 'return array(';
 
 foreach ( $canonical_decompositions as $code => $decomp ) {
 	$out[] = '  \'' . $code . '\' => \'' . $decomp . '\',';
 }
 $out[] = ');';
 $out[] = '';
-$out[] = '$result =& $data;';
-$out[] = 'unset($data);';
-$out[] = '';
-$out[] = 'return $result;';
-$out[] = '';
 
-file_put_contents( $outdirname . '/canonicalDecomposition.php', implode( "\n", $out ) );
+file_put_contents( $outdirname . '/canonicalDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
 
 $out = array();
 $out[] =  '<?php';
 $out[] = '';
-$out[] = 'static $data = array (';
+$out[] = 'return array(';
 
 foreach ( $compatibility_decompositions as $code => $decomp ) {
 	$out[] = '  \'' . out_esc( $code ) . '\' => \'' . out_esc( $decomp ) . '\',';
 }
 $out[] = ');';
 $out[] = '';
-$out[] = '$result =& $data;';
-$out[] = 'unset($data);';
+
+file_put_contents( $outdirname . '/compatibilityDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
+
+$out = array();
+$out[] =  '<?php';
 $out[] = '';
-$out[] = 'return $result;';
+$out[] = 'return array(';
+
+foreach ( $raw_decompositions as $code => $entry ) {
+	if ( $entry[1] ) {
+		$out[] = '  \'' . out_esc( $code ) . '\' => array(\'' . out_esc( $entry[0] ) . '\'),';
+	} else {
+		$out[] = '  \'' . out_esc( $code ) . '\' => \'' . out_esc( $entry[0] ) . '\',';
+	}
+}
+$out[] = ');';
 $out[] = '';
 
-file_put_contents( $outdirname . '/compatibilityDecomposition.php', implode( "\n", $out ) );
+file_put_contents( $outdirname . '/rawDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
+
+$out = array();
+$out[] =  '<?php';
+$out[] = '';
+$out[] = 'return array(';
+
+foreach ( $kc_case_foldings as $upper => $lower ) {
+	$out[] = '  \'' . out_esc( $upper ) . '\' => \'' . out_esc( $lower ) . '\',';
+}
+$out[] = ');';
+$out[] = '';
+
+file_put_contents( $outdirname . '/kcCaseFolding' . $filename_suffix . '.php', implode( "\n", $out ) );

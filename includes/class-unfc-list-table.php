@@ -1,6 +1,6 @@
 <?php
 /**
- * This is WP_List_Table as of WP 4.7.0 renamed to UNFC_List_Table.
+ * This is WP_List_Table ("wp-admin/includes/class-wp-list-table.php") as of WP 4.7.0 renamed to UNFC_List_Table.
  * Doing this for back/forward compatibility as WP_List_Table is private.
  * For backward compatibility check for the availibility of WP_Screen::render_screen_reader_content().
  * Parent of UNFC_DB_Check_List_Table in "class-unfc-db_check-list-table.php".
@@ -27,7 +27,6 @@ class UNFC_List_Table { // gitlost
 	 * The current list of items.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 * @var array
 	 */
 	public $items;
@@ -36,7 +35,6 @@ class UNFC_List_Table { // gitlost
 	 * Various information about the current table.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 * @var array
 	 */
 	protected $_args;
@@ -45,7 +43,6 @@ class UNFC_List_Table { // gitlost
 	 * Various information needed for displaying the pagination.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 * @var array
 	 */
 	protected $_pagination_args = array();
@@ -54,7 +51,6 @@ class UNFC_List_Table { // gitlost
 	 * The current screen.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 * @var object
 	 */
 	protected $screen;
@@ -63,7 +59,6 @@ class UNFC_List_Table { // gitlost
 	 * Cached bulk actions.
 	 *
 	 * @since 3.1.0
-	 * @access private
 	 * @var array
 	 */
 	private $_actions;
@@ -72,7 +67,6 @@ class UNFC_List_Table { // gitlost
 	 * Cached pagination output.
 	 *
 	 * @since 3.1.0
-	 * @access private
 	 * @var string
 	 */
 	private $_pagination;
@@ -81,7 +75,6 @@ class UNFC_List_Table { // gitlost
 	 * The view switcher modes.
 	 *
 	 * @since 4.1.0
-	 * @access protected
 	 * @var array
 	 */
 	protected $modes = array();
@@ -90,7 +83,6 @@ class UNFC_List_Table { // gitlost
 	 * Stores the value returned by ->get_column_info().
 	 *
 	 * @since 4.1.0
-	 * @access protected
 	 * @var array
 	 */
 	protected $_column_headers;
@@ -98,7 +90,6 @@ class UNFC_List_Table { // gitlost
 	/**
 	 * {@internal Missing Summary}
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	protected $compat_fields = array( '_args', '_pagination_args', 'screen', '_actions', '_pagination' );
@@ -106,7 +97,6 @@ class UNFC_List_Table { // gitlost
 	/**
 	 * {@internal Missing Summary}
 	 *
-	 * @access protected
 	 * @var array
 	 */
 	protected $compat_methods = array( 'set_pagination_args', 'get_views', 'get_bulk_actions', 'bulk_actions',
@@ -121,7 +111,6 @@ class UNFC_List_Table { // gitlost
 	 * the default $args.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @param array|string $args {
 	 *     Array or string of arguments.
@@ -179,7 +168,6 @@ class UNFC_List_Table { // gitlost
 	 * Make private properties readable for backward compatibility.
 	 *
 	 * @since 4.0.0
-	 * @access public
 	 *
 	 * @param string $name Property to get.
 	 * @return mixed Property.
@@ -194,7 +182,6 @@ class UNFC_List_Table { // gitlost
 	 * Make private properties settable for backward compatibility.
 	 *
 	 * @since 4.0.0
-	 * @access public
 	 *
 	 * @param string $name  Property to check if set.
 	 * @param mixed  $value Property value.
@@ -210,7 +197,6 @@ class UNFC_List_Table { // gitlost
 	 * Make private properties checkable for backward compatibility.
 	 *
 	 * @since 4.0.0
-	 * @access public
 	 *
 	 * @param string $name Property to check if set.
 	 * @return bool Whether the property is set.
@@ -225,7 +211,6 @@ class UNFC_List_Table { // gitlost
 	 * Make private properties un-settable for backward compatibility.
 	 *
 	 * @since 4.0.0
-	 * @access public
 	 *
 	 * @param string $name Property to unset.
 	 */
@@ -239,9 +224,8 @@ class UNFC_List_Table { // gitlost
 	 * Make private/protected methods readable for backward compatibility.
 	 *
 	 * @since 4.0.0
-	 * @access public
 	 *
-	 * @param callable $name      Method to call.
+	 * @param string   $name      Method to call.
 	 * @param array    $arguments Arguments to pass when calling.
 	 * @return mixed|bool Return value of the callback, false otherwise.
 	 */
@@ -256,7 +240,6 @@ class UNFC_List_Table { // gitlost
 	 * Checks the current user's permissions
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 * @abstract
 	 */
 	public function ajax_user_can() {
@@ -268,7 +251,6 @@ class UNFC_List_Table { // gitlost
 	 * @uses UNFC_List_Table::set_pagination_args() // gitlost
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 * @abstract
 	 */
 	public function prepare_items() {
@@ -279,7 +261,6 @@ class UNFC_List_Table { // gitlost
 	 * An internal method that sets all the necessary pagination arguments
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param array|string $args Array or string of arguments with information about the pagination.
 	 */
@@ -306,7 +287,6 @@ class UNFC_List_Table { // gitlost
 	 * Access the pagination args.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @param string $key Pagination argument to retrieve. Common values include 'total_items',
 	 *                    'total_pages', 'per_page', or 'infinite_scroll'.
@@ -326,7 +306,6 @@ class UNFC_List_Table { // gitlost
 	 * Whether the table has items to display or not
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @return bool
 	 */
@@ -338,7 +317,6 @@ class UNFC_List_Table { // gitlost
 	 * Message to be displayed when there are no items
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function no_items() {
 		_e( 'No items found.' );
@@ -348,7 +326,6 @@ class UNFC_List_Table { // gitlost
 	 * Displays the search box.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @param string $text     The 'submit' button label.
 	 * @param string $input_id ID attribute value for the search input field.
@@ -381,7 +358,6 @@ class UNFC_List_Table { // gitlost
 	 * of views available on this table.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @return array
 	 */
@@ -393,7 +369,6 @@ class UNFC_List_Table { // gitlost
 	 * Display the list of views available on this table.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function views() {
 		$views = $this->get_views();
@@ -405,7 +380,7 @@ class UNFC_List_Table { // gitlost
 		 *
 		 * @since 3.5.0
 		 *
-		 * @param array $views An array of available list table views.
+		 * @param string[] $views An array of available list table views.
 		 */
 		$views = apply_filters( "views_{$this->screen->id}", $views );
 
@@ -427,7 +402,6 @@ class UNFC_List_Table { // gitlost
 	 * of bulk actions available on this table.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @return array
 	 */
@@ -439,7 +413,6 @@ class UNFC_List_Table { // gitlost
 	 * Display the bulk actions dropdown.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
 	 *                      This is designated as optional for backward compatibility.
@@ -457,7 +430,7 @@ class UNFC_List_Table { // gitlost
 			 *
 			 * @since 3.5.0
 			 *
-			 * @param array $actions An array of the available bulk actions.
+			 * @param string[] $actions An array of the available bulk actions.
 			 */
 			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions );
 			$two = '';
@@ -488,7 +461,6 @@ class UNFC_List_Table { // gitlost
 	 * Get the current action selected from the bulk actions dropdown.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @return string|false The action name or False if no action was selected
 	 */
@@ -509,10 +481,9 @@ class UNFC_List_Table { // gitlost
 	 * Generate row actions div
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
-	 * @param array $actions The list of actions
-	 * @param bool $always_visible Whether the actions should be always visible
+	 * @param string[] $actions        An array of action links.
+	 * @param bool     $always_visible Whether the actions should be always visible
 	 * @return string
 	 */
 	protected function row_actions( $actions, $always_visible = false ) {
@@ -539,7 +510,6 @@ class UNFC_List_Table { // gitlost
 	 * Display a monthly dropdown for filtering items
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @global wpdb      $wpdb
 	 * @global WP_Locale $wp_locale
@@ -620,7 +590,6 @@ class UNFC_List_Table { // gitlost
 	 * Display a view switcher
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param string $current_mode
 	 */
@@ -649,7 +618,6 @@ class UNFC_List_Table { // gitlost
 	 * Display a comment count bubble
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param int $post_id          The post ID.
 	 * @param int $pending_comments Number of pending comments.
@@ -666,7 +634,7 @@ class UNFC_List_Table { // gitlost
 
 		// No comments at all.
 		if ( ! $approved_comments && ! $pending_comments ) {
-			printf( '<span aria-hidden="true">—</span><span class="screen-reader-text">%s</span>',
+			printf( '<span aria-hidden="true">&#8212;</span><span class="screen-reader-text">%s</span>',
 				__( 'No comments' )
 			);
 		// Approved comments have different display depending on some conditions.
@@ -701,7 +669,6 @@ class UNFC_List_Table { // gitlost
 	 * Get the current page number
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @return int
 	 */
@@ -718,7 +685,6 @@ class UNFC_List_Table { // gitlost
 	 * Get number of items to display on a single page
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param string $option
 	 * @param int    $default
@@ -749,7 +715,6 @@ class UNFC_List_Table { // gitlost
 	 * Display the pagination.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param string $which
 	 */
@@ -801,9 +766,9 @@ class UNFC_List_Table { // gitlost
 		}
 
 		if ( $disable_first ) {
-			$page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&laquo;</span>';
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
 		} else {
-			$page_links[] = sprintf( "<a class='first-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			$page_links[] = sprintf( "<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( remove_query_arg( 'paged', $current_url ) ),
 				__( 'First page' ),
 				'&laquo;'
@@ -811,9 +776,9 @@ class UNFC_List_Table { // gitlost
 		}
 
 		if ( $disable_prev ) {
-			$page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&lsaquo;</span>';
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
 		} else {
-			$page_links[] = sprintf( "<a class='prev-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			$page_links[] = sprintf( "<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $current_url ) ),
 				__( 'Previous page' ),
 				'&lsaquo;'
@@ -834,9 +799,9 @@ class UNFC_List_Table { // gitlost
 		$page_links[] = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . $total_pages_after;
 
 		if ( $disable_next ) {
-			$page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&rsaquo;</span>';
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
 		} else {
-			$page_links[] = sprintf( "<a class='next-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			$page_links[] = sprintf( "<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $current_url ) ),
 				__( 'Next page' ),
 				'&rsaquo;'
@@ -844,9 +809,9 @@ class UNFC_List_Table { // gitlost
 		}
 
 		if ( $disable_last ) {
-			$page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&raquo;</span>';
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
 		} else {
-			$page_links[] = sprintf( "<a class='last-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+			$page_links[] = sprintf( "<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
 				__( 'Last page' ),
 				'&raquo;'
@@ -855,7 +820,7 @@ class UNFC_List_Table { // gitlost
 
 		$pagination_links_class = 'pagination-links';
 		if ( ! empty( $infinite_scroll ) ) {
-			$pagination_links_class = ' hide-if-js';
+			$pagination_links_class .= ' hide-if-js';
 		}
 		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
 
@@ -874,7 +839,6 @@ class UNFC_List_Table { // gitlost
 	 * 'internal-name' => 'Title'
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 * @abstract
 	 *
 	 * @return array
@@ -892,7 +856,6 @@ class UNFC_List_Table { // gitlost
 	 * The second format will make the initial sorting order be descending
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @return array
 	 */
@@ -904,7 +867,6 @@ class UNFC_List_Table { // gitlost
 	 * Gets the name of the default primary column.
 	 *
 	 * @since 4.3.0
-	 * @access protected
 	 *
 	 * @return string Name of the default primary column, in this case, an empty string.
 	 */
@@ -934,7 +896,6 @@ class UNFC_List_Table { // gitlost
 	 * Public wrapper for UNFC_List_Table::get_default_primary_column_name(). // gitlost
 	 *
 	 * @since 4.4.0
-	 * @access public
 	 *
 	 * @return string Name of the default primary column.
 	 */
@@ -946,7 +907,6 @@ class UNFC_List_Table { // gitlost
 	 * Gets the name of the primary column.
 	 *
 	 * @since 4.3.0
-	 * @access protected
 	 *
 	 * @return string The name of the primary column.
 	 */
@@ -981,7 +941,6 @@ class UNFC_List_Table { // gitlost
 	 * Get a list of all, hidden and sortable columns, with filter applied
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @return array
 	 */
@@ -1036,7 +995,6 @@ class UNFC_List_Table { // gitlost
 	 * Return number of visible columns
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @return int
 	 */
@@ -1050,7 +1008,6 @@ class UNFC_List_Table { // gitlost
 	 * Print column headers, accounting for hidden and sortable columns.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @staticvar int $cb_counter
 	 *
@@ -1128,7 +1085,6 @@ class UNFC_List_Table { // gitlost
 	 * Display the table
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function display() {
 		$singular = $this->_args['singular'];
@@ -1166,7 +1122,6 @@ class UNFC_List_Table { // gitlost
 	 * Get a list of CSS classes for the UNFC_List_Table table tag. // gitlost
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @return array List of CSS classes for the table tag.
 	 */
@@ -1178,7 +1133,6 @@ class UNFC_List_Table { // gitlost
 	 * Generate the table navigation above or below the table
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 * @param string $which
 	 */
 	protected function display_tablenav( $which ) {
@@ -1206,7 +1160,6 @@ class UNFC_List_Table { // gitlost
 	 * Extra controls to be displayed between bulk actions and pagination
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param string $which
 	 */
@@ -1216,7 +1169,6 @@ class UNFC_List_Table { // gitlost
 	 * Generate the tbody element for the list table.
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function display_rows_or_placeholder() {
 		if ( $this->has_items() ) {
@@ -1232,7 +1184,6 @@ class UNFC_List_Table { // gitlost
 	 * Generate the table rows
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function display_rows() {
 		foreach ( $this->items as $item )
@@ -1243,7 +1194,6 @@ class UNFC_List_Table { // gitlost
 	 * Generates content for a single row of the table
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 *
 	 * @param object $item The current item
 	 */
@@ -1270,7 +1220,6 @@ class UNFC_List_Table { // gitlost
 	 * Generates the columns for a single row of the table
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param object $item The current item
 	 */
@@ -1323,7 +1272,6 @@ class UNFC_List_Table { // gitlost
 	 * Generates and display row actions links for the list table.
 	 *
 	 * @since 4.3.0
-	 * @access protected
 	 *
 	 * @param object $item        The item being acted upon.
 	 * @param string $column_name Current column name.
@@ -1338,7 +1286,6 @@ class UNFC_List_Table { // gitlost
 	 * Handle an incoming ajax request (called from admin-ajax.php)
 	 *
 	 * @since 3.1.0
-	 * @access public
 	 */
 	public function ajax_response() {
 		$this->prepare_items();
@@ -1371,7 +1318,6 @@ class UNFC_List_Table { // gitlost
 	/**
 	 * Send required variables to JavaScript land
 	 *
-	 * @access public
 	 */
 	public function _js_vars() {
 		$args = array(

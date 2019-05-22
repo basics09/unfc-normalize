@@ -45,6 +45,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		parent::setUp();
 		self::clear_func_args();
 		add_filter( 'wp_redirect', array( __CLASS__, 'wp_redirect' ), 10, 2 );
+		remove_filter( 'admin_init', 'wp_admin_headers' ); // Don't send headers.
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpSetUpBeforeClass();
 		}
@@ -58,6 +59,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 			array_shift( $this->caught_deprecated );
 		}
 		parent::tearDown();
+		add_filter( 'admin_init', 'wp_admin_headers' );
 		remove_filter( 'wp_redirect', array( __CLASS__, 'wp_redirect' ), 10, 2 );
 		if ( ! method_exists( 'WP_UnitTestCase', 'wpSetUpBeforeClass' ) ) { // Hack for WP testcase.php versions prior to 4.4
 			self::wpTearDownAfterClass();
@@ -775,7 +777,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['title'], 'failure' ) );
+		$this->assertSame( 1, preg_match( '/failure|error|wrong/i', $args['title'] ) ); // Cater for various versions of message.
 
 		self::clear_func_args();
 
@@ -1092,7 +1094,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['title'], 'failure' ) );
+		$this->assertSame( 1, preg_match( '/failure|error|wrong/i', $args['title'] ) ); // Cater for various versions of message.
 
 		self::clear_func_args();
 
@@ -1382,7 +1384,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['title'], 'failure' ) );
+		$this->assertSame( 1, preg_match( '/failure|error|wrong/i', $args['title'] ) ); // Cater for various versions of message.
 
 		self::clear_func_args();
 
@@ -1445,6 +1447,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		// Nicenames sanitized so fake it.
 		global $wpdb;
 		$wpdb->update( $wpdb->users, array( 'user_nicename' => $user_nicename1 ), array( 'ID' => $user1_id ) );
+		wp_cache_delete( $user1_id, 'users' ); // Remove from cache.
 		$user1 = get_userdata( $user1_id );
 		$this->assertSame( $user_nicename1, $user1->user_nicename );
 		$num_slugs++;
@@ -1615,7 +1618,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		}
 		$this->assertSame( 1, count( self::$func_args['wp_die'] ) );
 		$args = self::$func_args['wp_die'][0];
-		$this->assertTrue( false !== stripos( $args['title'], 'failure' ) );
+		$this->assertSame( 1, preg_match( '/failure|error|wrong/i', $args['title'] ) ); // Cater for various versions of message.
 
 		self::clear_func_args();
 
@@ -1685,6 +1688,7 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 		// Nicenames sanitized so fake it.
 		global $wpdb;
 		$wpdb->update( $wpdb->users, array( 'user_nicename' => $user_nicename1 ), array( 'ID' => $user1_id ) );
+		wp_cache_delete( $user1_id, 'users' ); // Remove from cache.
 		$user1 = get_userdata( $user1_id );
 		$this->assertSame( $user_nicename1, $user1->user_nicename );
 		$num_slugs++;

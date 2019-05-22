@@ -4,17 +4,21 @@
  * from the UCD derived normalization properties file "DerivedNormalizationProps.txt"
  * and the derived combining class file "DerivedCombiningClass.txt".
  *
- * See http://www.unicode.org/Public/9.0.0/ucd/DerivedNormalizationProps.txt
- * See http://www.unicode.org/Public/9.0.0/ucd/extracted/DerivedCombiningClass.txt
+ * See http://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
+ * See http://www.unicode.org/Public/12.1.0/ucd/extracted/DerivedCombiningClass.txt
  */
 
 $basename = basename( __FILE__ );
 $dirname = dirname( __FILE__ );
+$dirdirname = dirname( $dirname );
 $subdirname = basename( $dirname );
 
 require $dirname . '/functions.php';
 
-$prefix = $argc && ! empty( $argv[1] ) ? $argv[1] : 'UNFC_';
+$opts = getopt( 'v:p:d:' );
+$version = isset( $opts['v'] ) ? $opts['v'] : '12.1.0'; // Unicode version number.
+$prefix = isset( $opts['p'] ) ? $opts['p'] : 'UNFC_';
+$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $version ); // Where to load Unicode data files from.
 
 if ( ! function_exists( '__' ) ) {
 	function __( $str, $td ) { return $str; }
@@ -22,8 +26,8 @@ if ( ! function_exists( '__' ) ) {
 
 // Open the properties file.
 
-$filename_props = '/tests/UCD-9.0.0/DerivedNormalizationProps.txt';
-$file = dirname( $dirname ) . $filename_props;
+$filename_props = $datadirname . '/DerivedNormalizationProps.txt';
+$file = $dirdirname . '/' . $filename_props;
 error_log( "$basename: reading file=$file" );
 
 // Read the file.
@@ -126,8 +130,8 @@ if ( count( $haves ) !== count( $idx_strs ) ) {
 
 // Open the combining file.
 
-$filename_combines ='/tests/UCD-9.0.0/extracted/DerivedCombiningClass.txt';
-$file = dirname( $dirname ) . $filename_combines;
+$filename_combines = $datadirname . '/extracted/DerivedCombiningClass.txt';
+$file = $dirdirname . '/' . $filename_combines;
 error_log( "$basename: reading file=$file" );
 
 // Read the file.

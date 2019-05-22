@@ -99,11 +99,15 @@ module.exports = function( grunt ) { //The wrapper function
 							'../unfc-normalize/rangyinputs/rangyinputs-jquery-src.js',
 							'../unfc-normalize/rangyinputs/README.md',
 							'../unfc-normalize/Symfony/LICENSE',
+							'../unfc-normalize/Symfony/BaseNormalizer.php',
 							'../unfc-normalize/Symfony/Normalizer.php',
 							'../unfc-normalize/Symfony/unfc_regex_alts.php',
 							'../unfc-normalize/Symfony/Resources/unidata/canonicalComposition.php',
 							'../unfc-normalize/Symfony/Resources/unidata/canonicalDecomposition.php',
 							'../unfc-normalize/Symfony/Resources/unidata/combiningClass.php',
+							'../unfc-normalize/Symfony/Resources/unidata/compatibilityDecomposition.php',
+							'../unfc-normalize/Symfony/Resources/unidata/kcCaseFolding.php',
+							'../unfc-normalize/Symfony/Resources/unidata/rawDecomposition.php',
 							'../unfc-normalize/unorm/LICENSE.md',
 							'../unfc-normalize/unorm/lib/unorm.js'
 						]

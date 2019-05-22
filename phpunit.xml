@@ -17,6 +17,7 @@
 			<directory suffix=".php">./</directory>
 			<exclude>
 				<directory>Symfony/Resources</directory>
+				<directory>dick</directory>
 				<directory>node_modules</directory>
 				<directory>perf</directory>
 				<directory>php-utf8</directory>
@@ -25,8 +26,11 @@
 				<file>Symfony/NormalizerO.php</file>
 				<file>Symfony/NormalizerS.php</file>
 				<file>Symfony/unfc_ins.php</file>
+				<file>includes/class-unfc-normalize-command.php</file>
+				<file>includes/command.php</file>
 				<file>tools/gen_cat_regex_alts.php</file>
 				<file>tools/gen_combining_class.php</file>
+				<file>tools/gen_east_asian_width.php</file>
 				<file>tools/gen_latin_ascii_missing.php</file>
 				<file>tools/gen_mnme_regex.php</file>
 				<file>tools/gen_remove_accents_missing.php</file>
