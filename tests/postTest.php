@@ -127,7 +127,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 			'post_status' => 'publish',
 			'post_title' => 'Title' . $decomposed_str,
 			'post_type' => 'post',
-			'meta_input' => array( // Note not used by core.
+			'meta_input' => array(
 				'meta_input_key' => 'meta_input_value' . $decomposed_str,
 			),
 			'metakeyinput' => 'metakeyinput_key' . $decomposed_str,
@@ -142,6 +142,18 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 		if ( version_compare( $wp_version, '5.1', '>=' ) ) {
 			// Due to bug #46338 https://core.trac.wordpress.org/ticket/46338 make arrayish, defeating purpose.
 			$_POST['tax_input']['category'] = array( $_POST['tax_input']['category'] );
+		}
+
+		// meta_input arg introduced WP 4.4 but use in edit_post() security issue so only functions in specific windows.
+		$have_meta_input_through_edit = false;
+		if ( ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '4.4.17', '<' ) )
+				|| ( version_compare( $wp_version, '4.5', '>=' ) && version_compare( $wp_version, '4.5.16', '<' ) )
+				|| ( version_compare( $wp_version, '4.6', '>=' ) && version_compare( $wp_version, '4.6.13', '<' ) )
+				|| ( version_compare( $wp_version, '4.7', '>=' ) && version_compare( $wp_version, '4.7.12', '<' ) )
+				|| ( version_compare( $wp_version, '4.8', '>=' ) && version_compare( $wp_version, '4.8.8', '<' ) )
+				|| ( version_compare( $wp_version, '4.9', '>=' ) && version_compare( $wp_version, '4.9.9', '<' ) )
+				|| version_compare( $wp_version, '5.0', '=' ) ) {
+			$have_meta_input_through_edit = true;
 		}
 
 		do_action( 'init' );
@@ -159,7 +171,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 		$this->assertSame( UNFC_Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 		if ( class_exists( 'Normalizer' ) ) $this->assertSame( Normalizer::normalize( $_POST['post_title'] ), $out->post_title );
 
-		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
+		if ( $have_meta_input_through_edit ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
 			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta_input']['meta_input_key'] ), $out );
@@ -187,7 +199,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
 		global $wpdb;
 
-		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
+		if ( $have_meta_input_through_edit ) {
 			$meta_input_key_id = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $id, 'meta_input_key' ) );
 			$this->assertTrue( is_numeric( $meta_input_key_id ) );
 			$this->assertTrue( $meta_input_key_id > 0 );
@@ -217,7 +229,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 		$out = edit_post();
 		$this->assertSame( $id, $out );
 
-		if ( version_compare( $wp_version, '4.4', '>=' ) && version_compare( $wp_version, '5.1', '<' ) ) {
+		if ( $have_meta_input_through_edit ) {
 			$out = get_post_meta( $id, 'meta_input_key', true );
 
 			$this->assertSame( UNFC_Normalizer::normalize( $_POST['meta'][$meta_input_key_id]['value'] ), $out );
