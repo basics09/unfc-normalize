@@ -6,9 +6,9 @@ dist: trusty
 matrix:
   include:
     - php: 7.3
-      env: WP_VERSION=4.9.10
+      env: WP_VERSION=5.2.1
     - php: 7.2
-      env: WP_VERSION=4.8.9
+      env: WP_VERSION=5.1.1
     - php: 7.1
       env: WP_VERSION=4.7.13
     - php: 7.0
@@ -36,7 +36,6 @@ install:
   
 before_script:
 - if [[ ! ( $TRAVIS_PHP_VERSION = '7.1' && $WP_VERSION = 'latest' ) ]]; then phpenv config-rm xdebug.ini || true; fi
-- if [[ $TRAVIS_PHP_VERSION > '7.1.99' ]]; then composer global require "phpunit/phpunit:^6"; fi
 - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script: 

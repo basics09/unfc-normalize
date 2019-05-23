@@ -1,7 +1,7 @@
 <?php
 // Based on https://core.trac.wordpress.org/attachment/ticket/39822
 
-if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) ) {
+if ( class_exists( 'PHPUnit\Runner\Version' ) && version_compare( PHPUnit\Runner\Version::id(), '6.0', '>=' ) && version_compare( PHPUnit\Runner\Version::id(), '7.0', '<' ) ) {
 	class_alias( 'PHPUnit\Framework\AssertionFailedError', 'PHPUnit_Framework_AssertionFailedError' );
 	class_alias( 'PHPUnit\Framework\BaseTestListener', 'PHPUnit_Framework_BaseTestListener' );
 	class_alias( 'PHPUnit\Framework\Error\Notice', 'PHPUnit_Framework_Error_Notice' );

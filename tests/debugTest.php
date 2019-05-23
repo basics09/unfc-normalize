@@ -21,7 +21,7 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 
 		$output = explode( "\n", unfc_backtrace() );
 		$last_idx = count( $output ) - 1;
-		$this->assertSame( "{$last_idx}. Tests_UNFC_Debug::test_debug", trim( $output[ $last_idx ] ) );
+		$this->assertRegExp( '/^' . "{$last_idx}\. Tests_UNFC_Debug::test_debug" . '/', trim( $output[ $last_idx ] ) );
 	}
 
     /**
