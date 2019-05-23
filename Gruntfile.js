@@ -131,7 +131,7 @@ module.exports = function( grunt ) { //The wrapper function
 
 	// Creating a custom task
 	grunt.registerTask( 'phpunit', function () {
-		shell.exec( 'PHPRC=. WP_TESTS_DIR=' + ( process.env.WP_TESTS_DIR || wp_tests_dir ) + ' phpunit' );
+		shell.exec( 'PHPRC=. WP_TESTS_DIR=' + ( process.env.WP_TESTS_DIR || wp_tests_dir ) + ' bin/phpunit-6.5.14' );
 	} );
 
 	grunt.registerTask( 'test', [ 'jshint', 'phpunit', 'qunit' ] );
