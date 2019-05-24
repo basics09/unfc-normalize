@@ -196,6 +196,10 @@ class UNFC_Normalize {
 
 		// If running as wp-cli command, load and don't bother adding filters or javascript.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			// Debug functions - no-ops unless UNFC_DEBUG is set.
+			if ( ! function_exists( 'unfc_debug_log' ) ) {
+				require self::$dirname . '/includes/debug.php';
+			}
 			require self::$dirname . '/includes/class-unfc-normalize-command.php';
 			require self::$dirname . '/includes/command.php';
 			return;

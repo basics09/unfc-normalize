@@ -11,6 +11,7 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 	 * @ticket unfc_debug_debug
      */
 	function test_debug() {
+		$this->assertTrue( defined( 'UNFC_DEBUG' ) );
 		$this->assertTrue( UNFC_DEBUG );
 
 		$output = unfc_error_log( "Test" );
@@ -28,6 +29,8 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 	 * @ticket unfc_debug_print_r
      */
 	function test_print_r() {
+		$this->assertTrue( defined( 'UNFC_DEBUG_PRINT_LIMIT' ) );
+
 		$el = str_repeat( 'a', UNFC_DEBUG_PRINT_LIMIT + 1 );
 		$var = array( $el );
 		$output = unfc_print_r( $var );

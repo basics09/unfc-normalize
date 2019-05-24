@@ -55,6 +55,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	static $new_12_0_0 = array( // Combining class additions (13) UCD 12.0.0 over 11.0.0
 		0x0EBA, 0x119E0, 0x1E130, 0x1E131, 0x1E132, 0x1E133, 0x1E134, 0x1E135, 0x1E136, 0x1E2EC, 0x1E2ED, 0x1E2EE, 0x1E2EF,
 	);
+	// No new Combining class additions UCD 12.1.0 over 12.0.0
 
 	static $at_least_55_1 = false;
 	static $pcre_version = PCRE_VERSION;

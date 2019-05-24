@@ -7,6 +7,9 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
 	if ( ! defined( 'UNFC_DEBUG' ) ) define( 'UNFC_DEBUG', true );
+	if ( getenv( 'TRAVIS' ) ) {
+		ini_set( 'error_log', '/dev/null' ); // Lessen noise on travis.
+	}
 	require dirname( __FILE__ ) . '/../unfc-normalize.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
