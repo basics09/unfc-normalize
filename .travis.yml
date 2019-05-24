@@ -8,6 +8,7 @@ matrix:
     - php: 7.3
       env: WP_VERSION=5.2.1
       dist: xenial
+      services: mysql
     - php: 7.3
       env: WP_VERSION=5.2
     - php: 7.3
