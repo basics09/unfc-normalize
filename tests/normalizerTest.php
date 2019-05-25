@@ -472,14 +472,18 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 					}
 					if ( ( ! self::$new_cc_regex || ! preg_match( self::$new_cc_regex, $c[1] ) ) ) {
 						$this->assertSame( $normalize_n = Normalizer::normalize( $c[1], Normalizer::NFC ), $normalize_t = UNFC_Normalizer::normalize( $c[1], UNFC_Normalizer::NFC ), "$line_num: {$line}c[1]=" . bin2hex( $c[1] ) . ", normalize_n=" . bin2hex( $normalize_n ) . ", normalize_t=" . bin2hex( $normalize_t ) . ", c[2]=" . bin2hex( $c[2] ) );
-						$this->assertSame( $normalize_n = Normalizer::normalize( $c[3], Normalizer::NFC ), $normalize_t = UNFC_Normalizer::normalize( $c[3], UNFC_Normalizer::NFC ), "$line_num: {$line}c[1]=" . bin2hex( $c[1] ) . ", normalize_n=" . bin2hex( $normalize_n ) . ", normalize_t=" . bin2hex( $normalize_t ) . ", c[3]=" . bin2hex( $c[3] ) );
 					}
 					$this->assertSame( Normalizer::normalize( $c[2], Normalizer::NFC ), UNFC_Normalizer::normalize( $c[2], UNFC_Normalizer::NFC ) );
+					if ( ( ! self::$new_cc_regex || ! preg_match( self::$new_cc_regex, $c[3] ) ) ) {
+						$this->assertSame( Normalizer::normalize( $c[3], Normalizer::NFC ), UNFC_Normalizer::normalize( $c[3], UNFC_Normalizer::NFC ) );
+					}
 					if ( $c[2] !== $c[4] ) {
 						$this->assertSame( Normalizer::isNormalized( $c[4], Normalizer::NFC ), UNFC_Normalizer::isNormalized( $c[4], UNFC_Normalizer::NFC ) );
 					}
 					$this->assertSame( Normalizer::normalize( $c[4], Normalizer::NFC ), UNFC_Normalizer::normalize( $c[4], UNFC_Normalizer::NFC ) );
-					$this->assertSame( Normalizer::normalize( $c[5], Normalizer::NFC ), UNFC_Normalizer::normalize( $c[5], UNFC_Normalizer::NFC ) );
+					if ( ( ! self::$new_cc_regex || ! preg_match( self::$new_cc_regex, $c[5] ) ) ) {
+						$this->assertSame( Normalizer::normalize( $c[5], Normalizer::NFC ), UNFC_Normalizer::normalize( $c[5], UNFC_Normalizer::NFC ) );
+					}
 
 					if ( $last9_c1s ) {
 						shuffle( $last9_c1s );
