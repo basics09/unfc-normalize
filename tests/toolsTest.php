@@ -224,6 +224,48 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @ticket unfc_unicode_chr
+	 */
+    function test_unicode_chr() {
+		$this->assertSame( 0, unfc_unicode_chr( "\x00" ) );
+		$this->assertSame( 1, unfc_unicode_chr( "\x01" ) );
+		$this->assertSame( 0x41, unfc_unicode_chr( "A" ) );
+		$this->assertSame( 0x7f, unfc_unicode_chr( "\x7f" ) );
+		$this->assertSame( 0x0080, unfc_unicode_chr( "\xc2\x80" ) );
+		$this->assertSame( 0x00e0, unfc_unicode_chr( "\xc3\xa0" ) );
+		$this->assertSame( 0x03ff, unfc_unicode_chr( "\xcf\xbf" ) );
+		$this->assertSame( 0x0400, unfc_unicode_chr( "\xd0\x80" ) );
+		$this->assertSame( 0x0409, unfc_unicode_chr( "\xd0\x89" ) );
+		$this->assertSame( 0x04d6, unfc_unicode_chr( "\xd3\x96" ) );
+		$this->assertSame( 0x07ff, unfc_unicode_chr( "\xdf\xbf" ) );
+		$this->assertSame( 0x0800, unfc_unicode_chr( "\xe0\xa0\x80" ) );
+		$this->assertSame( 0x0fda, unfc_unicode_chr( "\xe0\xbf\x9a" ) );
+		$this->assertSame( 0x0fff, unfc_unicode_chr( "\xe0\xbf\xbf" ) );
+		$this->assertSame( 0x1000, unfc_unicode_chr( "\xe1\x80\x80" ) );
+		$this->assertSame( 0xfffd, unfc_unicode_chr( "\xef\xbf\xbd" ) );
+		$this->assertSame( 0xffff, unfc_unicode_chr( "\xef\xbf\xbf" ) );
+		$this->assertSame( 0x10000, unfc_unicode_chr( "\xf0\x90\x80\x80" ) );
+		$this->assertSame( 0x10001, unfc_unicode_chr( "\xf0\x90\x80\x81" ) );
+		$this->assertSame( 0xe0000, unfc_unicode_chr( "\xf3\xa0\x80\x80" ) );
+		$this->assertSame( 0xe0001, unfc_unicode_chr( "\xf3\xa0\x80\x81" ) );
+		$this->assertSame( 0x10fffe, unfc_unicode_chr( "\xf4\x8f\xbf\xbe" ) );
+		$this->assertSame( 0x10ffff, unfc_unicode_chr( "\xf4\x8f\xbf\xbf" ) );
+		$this->assertSame( 0x110000, unfc_unicode_chr( "\xf4\x90\x80\x80" ) );
+	}
+
+	/**
+	 * @ticket unfc_utf8_chr_len
+	 */
+    function test_utf8_chr_len() {
+		$this->assertSame( 0, unfc_utf8_chr_len( "" ) );
+		$this->assertSame( 1, unfc_utf8_chr_len( "\x00" ) );
+		$this->assertSame( 1, unfc_utf8_chr_len( "A" ) );
+		$this->assertSame( 2, unfc_utf8_chr_len( "\xc2\xa2" ) );
+		$this->assertSame( 3, unfc_utf8_chr_len( "\xe3\xa2\xa2" ) );
+		$this->assertSame( 4, unfc_utf8_chr_len( "\xf2\xa2\xa2\xa2" ) );
+	}
+
+	/**
 	 * @ticket unfc_utf8_rand_ratio_str
 	 */
     function test_utf8_rand_ratio_str() {

@@ -27,6 +27,38 @@ function unfc_utf8_chr( $c ) {
 }
 
 /**
+ * UTF-8 character as unicode codepoint.
+ */
+function unfc_unicode_chr( $c ) {
+	$len = unfc_utf8_chr_len( $c );
+	if ( 0 === $len ) {
+		return 0;
+	}
+	if ( 1 === $len ) {
+		return ord( $c[0] );
+	}
+	$uchr = unpack('C*', substr( $c, 0, $len ) );
+	if ( 2 === $len ) {
+		return ( ( $uchr[1] & 0x1F ) << 6 ) + ( $uchr[2] & 0x3F );
+	}
+	if ( 3 === $len ) {
+		return ( ( $uchr[1] & 0x0F ) << 12 ) + ( ( $uchr[2] & 0x3F ) << 6 ) + ( $uchr[3] & 0x3F );
+	}
+	return ( ( $uchr[1] & 0x07 ) << 18 ) + ( ( $uchr[2] & 0x3F ) << 12 ) + ( ( $uchr[3] & 0x3F ) << 6 ) + ( $uchr[4] & 0x3F );
+}
+
+/**
+ * Length of UTF-8 character.
+ */
+function unfc_utf8_chr_len( $c ) {
+	static $ulenMask = array( "\x00" => 1, "\x10" => 1, "\x20" => 1, "\x30" => 1, "\x40" => 1, "\x50" => 1, "\x60" => 1, "\x70" => 1, "\xC0" => 2, "\xD0" => 2, "\xE0" => 3, "\xF0" => 4 );
+	if ( '' === $c ) {
+		return 0;
+	}
+	return $ulenMask[ $c[0] & "\xF0" ];
+}
+
+/**
  * Unicode codepoint as array of 4 UTF-8 ints.
  * Based on https://github.com/symfony/polyfill/blob/master/tests/Intl/Normalizer/NormalizerTest.php NormalizerTest::chr().
  */
