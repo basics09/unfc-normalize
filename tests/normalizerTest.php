@@ -105,7 +105,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		// Normalizer::isNormalized() returns an integer on HHVM and a boolean on PHP
 		list( self::$true, self::$false ) = defined( 'HHVM_VERSION' ) ? array( 1, 0 ) : array( true, false );
 
-		self::$unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && defined( 'INTL_ICU_VERSION' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
+		self::$unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
 		self::$REIWA = self::chr( 0x32FF ); // Unicode 12.1.0 addition - avoid for comparison to PHP Normalizer built against ICU < 64.2.
 		self::$ignore_REIWA = ! defined( 'INTL_ICU_VERSION' ) || version_compare( INTL_ICU_VERSION, '64.2', '<' );
 
@@ -216,6 +216,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
         $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKD ) );
         $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC_CF ) );
 
+        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d ) );
         $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFC ) );
         $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
         $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC ) );
@@ -224,7 +225,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
         $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "\xFF" ) );
 
+		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88" ) ); // u umlaut.
 		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88", UNFC_Normalizer::NFC ) ); // u umlaut.
+		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0" ) ); // u umlaut + Hangul
 		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0", UNFC_Normalizer::NFC ) ); // u umlaut + Hangul
 
 		if ( class_exists( 'Normalizer' ) ) {
@@ -242,8 +245,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC_CF ) );
 			}
 
-			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFD ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
+			$this->assertSame( Normalizer::isNormalized( $d ), UNFC_Normalizer::isNormalized( $d ) );
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFC ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFC ) );
+			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFD ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFKC ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC ) );
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFKD ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKD ) );
 			if ( self::$unorm2 ) {
@@ -279,26 +283,29 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		}
 
         $c = 'déjà 훈쇼™';
-        $d = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFD );
-        $kc = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKC );
-        $kd = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKD );
-		if ( self::$unorm2 ) {
-			$kc_cf = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKC_CF );
-		}
 
-        $this->assertSame( '', UNFC_Normalizer::normalize( '' ) );
 		if ( class_exists( 'Normalizer' ) ) {
-        	$this->assertSame( $c, Normalizer::normalize( $d ) );
-        	$this->assertSame( $c, Normalizer::normalize( $d, Normalizer::NFC ) );
-        	$this->assertSame( $d, Normalizer::normalize( $c, Normalizer::NFD ) );
-        	$this->assertSame( $kc, Normalizer::normalize( $d, Normalizer::NFKC ) );
-        	$this->assertSame( $kd, Normalizer::normalize( $c, Normalizer::NFKD ) );
+			$d = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFD );
+
+			$this->assertSame( $c, Normalizer::normalize( $d ) );
+			$this->assertSame( $c, Normalizer::normalize( $d, Normalizer::NFC ) );
+			$this->assertSame( $d, Normalizer::normalize( $c, Normalizer::NFD ) );
+			$this->assertSame( $d, Normalizer::normalize( $d, Normalizer::NFD ) );
+			$this->assertSame( Normalizer::normalize( $c ), UNFC_Normalizer::normalize( $c ) );
+			$this->assertSame( Normalizer::normalize( $c, Normalizer::NFC ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFC ) );
+			$this->assertSame( Normalizer::normalize( $d, Normalizer::NFC ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFC ) );
+			$this->assertSame( Normalizer::normalize( $c, Normalizer::NFKC ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKC ) );
+			$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKC ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKC ) );
+			$this->assertSame( Normalizer::normalize( $c, Normalizer::NFKD ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKD ) );
+			$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKD ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKD ) );
 			if ( self::$unorm2 ) {
-				$this->assertSame( $kc_cf, Normalizer::normalize( $c, Normalizer::NFKC_CF ) );
+				$this->assertSame( Normalizer::normalize( $c, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKC_CF ) );
+				$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKC_CF ) );
 			}
 		}
-
         $this->assertSame( self::$false, UNFC_Normalizer::normalize( $c, -1 ) );
+
+        $this->assertSame( '', UNFC_Normalizer::normalize( '' ) );
         $this->assertFalse( UNFC_Normalizer::normalize( "\xFF" ) );
     }
 

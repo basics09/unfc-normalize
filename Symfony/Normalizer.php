@@ -19,7 +19,7 @@ require dirname( __FILE__ ) . '/BaseNormalizer.php';
 /**
  * Normalizer is a PHP fallback implementation of the Normalizer class provided by the intl extension.
  *
- * It has been validated with Unicode 9.0.0 Normalization Conformance Test. // gitlost
+ * It has been validated with Unicode 12.1.0 Normalization Conformance Test. // gitlost
  * See http://www.unicode.org/reports/tr15/ for detailed info about Unicode normalizations.
  *
  * @author Nicolas Grekas <p@tchwork.com>
@@ -28,7 +28,7 @@ require dirname( __FILE__ ) . '/BaseNormalizer.php';
  */
 
 // PHP >= 7.3 with ICU >= 56 changed the values of the Normalizer consts for some reason, and also added new const NFKC_CF for case-folding.
-if ( version_compare( PHP_VERSION, '7.3', '>=' ) && defined( 'INTL_ICU_VERSION' ) && version_compare( INTL_ICU_VERSION, '56', '>=' ) ) {
+if ( version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' ) ) {
 	class UNFC_Normalizer extends UNFC_BaseNormalizer {
 		const NONE = 0x2;
 		const FORM_D = 0x4;
@@ -41,23 +41,6 @@ if ( version_compare( PHP_VERSION, '7.3', '>=' ) && defined( 'INTL_ICU_VERSION' 
 		const NFC = 0x10;
 		const NFKC = 0x20;
 		const NFKC_CF = 0x30;
-
-		protected static $forms = array(self::NFD => true, self::NFKD => true, self::NFC => true, self::NFKC => true, self::NFKC_CF => true); // For checking valid forms.
-
-		public static function isNormalized($s, $form = self::NFC)
-		{
-			return parent::isNormalized($s, $form);
-		}
-
-		public static function normalize($s, $form = self::NFC)
-		{
-			return parent::normalize($s, $form);
-		}
-
-		public static function getRawDecomposition($c, $form = self::NFC)
-		{
-			return parent::getRawDecomposition($c, $form);
-		}
 	}
 } else {
 	class UNFC_Normalizer extends UNFC_BaseNormalizer {
@@ -71,22 +54,5 @@ if ( version_compare( PHP_VERSION, '7.3', '>=' ) && defined( 'INTL_ICU_VERSION' 
 		const NFC = 4;
 		const NFKC = 5;
 		const NFKC_CF = 0x30; // Define this anyway as functionality available.
-
-		protected static $forms = array(self::NFD => true, self::NFKD => true, self::NFC => true, self::NFKC => true, self::NFKC_CF => true); // For checking valid forms.
-
-		public static function isNormalized($s, $form = self::NFC)
-		{
-			return parent::isNormalized($s, $form);
-		}
-
-		public static function normalize($s, $form = self::NFC)
-		{
-			return parent::normalize($s, $form);
-		}
-
-		public static function getRawDecomposition($c, $form = self::NFC)
-		{
-			return parent::getRawDecomposition($c, $form);
-		}
 	}
 }
