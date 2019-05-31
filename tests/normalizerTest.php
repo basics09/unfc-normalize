@@ -57,12 +57,13 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	);
 	// No new Combining class additions UCD 12.1.0 over 12.0.0
 
+	static $at_least_4_8_1 = false;
 	static $at_least_55_1 = false;
 	static $pcre_version = PCRE_VERSION;
 	static $true = true;
 	static $false = false;
 	static $doing_coverage = false;
-	static $unorm2 = false;
+	static $icu_unorm2 = false;
 	static $REIWA = false;
 	static $ignore_REIWA = false;
 
@@ -78,6 +79,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		require_once $dirname . '/tools/functions.php';
 
 		$icu_version = unfc_icu_version();
+		self::$at_least_4_8_1 = version_compare( $icu_version, '4.8.1', '>=' ); // ICU 4.8.1 uses Unicode 6.0 (first used ICU 54.1).
 		self::$at_least_55_1 = version_compare( $icu_version, '55.1', '>=' ); // ICU 55.1 uses Unicode 7.0 (first used ICU 54.1).
 
 		$new_cc = array();
@@ -105,7 +107,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		// Normalizer::isNormalized() returns an integer on HHVM and a boolean on PHP
 		list( self::$true, self::$false ) = defined( 'HHVM_VERSION' ) ? array( 1, 0 ) : array( true, false );
 
-		self::$unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
+		self::$icu_unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
 		self::$REIWA = self::chr( 0x32FF ); // Unicode 12.1.0 addition - avoid for comparison to PHP Normalizer built against ICU < 64.2.
 		self::$ignore_REIWA = ! defined( 'INTL_ICU_VERSION' ) || version_compare( INTL_ICU_VERSION, '64.2', '<' );
 
@@ -146,7 +148,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$rpn = $rpn->getConstants();
 			$rin = $rin->getConstants();
 
-			if ( ! self::$unorm2 ) {
+			if ( ! self::$icu_unorm2 ) {
 				unset( $rpn['NFKC_CF'] ); // Only defined for PHP >= 7.3 and ICU >= 56
 			}
 
@@ -241,7 +243,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFD ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFD ) );
 			$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFKC ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC ) );
 			$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFKD ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKD ) );
-			if ( self::$unorm2 ) {
+			if ( self::$icu_unorm2 ) {
 				$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC_CF ) );
 			}
 
@@ -250,7 +252,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFD ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFKC ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC ) );
 			$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFKD ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKD ) );
-			if ( self::$unorm2 ) {
+			if ( self::$icu_unorm2 ) {
 				$this->assertSame( Normalizer::isNormalized( $d, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC_CF ) );
 			}
 
@@ -298,7 +300,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKC ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKC ) );
 			$this->assertSame( Normalizer::normalize( $c, Normalizer::NFKD ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKD ) );
 			$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKD ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKD ) );
-			if ( self::$unorm2 ) {
+			if ( self::$icu_unorm2 ) {
 				$this->assertSame( Normalizer::normalize( $c, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFKC_CF ) );
 				$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKC_CF ) );
 			}
@@ -318,7 +320,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 		if ( class_exists( 'Normalizer' ) ) {
 			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NONE, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC );
-			if ( self::$unorm2 ) {
+			if ( self::$icu_unorm2 ) {
 				$forms[] = Normalizer::NFKC_CF;
 			}
 
@@ -473,7 +475,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( $c[4], UNFC_Normalizer::normalize( $c[4], UNFC_Normalizer::NFC ) );
 				$this->assertSame( $c[4], UNFC_Normalizer::normalize( $c[5], UNFC_Normalizer::NFC ) );
 
-				if ( class_exists( 'Normalizer' ) && self::$at_least_55_1 ) {
+				if ( class_exists( 'Normalizer' ) && self::$at_least_4_8_1 ) {
 					if ( $c[2] !== $c[1] ) {
 						$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c[1], UNFC_Normalizer::NFC ) );
 					}
@@ -520,7 +522,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( $c[5], UNFC_Normalizer::normalize( $c[4], UNFC_Normalizer::NFKD ) );
 				$this->assertSame( $c[5], UNFC_Normalizer::normalize( $c[5], UNFC_Normalizer::NFKD ) );
 
-				if ( class_exists( 'Normalizer' ) && self::$unorm2 ) {
+				if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
 					if ( self::$REIWA !== $c[1] || ! self::$ignore_REIWA ) {
 						$this->assertSame( Normalizer::isNormalized( $c[1], Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $c[1], UNFC_Normalizer::NFKC_CF ) );
 						$this->assertSame( Normalizer::normalize( $c[1], Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $c[1], UNFC_Normalizer::NFKC_CF ) );
@@ -566,7 +568,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$str = $strs[ $i ];
 				$this->assertSame( Normalizer::isNormalized( $str ), UNFC_Normalizer::isNormalized( $str ) );
 				$this->assertSame( Normalizer::normalize( $str ), UNFC_Normalizer::normalize( $str ) );
-				if ( self::$unorm2 ) {
+				if ( self::$icu_unorm2 ) {
 					$this->assertSame( Normalizer::isNormalized( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
 					$this->assertSame( Normalizer::normalize( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $str, UNFC_Normalizer::NFKC_CF ) );
 				}
@@ -581,7 +583,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				}
 				$this->assertSame( Normalizer::isNormalized( $str ), UNFC_Normalizer::isNormalized( $str ) );
 				$this->assertSame( Normalizer::normalize( $str ), UNFC_Normalizer::normalize( $str ) );
-				if ( self::$unorm2 ) {
+				if ( self::$icu_unorm2 ) {
 					$this->assertSame( Normalizer::isNormalized( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
 					$this->assertSame( Normalizer::normalize( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $str, UNFC_Normalizer::NFKC_CF ) );
 				}
@@ -599,16 +601,17 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	function test_nfkc_cf( $str, $expected ) {
 
 		$actual = UNFC_Normalizer::normalize( $str, UNFC_Normalizer::NFKC_CF );
-		$this->assertSame( $actual, $expected );
+		$this->assertSame( $expected, $actual );
 		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ) );
-		$this->assertSame( UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ), $str === $expected );
+		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFC ) );
+		$this->assertSame( $str === $expected, UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
 
-		if ( class_exists( 'Normalizer' ) && self::$unorm2 ) {
+		if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
 			$n = Normalizer::normalize( $str, Normalizer::NFKC_CF );
-			$this->assertSame( $n, $expected ); // Check data good.
-			$this->assertSame( $actual, $n );
-			$this->assertSame( UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ), Normalizer::isNormalized( $str, Normalizer::NFKC_CF ) );
-			$this->assertSame( UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ), Normalizer::isNormalized( $actual, Normalizer::NFKC_CF ) );
+			$this->assertSame( $expected, $n ); // Check data good.
+			$this->assertSame( $n, $actual );
+			$this->assertSame( Normalizer::isNormalized( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
+			$this->assertSame( Normalizer::isNormalized( $actual, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ) );
 		}
 	}
 
@@ -616,33 +619,46 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 		// Data from php-7.3.5/ext/intl/tests/normalizer_normalize_kc_cf.phpt
 
-		$char_a_diaeresis = "\xC3\xA4";	// 'LATIN SMALL LETTER A WITH DIAERESIS' (U+00E4)
-		$char_a_ring = "\xC3\xA5";		// 'LATIN SMALL LETTER A WITH RING ABOVE' (U+00E5)
-		$char_o_diaeresis = "\xC3\xB6";    // 'LATIN SMALL LETTER O WITH DIAERESIS' (U+00F6)
+		$char_a_diaeresis = "\xC3\xA4"; // 'LATIN SMALL LETTER A WITH DIAERESIS' (U+00E4)
+		$char_a_ring = "\xC3\xA5"; // 'LATIN SMALL LETTER A WITH RING ABOVE' (U+00E5)
+		$char_o_diaeresis = "\xC3\xB6"; // 'LATIN SMALL LETTER O WITH DIAERESIS' (U+00F6)
 
 		$char_angstrom_sign = "\xE2\x84\xAB"; // 'ANGSTROM SIGN' (U+212B)
-		$char_A_ring = "\xC3\x85";	// 'LATIN CAPITAL LETTER A WITH RING ABOVE' (U+00C5)
+		$char_A_ring = "\xC3\x85"; // 'LATIN CAPITAL LETTER A WITH RING ABOVE' (U+00C5)
 
-		$char_ohm_sign = "\xE2\x84\xA6";	// 'OHM SIGN' (U+2126)
-		$char_omega = "\xCE\xA9";  // 'GREEK CAPITAL LETTER OMEGA' (U+03A9)
+		$char_ohm_sign = "\xE2\x84\xA6"; // 'OHM SIGN' (U+2126)
+		$char_omega = "\xCE\xA9"; // 'GREEK CAPITAL LETTER OMEGA' (U+03A9)
 		$char_small_omega = "\xCF\x89"; // 'GREEK SMALL LETTER OMEGA' (U+03C9)
 
-		$char_combining_ring_above = "\xCC\x8A";  // 'COMBINING RING ABOVE' (U+030A)
+		$char_combining_ring_above = "\xCC\x8A"; // 'COMBINING RING ABOVE' (U+030A)
 
-		$char_fi_ligature = "\xEF\xAC\x81";  // 'LATIN SMALL LIGATURE FI' (U+FB01)
+		$char_fi_ligature = "\xEF\xAC\x81"; // 'LATIN SMALL LIGATURE FI' (U+FB01)
 
-		$char_long_s_dot = "\xE1\xBA\x9B";	// 'LATIN SMALL LETTER LONG S WITH DOT ABOVE' (U+1E9B)
+		$char_long_s_dot = "\xE1\xBA\x9B"; // 'LATIN SMALL LETTER LONG S WITH DOT ABOVE' (U+1E9B)
 		$char_small_s_dot = "\xE1\xB9\xA1"; // 'LATIN SMALL LETTER S WITH DOT ABOVE' (U+1E61)
 
 		// Data from icu4c-64_2-src/source/test/intltest/tstnorm.cpp
 
-		$u0308 = self::chr( 0x0308 ); // 'COMBINING DIAERESIS' (U+0308)
-		$u00AD = self::chr( 0x00AD ); // 'SOFT HYPHEN' (U+00AD)
-		$u0323 = self::chr( 0x0323 ); // 'COMBINING DOT BELOW' (U+0323)
-		$u1100 = self::chr( 0x1100 ); // 'HANGUL CHOSEONG KIYEOK' (U+1100)
-		$u1161 = self::chr( 0x1161 ); // 'HANGUL JUNGSEONG A' (U+1161)
-		$u11A8 = self::chr( 0x11A8 ); // 'HANGUL JONGSEONG KIYEOK' (U+11A8)
-		$u3133 = self::chr( 0x3133 ); // 'HANGUL LETTER KIYEOK-SIOS' (U+3133)
+		$u0308 = self::chr( 0x0308 ); // COMBINING DIAERESIS
+		$u00AD = self::chr( 0x00AD ); // SOFT HYPHEN
+		$u0323 = self::chr( 0x0323 ); // COMBINING DOT BELOW
+		$u1100 = self::chr( 0x1100 ); // HANGUL CHOSEONG KIYEOK
+		$u1161 = self::chr( 0x1161 ); // HANGUL JUNGSEONG A
+		$u11A8 = self::chr( 0x11A8 ); // HANGUL JONGSEONG KIYEOK
+		$u3133 = self::chr( 0x3133 ); // HANGUL LETTER KIYEOK-SIOS
+
+		// Other
+
+		$char_A_diaeresis = self::chr( 0xC4 ); // LATIN CAPITAL LETTER A WITH DIAERESIS
+		$char_combining_dot_above = self::chr( 0x0307 ); // COMBINING DOT ABOVE
+		$char_eta = self::chr( 0x03B7 ); // GREEK SMALL LETTER ETA
+		$char_eta_ypogegrammeni = self::chr( 0x1FC3 ); // GREEK SMALL LETTER ETA WITH YPOGEGRAMMENI
+		$char_iota = self::chr( 0x03B9 ); // GREEK SMALL LETTER IOTA
+		$char_ALPHA = self::chr( 0x0391 ); // GREEK CAPITAL LETTER ALPHA
+		$char_alpha = self::chr( 0x03B1 ); // GREEK SMALL LETTER ALPHA
+		$char_combining_acute = self::chr( 0x0301 ); // COMBINING ACUTE ACCENT
+		$char_combining_ypogegrammeni = self::chr( 0x0345 ); // COMBINING GREEK YPOGEGRAMMENI
+		$char_iota_tonos = self::chr( 0x03AF ); // GREEK SMALL LETTER IOTA WITH TONOS
 
 		$ret = array(
 			array('ABC', 'abc'),
@@ -659,28 +675,35 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			),
 
 			array( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz' ),
-			array( $u00AD, '' ),
-			array( self::chr( 0xFFDA ), "\xe1\x85\xb3" ),
-			array( self::chr( 0xFDFA ), "\xd8\xb5\xd9\x84\xd9\x89\x20\xd8\xa7\xd9\x84\xd9\x84\xd9\x87\x20\xd8\xb9\xd9\x84\xd9\x8a\xd9\x87\x20\xd9\x88\xd8\xb3\xd9\x84\xd9\x85" ),
+			array( $u00AD /* SOFT HYPHEN */, '' ),
+			array( self::chr( 0xFFDA ) /* HALFWIDTH HANGUL LETTER EU */, "\xe1\x85\xb3" ),
+			array(
+				self::chr( 0xFDFA ) /* ARABIC LIGATURE SALLALLAHOU ALAYHE WASALLAM */,
+				"\xd8\xb5\xd9\x84\xd9\x89\x20\xd8\xa7\xd9\x84\xd9\x84\xd9\x87\x20\xd8\xb9\xd9\x84\xd9\x8a\xd9\x87\x20\xd9\x88\xd8\xb3\xd9\x84\xd9\x85"
+			),
 			array( "\xF5", false ), // Invalid UTF-8
 			array( "", "" ),
-			array( self::chr( 0xC4 ), self::chr( 0xE4 ) ), // LATIN CAPITAL LETTER A WITH DIAERESIS
-			array( self::chr( 0xE4 ), self::chr( 0xE4 ) ),
-			array( self::chr( 0x1E08 ), self::chr( 0x1E09 ) ), // LATIN CAPITAL LETTER C WITH CEDILLA AND ACUTE
-			array( self::chr( 0x212B ), self::chr( 0xE5 ) ), // ANGSTROM SIGN
-			array( self::chr( 0xAC00 ), self::chr( 0xAC00 ) ), // HANGUL SYLLABLE GA
-			array( self::chr( 0xAC01 ), self::chr( 0xAC01 ) ), // HANGUL SYLLABLE GAG
-			array( self::chr( 0x0130 ), self::chr( 0x69 ) . self::chr( 0x0307 ) ), // LATIN CAPITAL LETTER I WITH DOT ABOVE
-			array( self::chr( 0x0132 ), self::chr( 0x69 ) . self::chr( 0x6A ) ), // LATIN CAPITAL LIGATURE IJ
-			array( self::chr( 0x0133 ), self::chr( 0x69 ) . self::chr( 0x6A ) ), // LATIN SMALL LIGATURE IJ
-			array( self::chr( 0x0134 ), self::chr( 0x0135 ) ), // LATIN CAPITAL LETTER J WITH CIRCUMFLEX
-			array( self::chr( 0x2FA1D ), self::chr( 0x2A600 ) ), // CJK COMPATIBILITY IDEOGRAPH-2FA1D
-			array( self::chr( 0x2FA1E ), self::chr( 0x2FA1E ) ), // Unassigned
-			array( self::chr( 0xE0000 ), '' ), // Unassigned
-			array( self::chr( 0xE0001 ), '' ), // LANGUAGE TAG
-			array( self::chr( 0xE0FFF ), '' ), // Unassigned
-			array( self::chr( 0xE2000 ), self::chr( 0xE2000 ) ), // Unassigned
-			array( self::chr( 0xF0000 ), self::chr( 0xF0000 ) ), // <Plane 15 Private Use, First>
+
+			array( $char_A_diaeresis, $char_a_diaeresis ),
+			array( $char_angstrom_sign, $char_a_ring ),
+			array( $char_eta_ypogegrammeni, $char_eta . $char_iota ),
+			array( $char_ALPHA . $char_combining_ypogegrammeni . $char_combining_acute, $char_alpha . $char_iota_tonos ),
+
+			array( self::chr( 0xAC00 ) /* HANGUL SYLLABLE GA */, self::chr( 0xAC00 ) ),
+			array( self::chr( 0xAC01 ) /* HANGUL SYLLABLE GAG */, self::chr( 0xAC01 ) ),
+
+			array( self::chr( 0x0130 ) /* LATIN CAPITAL LETTER I WITH DOT ABOVE */, "i" . $char_combining_dot_above ),
+			array( self::chr( 0x0132 ) /* LATIN CAPITAL LIGATURE IJ */, "ij" ),
+			array( self::chr( 0x0133 ) /* LATIN SMALL LIGATURE IJ */, "ij" ),
+			array( self::chr( 0x0134 ) /* LATIN CAPITAL LETTER J WITH CIRCUMFLEX */, self::chr( 0x0135 ) /* LATIN SMALL LETTER J WITH CIRCUMFLEX */ ),
+
+			array( self::chr( 0x2FA1D ) /* CJK COMPATIBILITY IDEOGRAPH-2FA1D */, self::chr( 0x2A600 ) /* <CJK Ideograph Extension B> */ ),
+			array( self::chr( 0x2FA1E ) /* Unassigned */, self::chr( 0x2FA1E ) ),
+			array( self::chr( 0xE0000 ) /* Unassigned */, '' ),
+			array( self::chr( 0xE0001 ) /* LANGUAGE TAG */, '' ),
+			array( self::chr( 0xE0FFF ) /* Unassigned */, '' ),
+			array( self::chr( 0xE2000 ) /* Unassigned */, self::chr( 0xE2000 ) ),
+			array( self::chr( 0xF0000 ) /* <Plane 15 Private Use, First> */, self::chr( 0xF0000 ) ),
 		);
 
 		$concat_str = $concat_expected = '';
@@ -703,15 +726,15 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 		foreach ( $form_expecteds as $form => $expected ) {
 			$actual = UNFC_Normalizer::getRawDecomposition( $c, $form );
-			$this->assertSame( $actual, $expected );
-			if ( class_exists( 'Normalizer' ) && self::$unorm2 ) {
+			$this->assertSame( $expected, $actual );
+			if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
 				$n = Normalizer::getRawDecomposition( $c, $form );
 				$this->assertSame( $expected, $n ); // Check data good.
-				$this->assertSame( $actual, $n );
+				$this->assertSame( $n, $actual );
 			}
 			if ( UNFC_Normalizer::NFC === $form ) { // Default arg check.
 				$this->assertSame( $actual, UNFC_Normalizer::getRawDecomposition( $c ) );
-				if ( class_exists( 'Normalizer' ) && self::$unorm2 ) {
+				if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
 					$this->assertSame( $actual, Normalizer::getRawDecomposition( $c ) );
 				}
 			}
@@ -729,6 +752,10 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFKC_CF => null,
 				UNFC_Normalizer::NONE => '',
 				0 => '',
+			) ),
+			array( "A", array( // Additional NFKC_CF check.
+				UNFC_Normalizer::NFKC => null,
+				UNFC_Normalizer::NFKC_CF => "a",
 			) ),
 			array( self::chr( 0xFFDA ) /* HALFWIDTH HANGUL LETTER EU */, array(
 				UNFC_Normalizer::NFKC => "\xe3\x85\xa1", // U+3161 compatibility decomposition (with recursive decomposition to U+1173 not done).
@@ -796,7 +823,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFKC => self::chr( 0xC5 ), // LATIN CAPITAL LETTER A WITH RING ABOVE
 				UNFC_Normalizer::NFKC_CF => self::chr( 0xE5 ), // LATIN SMALL LETTER A WITH RING ABOVE
 			) ),
-			array( self::chr( 0xAC00 ), /* <Hangul Syllable, First> GA */ array(
+			array( self::chr( 0xAC00 ) /* <Hangul Syllable, First> GA */, array(
 				UNFC_Normalizer::NFKC => self::chr( 0x1100 ) . self::chr( 0x1161 ),
 				UNFC_Normalizer::NFKD => self::chr( 0x1100 ) . self::chr( 0x1161 ),
 				UNFC_Normalizer::NFC => self::chr( 0x1100 ) . self::chr( 0x1161 ),
@@ -820,27 +847,27 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 			// Canonical/compatibility.
 			array( self::chr( 0x0130 ) /* LATIN CAPITAL LETTER I WITH DOT ABOVE */, array(
-				UNFC_Normalizer::NFKC => self::chr( 0x49 ) . self::chr( 0x0307 ),
-				UNFC_Normalizer::NFKD => self::chr( 0x49 ) . self::chr( 0x0307 ),
-				UNFC_Normalizer::NFC => self::chr( 0x49 ) . self::chr( 0x0307 ),
-				UNFC_Normalizer::NFD => self::chr( 0x49 ) . self::chr( 0x0307 ),
-				UNFC_Normalizer::NFKC_CF => self::chr( 0x69 ) . self::chr( 0x0307 ),
+				UNFC_Normalizer::NFKC => 'I' . self::chr( 0x0307 ),
+				UNFC_Normalizer::NFKD => 'I' . self::chr( 0x0307 ),
+				UNFC_Normalizer::NFC => 'I' . self::chr( 0x0307 ),
+				UNFC_Normalizer::NFD => 'I' . self::chr( 0x0307 ),
+				UNFC_Normalizer::NFKC_CF => 'i' . self::chr( 0x0307 ),
 			) ),
 			array( self::chr( 0x0132 ) /* LATIN CAPITAL LIGATURE IJ */, array(
-				UNFC_Normalizer::NFKC => self::chr( 0x49 ) . self::chr( 0x4A ),
-				UNFC_Normalizer::NFKD => self::chr( 0x49 ) . self::chr( 0x4A ),
+				UNFC_Normalizer::NFKC => 'IJ',
+				UNFC_Normalizer::NFKD => 'IJ',
 				UNFC_Normalizer::NFC => null,
 				UNFC_Normalizer::NFD => null,
-				UNFC_Normalizer::NFKC_CF => self::chr( 0x69 ) . self::chr( 0x6A ),
+				UNFC_Normalizer::NFKC_CF => 'ij',
 			) ),
 			array( self::chr( 0x0133 ) /* LATIN SMALL LIGATURE IJ */, array(
-				UNFC_Normalizer::NFKC => self::chr( 0x69 ) . self::chr( 0x6A ),
+				UNFC_Normalizer::NFKC => 'ij',
 				UNFC_Normalizer::NFC => null,
-				UNFC_Normalizer::NFKC_CF => self::chr( 0x69 ) . self::chr( 0x6A ),
+				UNFC_Normalizer::NFKC_CF => 'ij',
 			) ),
 			array( self::chr( 0x0134 ) /* LATIN CAPITAL LETTER J WITH CIRCUMFLEX */, array(
-				UNFC_Normalizer::NFKC => self::chr( 0x4A ) . self::chr( 0x0302 ),
-				UNFC_Normalizer::NFC => self::chr( 0x4A ) . self::chr( 0x0302 ),
+				UNFC_Normalizer::NFKC => 'J' . self::chr( 0x0302 ),
+				UNFC_Normalizer::NFC => 'J' . self::chr( 0x0302 ),
 				UNFC_Normalizer::NFKC_CF => self::chr( 0x0135 ),
 			) ),
 
@@ -874,10 +901,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFKC => null,
 				UNFC_Normalizer::NFC => null,
 				UNFC_Normalizer::NFKC_CF => null,
-			) ),
-			array( "A", array(
-				UNFC_Normalizer::NFKC => null,
-				UNFC_Normalizer::NFKC_CF => "a",
 			) ),
 		);
 	}
