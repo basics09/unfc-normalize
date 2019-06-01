@@ -2,12 +2,12 @@ language: php
 
 sudo: false
 dist: xenial
+services: mysql
 
 matrix:
   include:
     - php: 7.3
       env: WP_VERSION=5.2.1
-      services: mysql
     - php: 7.3
       env: WP_VERSION=5.2
     - php: 7.3
