@@ -1,13 +1,12 @@
 language: php
 
 sudo: false
-dist: trusty
+dist: xenial
 
 matrix:
   include:
     - php: 7.3
       env: WP_VERSION=5.2.1
-      dist: xenial
       services: mysql
     - php: 7.3
       env: WP_VERSION=5.2
@@ -57,8 +56,10 @@ matrix:
       env: WP_VERSION=3.9.13
     - php: 5.5
       env: WP_VERSION=4.2.15
+      dist: trusty
     - php: 5.4
       env: WP_VERSION=4.1.18
+      dist: trusty
     - php: 5.3
       env: WP_VERSION=4.0.18
       dist: precise

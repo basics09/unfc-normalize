@@ -57,7 +57,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	);
 	// No new Combining class additions UCD 12.1.0 over 12.0.0
 
-	static $at_least_4_8_1 = false;
 	static $at_least_55_1 = false;
 	static $pcre_version = PCRE_VERSION;
 	static $true = true;
@@ -79,7 +78,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		require_once $dirname . '/tools/functions.php';
 
 		$icu_version = unfc_icu_version();
-		self::$at_least_4_8_1 = version_compare( $icu_version, '4.8.1', '>=' ); // ICU 4.8.1 uses Unicode 6.0 (first used ICU 54.1).
 		self::$at_least_55_1 = version_compare( $icu_version, '55.1', '>=' ); // ICU 55.1 uses Unicode 7.0 (first used ICU 54.1).
 
 		$new_cc = array();
@@ -475,7 +473,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( $c[4], UNFC_Normalizer::normalize( $c[4], UNFC_Normalizer::NFC ) );
 				$this->assertSame( $c[4], UNFC_Normalizer::normalize( $c[5], UNFC_Normalizer::NFC ) );
 
-				if ( class_exists( 'Normalizer' ) && self::$at_least_4_8_1 ) {
+				if ( class_exists( 'Normalizer' ) && self::$at_least_55_1 ) {
 					if ( $c[2] !== $c[1] ) {
 						$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c[1], UNFC_Normalizer::NFC ) );
 					}
