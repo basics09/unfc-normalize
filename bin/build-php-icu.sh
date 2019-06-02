@@ -21,7 +21,7 @@ if [ ! -f $ICU_PHP_DIR/bin/php ]; then
 	wget -O php-src.tgz http://us1.php.net/get/php-$ICU_PHP_VERSION.tar.gz/from/this/mirror
 	mkdir php-src && tar xzf php-src.tgz -C php-src --strip-components=1
 	pushd php-src
-		./configure --prefix=$ICU_PHP_DIR --enable-intl --with-icu-dir=$ICU_DIR
+		./configure --prefix=$ICU_PHP_DIR --enable-intl --with-icu-dir=$ICU_DIR --enable-mbstring --with-mysql --with-mysqli=/usr/bin/mysql_config
 		make && make install
 	popd
 fi

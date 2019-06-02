@@ -4,6 +4,10 @@ sudo: false
 dist: xenial
 services: mysql
 
+cache:
+  directories:
+    - $HOME/.build
+
 matrix:
   include:
     - php: 7.3
@@ -73,12 +77,11 @@ install:
 
 before_script:
 - ICU_PHP_VERSION=$(php -r 'echo preg_replace("/(^[0-9.]+).*$/", '\''$1'\'', PHP_VERSION);')
-- echo ICU_PHP_VERSION $ICU_PHP_VERSION TRAVIS_PHP_VERSION $TRAVIS_PHP_VERSION
 - if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $ICU_PHP_VERSION; UNFC_PHP=$HOME/.build/php-$ICU_PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
 - if [[ ! ( $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = '5.2.1' ) ]]; then phpenv config-rm xdebug.ini || true; fi
-- if [[ $TRAVIS_PHP_VERSION = 7.[0123]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; else UNFC_PHPUNIT=phpunit; fi
+- if [[ $TRAVIS_PHP_VERSION = 7.[0123]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; else UNFC_PHPUNIT=$(which phpunit); fi
 - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-- php --info
+- $UNFC_PHP --info
 
 script:
 - PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose
