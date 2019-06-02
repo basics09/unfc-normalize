@@ -610,6 +610,23 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$this->assertSame( $n, $actual );
 			$this->assertSame( Normalizer::isNormalized( $str, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
 			$this->assertSame( Normalizer::isNormalized( $actual, Normalizer::NFKC_CF ), UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ) );
+
+			$n = Normalizer::normalize( $str, Normalizer::NFC );
+			if ( $n !== $str ) {
+				$this->assertSame( Normalizer::normalize( $n, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $n, UNFC_Normalizer::NFKC_CF ) );
+			}
+			$n = Normalizer::normalize( $str, Normalizer::NFD );
+			if ( $n !== $str ) {
+				$this->assertSame( Normalizer::normalize( $n, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $n, UNFC_Normalizer::NFKC_CF ) );
+			}
+			$n = Normalizer::normalize( $str, Normalizer::NFKC );
+			if ( $n !== $str ) {
+				$this->assertSame( Normalizer::normalize( $n, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $n, UNFC_Normalizer::NFKC_CF ) );
+			}
+			$n = Normalizer::normalize( $str, Normalizer::NFKD );
+			if ( $n !== $str ) {
+				$this->assertSame( Normalizer::normalize( $n, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $n, UNFC_Normalizer::NFKC_CF ) );
+			}
 		}
 	}
 
@@ -657,6 +674,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		$char_combining_acute = self::chr( 0x0301 ); // COMBINING ACUTE ACCENT
 		$char_combining_ypogegrammeni = self::chr( 0x0345 ); // COMBINING GREEK YPOGEGRAMMENI
 		$char_iota_tonos = self::chr( 0x03AF ); // GREEK SMALL LETTER IOTA WITH TONOS
+		$char_alpha_tonos = self::chr( 0x03AC ); // GREEK SMALL LETTER ALPHA WITH TONOS
 
 		$ret = array(
 			array('ABC', 'abc'),
@@ -685,7 +703,8 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			array( $char_A_diaeresis, $char_a_diaeresis ),
 			array( $char_angstrom_sign, $char_a_ring ),
 			array( $char_eta_ypogegrammeni, $char_eta . $char_iota ),
-			array( $char_ALPHA . $char_combining_ypogegrammeni . $char_combining_acute, $char_alpha . $char_iota_tonos ),
+			array( $char_ALPHA . $char_combining_ypogegrammeni . $char_combining_acute /* Non-normalized */, $char_alpha . $char_iota_tonos ),
+			array( $char_ALPHA . $char_combining_acute . $char_combining_ypogegrammeni /* Normalized */, $char_alpha_tonos . $char_iota ),
 
 			array( self::chr( 0xAC00 ) /* HANGUL SYLLABLE GA */, self::chr( 0xAC00 ) ),
 			array( self::chr( 0xAC01 ) /* HANGUL SYLLABLE GAG */, self::chr( 0xAC01 ) ),
@@ -697,10 +716,11 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 			array( self::chr( 0x2FA1D ) /* CJK COMPATIBILITY IDEOGRAPH-2FA1D */, self::chr( 0x2A600 ) /* <CJK Ideograph Extension B> */ ),
 			array( self::chr( 0x2FA1E ) /* Unassigned */, self::chr( 0x2FA1E ) ),
+			array( self::chr( 0xDFFFF ) /* <not a character> */, self::chr( 0xDFFFF ) ),
 			array( self::chr( 0xE0000 ) /* Unassigned */, '' ),
 			array( self::chr( 0xE0001 ) /* LANGUAGE TAG */, '' ),
 			array( self::chr( 0xE0FFF ) /* Unassigned */, '' ),
-			array( self::chr( 0xE2000 ) /* Unassigned */, self::chr( 0xE2000 ) ),
+			array( self::chr( 0xE1000 ) /* Unassigned */, self::chr( 0xE1000 ) ),
 			array( self::chr( 0xF0000 ) /* <Plane 15 Private Use, First> */, self::chr( 0xF0000 ) ),
 		);
 
