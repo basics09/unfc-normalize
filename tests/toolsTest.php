@@ -8,10 +8,14 @@
  */
 class Tests_UNFC_Tools extends WP_UnitTestCase {
 
+	static $pcre_utf8 = false;
+
 	public static function wpSetUpBeforeClass() {
 		$dirname = dirname( dirname( __FILE__ ) );
 		require_once $dirname . '/tools/functions.php';
 		require_once $dirname . '/Symfony/unfc_regex_alts.php';
+
+		self::$pcre_utf8 = false !== @preg_match( '//u', '' );
 	}
 
 	function setUp() {
@@ -149,8 +153,10 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 		$this->assertSame( '\x20|\xc2\xa0|\xe1\x9a\x80|\xe2(?:\x80[\x80-\x8a\xa8\xa9\xaf]|\x81\x9f)|\xe3\x80\x80', $out_utf8 );
 		$out_utf16 = unfc_unicode_regex_chars_from_codepoints( $codepoints['Z'] );
 		$this->assertSame( '\x20\xa0\x{1680}\x{2000}-\x{200a}\x{2028}\x{2029}\x{202f}\x{205f}\x{3000}', $out_utf16 );
-		$str = " \x20\xe2\x80\x89";
-		$this->assertSame( preg_match( '/' . $out_utf8 . '/', $str ), preg_match( '/[' . $out_utf16 . ']/u', $str ) );
+		if ( self::$pcre_utf8 ) {
+			$str = " \x20\xe2\x80\x89";
+			$this->assertSame( preg_match( '/' . $out_utf8 . '/', $str ), preg_match( '/[' . $out_utf16 . ']/u', $str ) );
+		}
 	}
 
 	static function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) {
@@ -201,12 +207,16 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 		foreach ( $unfc_nfc_noes as $no ) {
 			$chr = unfc_utf8_chr( $no );
 			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES, $chr ) );
-			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_U, $chr ) );
+			if ( self::$pcre_utf8 ) {
+				$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_U, $chr ) );
+			}
 		}
 		foreach ( $unfc_nfc_noes_maybes_reorders as $nmr ) {
 			$chr = unfc_utf8_chr( $nmr );
 			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $chr ) );
-			$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_MAYBES_REORDERS_U, $chr ) );
+			if ( self::$pcre_utf8 ) {
+				$this->assertSame( 1, preg_match( UNFC_REGEX_NFC_NOES_MAYBES_REORDERS_U, $chr ) );
+			}
 		}
 	}
 

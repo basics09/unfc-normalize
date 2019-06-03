@@ -16,13 +16,13 @@ matrix:
     - php: nightly
       env: WP_VERSION=5.2.1
     - php: 7.3
-      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
+      env: WP_VERSION=5.2.1
     - php: 7.3
       env: WP_VERSION=5.2
     - php: 7.3
       env: WP_VERSION=5.1.1
     - php: 7.2
-      env: WP_VERSION=5.2.1
+      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
     - php: 7.2
       env: WP_VERSION=5.1.1
     - php: 7.2
@@ -81,7 +81,6 @@ install:
 - npm install
 
 before_script:
-- phpenv version-name
 - PHP_VERSION=$(php -r 'echo substr(PHP_VERSION, 0, strspn(PHP_VERSION, "0123456789."));')
 - if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $PHP_VERSION; UNFC_PHP=$HOME/.build/php-$PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
 - if [[ ! ( $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ) ]]; then phpenv config-rm xdebug.ini || true; fi

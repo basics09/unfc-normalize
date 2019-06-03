@@ -63,6 +63,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	static $icu_unorm2 = false;
 	static $REIWA = false;
 	static $ignore_REIWA = false;
+	static $pcre_utf8 = false;
 
 	static function wpSetUpBeforeClass() {
 		global $unfc_normalize;
@@ -103,6 +104,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		self::$icu_unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
 		self::$REIWA = self::chr( 0x32FF ); // Unicode 12.1.0 addition - avoid for comparison to PHP Normalizer built against ICU < 64.2.
 		self::$ignore_REIWA = ! defined( 'INTL_ICU_VERSION' ) || version_compare( INTL_ICU_VERSION, '64.2', '<' );
+		self::$pcre_utf8 = false !== @preg_match( '//u', '' );
 
 		global $argv;
 		$grep = preg_grep( '/--coverage/', $argv );
@@ -914,7 +916,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	 */
 	function test_is_valid_utf8_true( $str ) {
 		$this->assertTrue( unfc_is_valid_utf8( $str ) );
-		if ( version_compare( self::$pcre_version, '7.3', '>=' ) && version_compare( self::$pcre_version, '8.32', '!=' ) ) { // RFC 3629 compliant and without 8.32 regression (rejecting non-chars).
+		if ( version_compare( self::$pcre_version, '7.3', '>=' ) && version_compare( self::$pcre_version, '8.32', '!=' ) && self::$pcre_utf8 ) { // RFC 3629 compliant and without 8.32 regression (rejecting non-chars).
 			$this->assertTrue( 1 === preg_match( '//u', $str ) );
 		}
 		if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
@@ -953,7 +955,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	 */
 	function test_is_valid_utf8_false( $str ) {
 		$this->assertFalse( unfc_is_valid_utf8( $str ) );
-		if ( version_compare( self::$pcre_version, '7.3', '>=' ) && version_compare( self::$pcre_version, '8.32', '!=' ) ) { // RFC 3629 compliant and without 8.32 regression (rejecting non-chars).
+		if ( version_compare( self::$pcre_version, '7.3', '>=' ) && version_compare( self::$pcre_version, '8.32', '!=' ) && self::$pcre_utf8 ) { // RFC 3629 compliant and without 8.32 regression (rejecting non-chars).
 			$this->assertFalse( 1 === preg_match( '//u', $str ) );
 		}
 		if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
@@ -995,7 +997,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		for ( $i = 0; $i < $num_tests; $i++ ) {
 			$str = unfc_utf8_rand_ratio_str( 100, 0.1 );
 			$this->assertFalse( unfc_is_valid_utf8( $str ) );
-			if ( version_compare( self::$pcre_version, '7.3', '>=' ) ) { // RFC 3629 compliant.
+			if ( version_compare( self::$pcre_version, '7.3', '>=' ) && self::$pcre_utf8 ) { // RFC 3629 compliant.
 				$this->assertFalse( 1 === preg_match( '//u', $str ) );
 			}
 			if ( version_compare( PHP_VERSION, '5.3.4', '>=' ) ) { // RFC 3629 compliant.
