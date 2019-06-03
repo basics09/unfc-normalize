@@ -16,13 +16,13 @@ matrix:
     - php: nightly
       env: WP_VERSION=5.2.1
     - php: 7.3
-      env: WP_VERSION=5.2.1
+      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
     - php: 7.3
       env: WP_VERSION=5.2
     - php: 7.3
       env: WP_VERSION=5.1.1
     - php: 7.2
-      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
+      env: WP_VERSION=5.2.1
     - php: 7.2
       env: WP_VERSION=5.1.1
     - php: 7.2
@@ -89,6 +89,8 @@ before_script:
 - $UNFC_PHP --info
 
 script:
+- echo UNFC_PHP $UNFC_PHP
+- echo UNFC_PHPUNIT $UNFC_PHPUNIT
 - PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
