@@ -59,8 +59,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 	static $at_least_55_1 = false;
 	static $pcre_version = PCRE_VERSION;
-	static $true = true;
-	static $false = false;
 	static $doing_coverage = false;
 	static $icu_unorm2 = false;
 	static $REIWA = false;
@@ -102,9 +100,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 		self::$pcre_version = substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) );
 
-		// Normalizer::isNormalized() returns an integer on HHVM and a boolean on PHP
-		list( self::$true, self::$false ) = defined( 'HHVM_VERSION' ) ? array( 1, 0 ) : array( true, false );
-
 		self::$icu_unorm2 = version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( INTL_ICU_VERSION, '56', '>=' );
 		self::$REIWA = self::chr( 0x32FF ); // Unicode 12.1.0 addition - avoid for comparison to PHP Normalizer built against ICU < 64.2.
 		self::$ignore_REIWA = ! defined( 'INTL_ICU_VERSION' ) || version_compare( INTL_ICU_VERSION, '64.2', '<' );
@@ -134,7 +129,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_constants
 	 * @requires extension intl
 	 */
     function test_constants() {
@@ -160,7 +154,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
     }
 
 	/**
-	 * @ticket unfc_props
 	 */
     function test_props() {
 
@@ -176,59 +169,59 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		}
 
 		if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) { // For availability of ReflectionClass::setAccessible()
-			$prop = $rpn->getProperty( 'D' );
-			$prop->setAccessible( true );
-			$prop->setValue( null );
+			$prop_D = $rpn->getProperty( 'D' );
+			$prop_D->setAccessible( true );
+			$prop_D->setValue( null );
 
-			$prop = $rpn->getProperty( 'C' );
-			$prop->setAccessible( true );
-			$prop->setValue( null );
+			$prop_C = $rpn->getProperty( 'C' );
+			$prop_C->setAccessible( true );
+			$prop_C->setValue( null );
 
 			$this->assertSame( "\xc3\xbc", UNFC_Normalizer::normalize( "u\xcc\x88" ) );
 
-			$prop = $rpn->getProperty( 'kcCF' );
-			$prop->setAccessible( true );
-			$prop->setValue( null );
+			$prop_C->setValue( null );
+			$prop_D->setValue( null );
+
+			$prop_kcCF = $rpn->getProperty( 'kcCF' );
+			$prop_kcCF->setAccessible( true );
+			$prop_kcCF->setValue( null );
 
 			$this->assertSame( "a", UNFC_Normalizer::getRawDecomposition( "A", UNFC_Normalizer::NFKC_CF ) );
 
-			$prop = $rpn->getProperty( 'kcCF' );
-			$prop->setAccessible( true );
-			$prop->setValue( null );
+			$prop_kcCF->setValue( null );
 		}
     }
 
     /**
-	 * @ticket unfc_is_normalized
      */
     function test_is_normalized() {
 
         $c = 'déjà';
         $d = UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NFD );
 
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( '' ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( 'abc' ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( '' ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( 'abc' ) );
 
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFC ) );
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFD ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC ) );
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKD ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC_CF ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $c ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFC ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFD ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKD ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFKC_CF ) );
 
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d ) );
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFC ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC ) );
-        $this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKD ) );
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC_CF ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $d ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFC ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFD ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKD ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC_CF ) );
 
-        $this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "\xFF" ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( "\xFF" ) );
 
-		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88" ) ); // u umlaut.
-		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88", UNFC_Normalizer::NFC ) ); // u umlaut.
-		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0" ) ); // u umlaut + Hangul
-		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0", UNFC_Normalizer::NFC ) ); // u umlaut + Hangul
+		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88" ) ); // u umlaut.
+		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88", UNFC_Normalizer::NFC ) ); // u umlaut.
+		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0" ) ); // u umlaut + Hangul
+		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0", UNFC_Normalizer::NFC ) ); // u umlaut + Hangul
 
 		if ( class_exists( 'Normalizer' ) ) {
 			$this->assertSame( $d, Normalizer::normalize( $c, Normalizer::NFD ) );
@@ -256,15 +249,14 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 			$this->assertSame( Normalizer::isNormalized( "\xFF" ), UNFC_Normalizer::isNormalized( "\xFF" ) );
 
-			$this->assertSame( self::$true, Normalizer::isNormalized( $d, Normalizer::NFD ) );
-			$this->assertSame( self::$true, Normalizer::isNormalized( $d, Normalizer::NFKD ) );
-			$this->assertSame( self::$false, Normalizer::isNormalized( "u\xcc\x88", Normalizer::NFC ) ); // u umlaut.
-			$this->assertSame( self::$false, Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0", Normalizer::NFC ) ); // u umlaut + Hangul
+			$this->assertTrue( Normalizer::isNormalized( $d, Normalizer::NFD ) );
+			$this->assertTrue( Normalizer::isNormalized( $d, Normalizer::NFKD ) );
+			$this->assertFalse( Normalizer::isNormalized( "u\xcc\x88", Normalizer::NFC ) ); // u umlaut.
+			$this->assertFalse( Normalizer::isNormalized( "u\xcc\x88\xed\x9e\xa0", Normalizer::NFC ) ); // u umlaut + Hangul
 		}
     }
 
     /**
-	 * @ticket unfc_normalize
      */
     function test_normalize() {
 
@@ -303,14 +295,13 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( Normalizer::normalize( $d, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $d, UNFC_Normalizer::NFKC_CF ) );
 			}
 		}
-        $this->assertSame( self::$false, UNFC_Normalizer::normalize( $c, -1 ) );
+        $this->assertFalse( UNFC_Normalizer::normalize( $c, -1 ) );
 
         $this->assertSame( '', UNFC_Normalizer::normalize( '' ) );
         $this->assertFalse( UNFC_Normalizer::normalize( "\xFF" ) );
     }
 
 	/**
-	 * @ticket unfc_args_compat
 	 * @dataProvider data_args_compat
 	 * @requires extension intl
 	 */
@@ -352,7 +343,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_mbstring
 	 * @requires extension mbstring
 	 *
 	 * NOTE: need to run phpunit as "PHPRC=. phpunit" to pick up "php-cli.ini" in normalizer directory for "mbstring.func_overload = 2" to be set.
@@ -370,11 +360,11 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		$this->assertSame( "\x8e\xa1", mb_substr( "\x8e\xa1", 0, 1 ) );
 		$this->assertSame( "\x8e\xa1", substr( "\x8e\xa1", 0, 1 ) );
 
-		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( 'abc' ) );
+		$this->assertTrue( UNFC_Normalizer::isNormalized( 'abc' ) );
 		$this->assertSame( $encoding, mb_internal_encoding() );
-		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( "\xe2\x8e\xa1" ) );
+		$this->assertTrue( UNFC_Normalizer::isNormalized( "\xe2\x8e\xa1" ) );
 		$this->assertSame( $encoding, mb_internal_encoding() );
-		$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( "u\xcc\x88" ) );
+		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88" ) );
 		$this->assertSame( $encoding, mb_internal_encoding() );
 
 		$this->assertSame( 'abc', UNFC_Normalizer::normalize( 'abc' ) );
@@ -397,7 +387,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_conformance_12_1_0
      */
     function test_conformance_12_1_0() {
 
@@ -466,7 +455,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 					array_shift( $last9_c1s );
 				}
 
-				$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c[2], UNFC_Normalizer::NFC ), "$line_num: {$line}c[2]=" . bin2hex( $c[2] ) );
+				$this->assertTrue( UNFC_Normalizer::isNormalized( $c[2], UNFC_Normalizer::NFC ), "$line_num: {$line}c[2]=" . bin2hex( $c[2] ) );
 				$this->assertSame( $c[2], UNFC_Normalizer::normalize( $c[1], UNFC_Normalizer::NFC ) );
 				$this->assertSame( $c[2], UNFC_Normalizer::normalize( $c[2], UNFC_Normalizer::NFC ) );
 				$this->assertSame( $c[2], UNFC_Normalizer::normalize( $c[3], UNFC_Normalizer::NFC ) );
@@ -475,7 +464,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 				if ( class_exists( 'Normalizer' ) && self::$at_least_55_1 ) {
 					if ( $c[2] !== $c[1] ) {
-						$this->assertSame( self::$false, UNFC_Normalizer::isNormalized( $c[1], UNFC_Normalizer::NFC ) );
+						$this->assertFalse( UNFC_Normalizer::isNormalized( $c[1], UNFC_Normalizer::NFC ) );
 					}
 					if ( ( ! self::$new_cc_regex || ! preg_match( self::$new_cc_regex, $c[1] ) ) ) {
 						$this->assertSame( $normalize_n = Normalizer::normalize( $c[1], Normalizer::NFC ), $normalize_t = UNFC_Normalizer::normalize( $c[1], UNFC_Normalizer::NFC ), "$line_num: {$line}c[1]=" . bin2hex( $c[1] ) . ", normalize_n=" . bin2hex( $normalize_n ) . ", normalize_t=" . bin2hex( $normalize_t ) . ", c[2]=" . bin2hex( $c[2] ) );
@@ -538,7 +527,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 					for ( $i = $last_x + 1; $i < $x; $i++ ) {
 						$c1 = self::chr( $i );
 						if ( unfc_is_valid_utf8( $c1 ) ) {
-							$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $c1, UNFC_Normalizer::NFC ), "$line_num: {$line}c1=" . bin2hex( $c1 ) );
+							$this->assertTrue( UNFC_Normalizer::isNormalized( $c1, UNFC_Normalizer::NFC ), "$line_num: {$line}c1=" . bin2hex( $c1 ) );
 							$this->assertSame( $c1, UNFC_Normalizer::normalize( $c1, UNFC_Normalizer::NFC ) );
 						}
 					}
@@ -549,7 +538,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
     }
 
     /**
-	 * @ticket unfc_random
 	 * @requires extension intl
      */
 	function test_random() {
@@ -593,15 +581,14 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_nfkc_cf
 	 * @dataProvider data_nfkc_cf
 	 */
 	function test_nfkc_cf( $str, $expected ) {
 
 		$actual = UNFC_Normalizer::normalize( $str, UNFC_Normalizer::NFKC_CF );
 		$this->assertSame( $expected, $actual );
-		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ) );
-		$this->assertSame( self::$true, UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFC ) );
+		$this->assertTrue( UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFKC_CF ) );
+		$this->assertTrue( UNFC_Normalizer::isNormalized( $actual, UNFC_Normalizer::NFC ) );
 		$this->assertSame( $str === $expected, UNFC_Normalizer::isNormalized( $str, UNFC_Normalizer::NFKC_CF ) );
 
 		if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
@@ -737,7 +724,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_get_raw_decomposition
 	 * @dataProvider data_get_raw_decomposition
 	 */
 	function test_get_raw_decomposition($c, $form_expecteds) {
@@ -924,7 +910,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_is_valid_utf8_true
 	 * @dataProvider data_is_valid_utf8_true
 	 */
 	function test_is_valid_utf8_true( $str ) {
@@ -964,7 +949,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_is_valid_utf8_false
 	 * @dataProvider data_is_valid_utf8_false
 	 */
 	function test_is_valid_utf8_false( $str ) {
@@ -1003,7 +987,6 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_is_valid_utf8_false_random
 	 */
 	function test_is_valid_utf8_false_random() {
 		require_once dirname( dirname( __FILE__ ) ) . '/tools/functions.php';

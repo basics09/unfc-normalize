@@ -22,7 +22,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_regex_alts
 	 */
     function test_utf8_regex_alts() {
 
@@ -75,9 +74,10 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
     }
 
 	/**
-	 * @ticket unfc_utf8_ranges_from_codepoints
 	 */
     function test_utf8_ranges_from_codepoints() {
+		$this->assertSame( array(), unfc_utf8_ranges_from_codepoints( array() ) );
+
 		$out = unfc_utf8_regex_alts( unfc_utf8_ranges_from_codepoints( array( 0x9, 0x0a, 0xb ) ) );
 		$this->assertSame( '[\x09-\x0b]', $out );
 		$out_utf16 = unfc_unicode_regex_chars_from_codepoints( array( 0x9, 0x0a, 0xb ) );
@@ -107,9 +107,10 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_unicode_ranges_from_codepoints
 	 */
     function test_unicode_ranges_from_codepoints() {
+		$this->assertSame( array(), unfc_unicode_ranges_from_codepoints( array() ) );
+
 		$out = unfc_unicode_ranges_from_codepoints( array( 0x9, 0x0a, 0xb ) );
 		$this->assertSame( array( array( 0x9, 0xb ) ), $out );
 
@@ -137,7 +138,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_parse_unicode_data
 	 */
     function test_utf8_parse_unicode_data() {
 		$file = 'tests/UCD-9.0.0/UnicodeData.txt';
@@ -173,7 +173,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_parse_scripts
 	 */
     function test_utf8_parse_scripts() {
 		$file = 'tests/UCD-9.0.0/Scripts.txt';
@@ -194,7 +193,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_u_equivalence
 	 */
     function test_u_equivalence() {
 		global $unfc_nfc_noes, $unfc_nfc_noes_maybes_reorders;
@@ -213,7 +211,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_chr
 	 */
     function test_utf8_chr() {
 		$this->assertSame( "\x00", unfc_utf8_chr( 0 ) );
@@ -224,9 +221,9 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_unicode_chr
 	 */
     function test_unicode_chr() {
+		$this->assertSame( 0, unfc_unicode_chr( "" ) );
 		$this->assertSame( 0, unfc_unicode_chr( "\x00" ) );
 		$this->assertSame( 1, unfc_unicode_chr( "\x01" ) );
 		$this->assertSame( 0x41, unfc_unicode_chr( "A" ) );
@@ -254,7 +251,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_chr_len
 	 */
     function test_utf8_chr_len() {
 		$this->assertSame( 0, unfc_utf8_chr_len( "" ) );
@@ -266,7 +262,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_rand_ratio_str
 	 */
     function test_utf8_rand_ratio_str() {
 		global $unfc_normalize;
@@ -285,7 +280,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_rand_chr
 	 */
     function test_utf8_rand_chr() {
 		$ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
@@ -297,7 +291,22 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_utf8_ranges
+	 */
+    function test_utf8_ints() {
+		$ints_max = array( 0xf4, 0x8f, 0xbf, 0xbf );
+		$this->assertSame( $ints_max, unfc_utf8_ints( UNFC_UTF8_MAX ) );
+		$this->assertSame( $ints_max, unfc_utf8_ints( UNFC_UTF8_MAX + 1 ) );
+		$this->assertSame( $ints_max, unfc_utf8_ints( -1 ) );
+		$this->assertSame( array( 0, 0, 0, 0 ), unfc_utf8_ints( 0 ) );
+		$this->assertSame( array( 0, 0, 0, 0x7f ), unfc_utf8_ints( 0x7f ) );
+		$this->assertSame( array( 0, 0, 0xc2, 0x80 ), unfc_utf8_ints( 0x80 ) );
+		$this->assertSame( array( 0, 0, 0xdf, 0xbf ), unfc_utf8_ints( 0x7ff ) );
+		$this->assertSame( array( 0, 0xe0, 0xa0, 0x80 ), unfc_utf8_ints( 0x800 ) );
+		$this->assertSame( array( 0, 0xef, 0xbf, 0xbf ), unfc_utf8_ints( 0xffff ) );
+		$this->assertSame( array( 0xf0, 0x90, 0x80, 0x80 ), unfc_utf8_ints( 0x10000 ) );
+	}
+
+	/**
 	 */
     function test_utf8_ranges() {
 		$arr = array(
@@ -319,7 +328,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_unicode_fmt
 	 */
     function test_unicode_fmt() {
 		$arr = array(
@@ -343,7 +351,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_get_cb
 	 */
     function test_get_cb() {
 		$in = "\rasdfasdf\n\r";
@@ -353,7 +360,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_array_map_recursive
 	 */
     function test_array_map_recursive() {
 		$arr = array( 'a' => array( 'b' => array( 'c' => 'a', 'd' => 'b' ), 'e' => 'c' ), 'f' => 'd', 'g' => array( 'h' => 'e' ) ); 
@@ -363,7 +369,6 @@ class Tests_UNFC_Tools extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_list_pluck
 	 */
     function test_list_pluck() {
 		$obj1 = new stdclass;

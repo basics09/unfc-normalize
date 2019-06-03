@@ -48,7 +48,6 @@ class Tests_UNFC_Settings extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_settings_settings
      */
 	function test_settings() {
 		$this->assertTrue( is_admin() ) ;

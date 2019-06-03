@@ -55,7 +55,6 @@ class Tests_UNFC_Menus extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_menus_menus
      */
 	function test_menus() {
 		$this->assertTrue( is_admin() ) ;

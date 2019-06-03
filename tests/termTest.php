@@ -48,7 +48,6 @@ class Tests_UNFC_Term extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_term_term
      */
 	function test_term() {
 		$this->assertTrue( is_admin() ) ;

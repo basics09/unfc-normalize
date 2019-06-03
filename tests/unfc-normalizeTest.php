@@ -44,7 +44,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_extra_filters
 	 */
 	function test_extra_filters() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
@@ -77,7 +76,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_print_scripts
 	 */
 	function test_print_scripts() {
 		global $pagenow;
@@ -128,7 +126,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_unfc_normalize
 	 */
 	function test_unfc_normalize() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
@@ -158,7 +155,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_compat
 	 */
 	function test_compat() {
 		$decomposed_str = "u\xcc\x88"; // u umlaut.
@@ -266,7 +262,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_get_base
 	 * @dataProvider data_get_base
 	 */
 	function test_get_base( $page, $action, $expected ) {
@@ -338,7 +333,6 @@ class Tests_UNFC_Normalize extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @ticket unfc_unfc_normalize_php
 	 */
 	function test_unfc_normalize_php() {
 		global $pagenow;

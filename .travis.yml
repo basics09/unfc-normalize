@@ -4,12 +4,17 @@ sudo: false
 dist: xenial
 services: mysql
 
+notifications:
+  email: false
+
 cache:
   directories:
     - $HOME/.build
 
 matrix:
   include:
+    - php: nightly
+      env: WP_VERSION=5.2.1
     - php: 7.3
       env: WP_VERSION=5.2.1 ICU_VERSION=64.2
     - php: 7.3
@@ -76,10 +81,11 @@ install:
 - npm install
 
 before_script:
-- ICU_PHP_VERSION=$(php -r 'echo preg_replace("/(^[0-9.]+).*$/", '\''$1'\'', PHP_VERSION);')
-- if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $ICU_PHP_VERSION; UNFC_PHP=$HOME/.build/php-$ICU_PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
-- if [[ ! ( $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = '5.2.1' ) ]]; then phpenv config-rm xdebug.ini || true; fi
-- if [[ $TRAVIS_PHP_VERSION = 7.[0123]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; else UNFC_PHPUNIT=$(which phpunit); fi
+- phpenv version-name
+- PHP_VERSION=$(php -r 'echo substr(PHP_VERSION, 0, strspn(PHP_VERSION, "0123456789."));')
+- if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $PHP_VERSION; UNFC_PHP=$HOME/.build/php-$PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
+- if [[ ! ( $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ) ]]; then phpenv config-rm xdebug.ini || true; fi
+- if [[ $TRAVIS_PHP_VERSION = [78]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; else UNFC_PHPUNIT=$(which phpunit); fi
 - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 - $UNFC_PHP --info
 
@@ -88,4 +94,4 @@ script:
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
 after_success:
-- if [[ $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = '5.2.1' ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash); fi
+- if [[ $TRAVIS_PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash); fi

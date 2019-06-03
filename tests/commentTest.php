@@ -52,7 +52,6 @@ class Tests_UNFC_Comment extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_comment_comment
      */
 	function test_comment() {
 		$this->assertTrue( is_admin() ) ;

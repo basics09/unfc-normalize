@@ -65,7 +65,6 @@ class Tests_UNFC_Widget extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_widget_widget
      */
 	function test_widget() {
 		$this->assertTrue( is_admin() ) ;

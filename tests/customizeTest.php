@@ -55,7 +55,6 @@ class Tests_UNFC_Customize extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_customize_customize
      */
 	function test_customize() {
 		$this->assertTrue( is_admin() ) ;

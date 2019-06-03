@@ -57,7 +57,6 @@ class Tests_UNFC_Link extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_link_link
      */
 	function test_link() {
 		$this->assertTrue( is_admin() ) ;

@@ -48,7 +48,6 @@ class Tests_UNFC_Options extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_options_options
      */
 	function test_options() {
 		$this->assertTrue( is_admin() ) ;
@@ -96,7 +95,6 @@ class Tests_UNFC_Options extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_options_format
      */
 	function test_options_format() {
 		global $pagenow;

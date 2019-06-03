@@ -8,7 +8,6 @@
 class Tests_UNFC_List_Table extends WP_UnitTestCase {
 
     /**
-	 * @ticket unfc_list_table_list_table
      */
 	function test_list_table() {
 		$args = array( 'screen' => 'dummy', 'ajax' => true );
@@ -117,7 +116,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_columns
      */
 	function test_columns() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
@@ -130,7 +128,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_search_box
      */
 	function test_search_box() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
@@ -162,7 +159,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_views
      */
 	function test_views() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
@@ -194,7 +190,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_actions
      */
 	function test_actions() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
@@ -220,7 +215,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_months_dropdown
      */
 	function test_months_dropdown() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );
@@ -251,7 +245,6 @@ class Tests_UNFC_List_Table extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_list_table_comments
      */
 	function test_comments() {
 		$list_table = new _Dummy_UNFC_List_Table( array( 'screen' => 'dummy' ) );

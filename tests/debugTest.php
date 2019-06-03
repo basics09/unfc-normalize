@@ -8,7 +8,6 @@
 class Tests_UNFC_Debug extends WP_UnitTestCase {
 
     /**
-	 * @ticket unfc_debug_debug
      */
 	function test_debug() {
 		$this->assertTrue( defined( 'UNFC_DEBUG' ) );
@@ -26,7 +25,6 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_debug_print_r
      */
 	function test_print_r() {
 		$this->assertTrue( defined( 'UNFC_DEBUG_PRINT_LIMIT' ) );
@@ -57,7 +55,6 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_debug_format_bytes
 	 * @dataProvider data_format_bytes
      */
 	function test_format_bytes( $bytes, $precision, $expected ) {

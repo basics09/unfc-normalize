@@ -48,7 +48,6 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_post_post
      */
 	function test_post() {
 		$this->assertTrue( is_admin() ) ;
@@ -100,7 +99,6 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_post_meta
      */
 	function test_meta() {
 		$this->assertTrue( is_admin() ) ;
@@ -243,7 +241,6 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_post_attachment
      */
 	function test_attachment() {
 		$this->assertTrue( is_admin() ) ;
@@ -288,7 +285,6 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_post_media
      */
 	function test_media() {
 		$this->assertTrue( is_admin() ) ;
@@ -353,7 +349,6 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_post_custom
      */
 	function test_custom() {
 		$this->assertTrue( is_admin() ) ;

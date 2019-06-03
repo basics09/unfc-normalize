@@ -54,7 +54,6 @@ class Tests_UNFC_Permalink extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_permalink_permalink
      */
 	function test_permalink() {
 		$this->assertTrue( is_admin() ) ;

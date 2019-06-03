@@ -92,7 +92,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_post
      */
 	function test_db_check_post() {
 		$this->assertTrue( is_admin() );
@@ -184,7 +183,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_comment
      */
 	function test_db_check_comment() {
 		$this->assertTrue( is_admin() );
@@ -226,7 +224,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_user
      */
 	function test_db_check_user() {
 		$this->assertTrue( is_admin() );
@@ -249,7 +246,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_term
      */
 	function test_db_check_term() {
 		$this->assertTrue( is_admin() );
@@ -311,7 +307,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_options
      */
 	function test_db_check_options() {
 		$this->assertTrue( is_admin() );
@@ -338,7 +333,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_settings
      */
 	function test_db_check_settings() {
 		$this->assertTrue( is_admin() );
@@ -366,7 +360,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_link
      */
 	function test_db_check_link() {
 		$this->assertTrue( is_admin() );
@@ -424,7 +417,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_items
      */
 	function test_db_check_items() {
 		$this->assertTrue( is_admin() );
@@ -527,7 +519,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_meta
      */
 	function test_db_check_meta() {
 
@@ -588,7 +579,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_admin_menu
      */
 	function test_db_check_admin_menu() {
 		$this->assertTrue( is_admin() );
@@ -635,7 +625,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_button
      */
 	function test_db_check_button() {
 		global $unfc_normalize;
@@ -674,7 +663,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_transient
      */
 	function test_db_check_transient() {
 		global $unfc_normalize;
@@ -717,7 +705,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_db_check
      */
 	function test_db_check_db_check() {
 		$this->assertTrue( is_admin() );
@@ -1062,7 +1049,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_normalize_all
      */
 	function test_db_check_normalize_all() {
 		$this->assertTrue( is_admin() );
@@ -1352,7 +1338,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_slugs
      */
 	function test_db_check_slugs() {
 		$this->assertTrue( is_admin() );
@@ -1586,7 +1571,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_normalize_slugs
      */
 	function test_db_check_normalize_slugs() {
 		$this->assertTrue( is_admin() );
@@ -1881,7 +1865,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_screen_options
      */
 	function test_db_check_screen_options() {
 		$this->assertTrue( is_admin() );
@@ -1939,7 +1922,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_referer
      */
 	function test_db_check_referer() {
 		$this->assertTrue( is_admin() );
@@ -2040,7 +2022,6 @@ class Tests_UNFC_DB_Check extends WP_UnitTestCase {
 	}
 
     /**
-	 * @ticket unfc_db_check_percent_decode
 	 * @dataProvider data_percent_decode
      */
 	function test_db_check_percent_decode( $encoded, $decoded ) {
