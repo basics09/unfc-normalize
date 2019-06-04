@@ -323,8 +323,8 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 			foreach ( $forms as $form ) {
 				$is_normalized = Normalizer::isNormalized( $string, $form );
-				if ( Normalizer::NONE === $form && version_compare( PHP_VERSION, '7.3', '>=' ) ) { // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
-					$normalize = @Normalizer::normalize( $string, $form );
+				if ( version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( PHP_VERSION, '8', '<' ) && Normalizer::NONE === $form ) {
+					$normalize = @Normalizer::normalize( $string, $form ); // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
 				} else {
 					$normalize = Normalizer::normalize( $string, $form );
 				}
