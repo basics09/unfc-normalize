@@ -13,68 +13,8 @@ cache:
 
 matrix:
   include:
-    - php: nightly
-      env: WP_VERSION=5.2.1
-    - php: 7.3
-      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
     - php: 7.3
       env: WP_VERSION=5.2
-    - php: 7.3
-      env: WP_VERSION=5.1.1
-    - php: 7.2
-      env: WP_VERSION=5.2.1
-    - php: 7.2
-      env: WP_VERSION=5.1.1
-    - php: 7.2
-      env: WP_VERSION=5.1 ICU_VERSION=64.1
-    - php: 7.2
-      env: WP_VERSION=5.0.4
-    - php: 7.2
-      env: WP_VERSION=5.0
-    - php: 7.2
-      env: WP_VERSION=4.9.10
-    - php: 7.2
-      env: WP_VERSION=4.9
-    - php: 7.2
-      env: WP_VERSION=4.8.9
-    - php: 7.1
-      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
-    - php: 7.1
-      env: WP_VERSION=5.1
-    - php: 7.1
-      env: WP_VERSION=5.0.3
-    - php: 7.1
-      env: WP_VERSION=4.9.1
-    - php: 7.1
-      env: WP_VERSION=4.8
-    - php: 7.1
-      env: WP_VERSION=4.7.13
-    - php: 7.0
-      env: WP_VERSION=5.2.1
-    - php: 7.0
-      env: WP_VERSION=4.6.6
-    - php: 7.0
-      env: WP_VERSION=4.5.9
-    - php: 5.6
-      env: WP_VERSION=5.2.1
-    - php: 5.6
-      env: WP_VERSION=4.4.10
-    - php: 5.6
-      env: WP_VERSION=4.3.11
-    - php: 5.6
-      env: WP_VERSION=3.9.13
-    - php: 5.5
-      env: WP_VERSION=4.2.15
-      dist: trusty
-    - php: 5.4
-      env: WP_VERSION=4.1.18
-      dist: trusty
-    - php: 5.3
-      env: WP_VERSION=4.0.18
-      dist: precise
-    - php: 5.2
-      env: WP_VERSION=3.9.13
-      dist: precise
 
 install:
 - npm install grunt-cli
@@ -95,4 +35,4 @@ script:
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
 after_success:
-- if [[ $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash | sed -e 's/TRAVIS_.*_VERSION/^TRAVIS_.*_VERSION=/'); fi
+- if [[ $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && curl -s https://codecov.io/bash | sed -e 's/TRAVIS_.*_VERSION/^TRAVIS_.*_VERSION=/' | bash; fi
