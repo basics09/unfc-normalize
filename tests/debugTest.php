@@ -5,28 +5,28 @@
  * @group unfc
  * @group unfc_debug
  */
-class Tests_UNFC_Debug extends WP_UnitTestCase {
+class TestUNFC_Debug extends WP_UnitTestCase {
 
     /**
      */
-	function test_debug() {
+	function test_unfc_debug() {
 		$this->assertTrue( defined( 'UNFC_DEBUG' ) );
 		$this->assertTrue( UNFC_DEBUG );
 
 		$output = unfc_error_log( "Test" );
-		$this->assertRegExp( '/^ERROR: .+?\/unfc-normalize\/tests\/debugTest.php:[1-2][0-9] test_debug\(\)[ \n\t]+Test$/', $output );
+		$this->assertRegExp( '/^ERROR: .+?\/unfc-normalize\/tests\/debugTest.php:[1-2][0-9] test_unfc_debug\(\)[ \n\t]+Test$/', $output );
 
 		$output = unfc_debug_log( "Test" );
-		$this->assertRegExp( '/\/unfc-normalize\/tests\/debugTest.php:[1-2][0-9] test_debug\(\)[ \n\t]+Test$/', $output );
+		$this->assertRegExp( '/\/unfc-normalize\/tests\/debugTest.php:[1-2][0-9] test_unfc_debug\(\)[ \n\t]+Test$/', $output );
 
 		$output = explode( "\n", unfc_backtrace() );
 		$last_idx = count( $output ) - 1;
-		$this->assertRegExp( '/^' . "{$last_idx}\. Tests_UNFC_Debug::test_debug" . '/', trim( $output[ $last_idx ] ) );
+		$this->assertRegExp( '/^' . "{$last_idx}\. TestUNFC_Debug::test_unfc_debug" . '/', trim( $output[ $last_idx ] ) );
 	}
 
     /**
      */
-	function test_print_r() {
+	function test_unfc_print_r() {
 		$this->assertTrue( defined( 'UNFC_DEBUG_PRINT_LIMIT' ) );
 
 		$el = str_repeat( 'a', UNFC_DEBUG_PRINT_LIMIT + 1 );
@@ -51,18 +51,18 @@ class Tests_UNFC_Debug extends WP_UnitTestCase {
 		$this->assertRegExp( '/array\(5\) {\n  \[0\]=> string\(1\) "a"\n  \[1\]=> bool\(true\)\n  \[2\]=> (?:int|long)\(1010\)\n  \[3\]=> (?:float|double)\(1\.2\)\n  \[4\]=> NULL\n}\n/', $output );
 
 		$output = unfc_bin2hex( array( __CLASS__, 'test_print_r' ) );
-		$this->assertSame( "(array);0=" . bin2hex( 'Tests_UNFC_Debug' ) . ";1=" . bin2hex( 'test_print_r' ), $output );
+		$this->assertSame( "(array);0=" . bin2hex( 'TestUNFC_Debug' ) . ";1=" . bin2hex( 'test_print_r' ), $output );
 	}
 
     /**
-	 * @dataProvider data_format_bytes
+	 * @dataProvider data_unfc_format_bytes
      */
-	function test_format_bytes( $bytes, $precision, $expected ) {
+	function test_unfc_format_bytes( $bytes, $precision, $expected ) {
 		$output = unfc_format_bytes( $bytes, $precision );
 		$this->assertSame( $expected, $output );
 	}
 
-	function data_format_bytes() {
+	function data_unfc_format_bytes() {
 		return array(
 			array( 1024 * 1024 * 1024 * 1024 * 100, 2, '100 TB' ),
 			array( 1024 * 1024 * 1024 * 12, 4, '12 GB' ),

@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_link
  */
-class Tests_UNFC_Link extends WP_UnitTestCase {
+class TestUNFC_Link extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -58,7 +58,7 @@ class Tests_UNFC_Link extends WP_UnitTestCase {
 
     /**
      */
-	function test_link() {
+	function test_link_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

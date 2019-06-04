@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_list_table
  */
-class Tests_UNFC_List_Table extends WP_UnitTestCase {
+class TestUNFC_List_Table extends WP_UnitTestCase {
 
     /**
      */

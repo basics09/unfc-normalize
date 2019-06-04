@@ -29,7 +29,7 @@ require_once 'Symfony/Normalizer.php';
  * @group unfc
  * @group unfc_normalizer
  */
-class Tests_UNFC_Normalizer extends WP_UnitTestCase {
+class TestUNFC_Normalizer extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 
@@ -133,7 +133,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	/**
 	 * @requires extension intl
 	 */
-    function test_constants() {
+    function test_class_constants() {
 
 		if ( class_exists( 'Normalizer' ) ) {
 			$rpn = new ReflectionClass( 'UNFC_Normalizer' );
@@ -160,7 +160,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 	/**
 	 */
-    function test_props() {
+    function test_class_properties() {
 
         $rpn = new ReflectionClass( 'UNFC_BaseNormalizer' );
 
@@ -222,6 +222,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
         $this->assertFalse( UNFC_Normalizer::isNormalized( $d, UNFC_Normalizer::NFKC_CF ) );
 
         $this->assertFalse( UNFC_Normalizer::isNormalized( "\xFF" ) );
+        $this->assertTrue( UNFC_Normalizer::isNormalized( false ) );
 
 		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88" ) ); // u umlaut.
 		$this->assertFalse( UNFC_Normalizer::isNormalized( "u\xcc\x88", UNFC_Normalizer::NFC ) ); // u umlaut.
@@ -253,6 +254,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			}
 
 			$this->assertSame( Normalizer::isNormalized( "\xFF" ), UNFC_Normalizer::isNormalized( "\xFF" ) );
+			$this->assertSame( Normalizer::isNormalized( false ), UNFC_Normalizer::isNormalized( false ) );
 
 			$this->assertTrue( Normalizer::isNormalized( $d, Normalizer::NFD ) );
 			$this->assertTrue( Normalizer::isNormalized( $d, Normalizer::NFKD ) );
@@ -307,10 +309,10 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
     }
 
 	/**
-	 * @dataProvider data_args_compat
+	 * @dataProvider data_args_compatible
 	 * @requires extension intl
 	 */
-	function test_args_compat( $string ) {
+	function test_args_compatible( $string ) {
 
 		if ( class_exists( 'Normalizer' ) ) {
 			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC );
@@ -339,7 +341,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		}
 	}
 
-	function data_args_compat() {
+	function data_args_compatible() {
 		return array(
 			array( '' ),
 			array( 'a' ), array( ' ' ), array( "\x80" ), array( "\xc2" ), array( "\xe0" ), array( "\xf0" ),
@@ -355,7 +357,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	 *
 	 * NOTE: need to run phpunit as "PHPRC=. phpunit" to pick up "php-cli.ini" in normalizer directory for "mbstring.func_overload = 2" to be set.
 	 */
-	function test_mbstring() {
+	function test_mbstring_overload() {
 		if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
 			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_mbstring: MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
 		}
@@ -399,7 +401,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
     /**
      */
-    function test_conformance_12_1_0() {
+    function test_conforms_to_unicode_12_1_0() {
 
         $t = file( dirname( __FILE__ ) . '/UCD-12.1.0/NormalizationTest.txt' );
         $c = array();
@@ -551,7 +553,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
     /**
 	 * @requires extension intl
      */
-	function test_random() {
+	function test_random_utf8_strings() {
 		require_once dirname( dirname( __FILE__ ) ) . '/tools/functions.php';
 
 		if ( class_exists( 'Normalizer' ) ) {
@@ -592,9 +594,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @dataProvider data_nfkc_cf
+	 * @dataProvider data_normalization_form_nfkc_cf
 	 */
-	function test_nfkc_cf( $str, $expected ) {
+	function test_normalization_form_nfkc_cf( $str, $expected ) {
 
 		$actual = UNFC_Normalizer::normalize( $str, UNFC_Normalizer::NFKC_CF );
 		$this->assertSame( $expected, $actual );
@@ -628,7 +630,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		}
 	}
 
-	function data_nfkc_cf() {
+	function data_normalization_form_nfkc_cf() {
 
 		// Data from php-7.3.5/ext/intl/tests/normalizer_normalize_kc_cf.phpt
 
@@ -714,11 +716,11 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 
 			array( self::chr( 0x2FA1D ) /* CJK COMPATIBILITY IDEOGRAPH-2FA1D */, self::chr( 0x2A600 ) /* <CJK Ideograph Extension B> */ ),
 			array( self::chr( 0x2FA1E ) /* Unassigned */, self::chr( 0x2FA1E ) ),
-			array( self::chr( 0xDFFFF ) /* <not a character> */, self::chr( 0xDFFFF ) ),
+			array( self::chr( 0xDFFFF ) /* <not a character> */, self::chr( 0xDFFFF ) ), // U+E0000..E0FFF gatepost begin.
 			array( self::chr( 0xE0000 ) /* Unassigned */, '' ),
 			array( self::chr( 0xE0001 ) /* LANGUAGE TAG */, '' ),
 			array( self::chr( 0xE0FFF ) /* Unassigned */, '' ),
-			array( self::chr( 0xE1000 ) /* Unassigned */, self::chr( 0xE1000 ) ),
+			array( self::chr( 0xE1000 ) /* Unassigned */, self::chr( 0xE1000 ) ), // U+E0000..E0FFF gatepost end.
 			array( self::chr( 0xF0000 ) /* <Plane 15 Private Use, First> */, self::chr( 0xF0000 ) ),
 		);
 
@@ -886,7 +888,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFKC_CF => self::chr( 0x0135 ),
 			) ),
 
-			// Boundary and U+E0000..E0FFF cases.
+			// Boundary and U+E0000..E0FFF gateposts.
 			array( self::chr( 0x2FA1E ) /* Unassigned */ , array(
 				UNFC_Normalizer::NFKC => null,
 				UNFC_Normalizer::NFC => null,
@@ -907,7 +909,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFC => null,
 				UNFC_Normalizer::NFKC_CF => '',
 			) ),
-			array( self::chr( 0xE2000 ) /* Unassigned */, array(
+			array( self::chr( 0xE1000 ) /* Unassigned */, array(
 				UNFC_Normalizer::NFKC => null,
 				UNFC_Normalizer::NFC => null,
 				UNFC_Normalizer::NFKC_CF => null,

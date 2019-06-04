@@ -26,7 +26,7 @@ matrix:
     - php: 7.2
       env: WP_VERSION=5.1.1
     - php: 7.2
-      env: WP_VERSION=5.1
+      env: WP_VERSION=5.1 ICU_VERSION=64.1
     - php: 7.2
       env: WP_VERSION=5.0.4
     - php: 7.2
@@ -95,4 +95,4 @@ script:
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
 after_success:
-- if [[ $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash); fi
+- if [[ $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && bash <(curl -s https://codecov.io/bash | sed -e 's/TRAVIS_.*_VERSION/^TRAVIS_.*_VERSION=/'); fi

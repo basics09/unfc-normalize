@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_menus
  */
-class Tests_UNFC_Menus extends WP_UnitTestCase {
+class TestUNFC_Menus extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -56,7 +56,7 @@ class Tests_UNFC_Menus extends WP_UnitTestCase {
 
     /**
      */
-	function test_menus() {
+	function test_menu_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

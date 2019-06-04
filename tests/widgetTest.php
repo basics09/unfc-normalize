@@ -6,7 +6,7 @@
  * @group unfc_widget
  */
 
-class Tests_UNFC_Widget extends WP_UnitTestCase {
+class TestUNFC_Widget extends WP_UnitTestCase {
 
 	function clean_up_global_scope() {
 		global $wp_widget_factory, $wp_registered_sidebars, $wp_registered_widgets, $wp_registered_widget_controls, $wp_registered_widget_updates;
@@ -66,7 +66,7 @@ class Tests_UNFC_Widget extends WP_UnitTestCase {
 
     /**
      */
-	function test_widget() {
+	function test_widget_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

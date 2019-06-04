@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_user
  */
-class Tests_UNFC_User extends WP_UnitTestCase {
+class TestUNFC_User extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -49,7 +49,7 @@ class Tests_UNFC_User extends WP_UnitTestCase {
 
     /**
      */
-	function test_user() {
+	function test_user_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

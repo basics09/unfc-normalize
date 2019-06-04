@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_customize
  */
-class Tests_UNFC_Customize extends WP_UnitTestCase {
+class TestUNFC_Customize extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -56,7 +56,7 @@ class Tests_UNFC_Customize extends WP_UnitTestCase {
 
     /**
      */
-	function test_customize() {
+	function test_customize_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

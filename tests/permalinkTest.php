@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_permalink
  */
-class Tests_UNFC_Permalink extends WP_UnitTestCase {
+class TestUNFC_Permalink extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -55,7 +55,7 @@ class Tests_UNFC_Permalink extends WP_UnitTestCase {
 
     /**
      */
-	function test_permalink() {
+	function test_permalink_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		global $unfc_normalize;

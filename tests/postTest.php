@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_post
  */
-class Tests_UNFC_Post extends WP_UnitTestCase {
+class TestUNFC_Post extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -49,7 +49,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
     /**
      */
-	function test_post() {
+	function test_post_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );
@@ -100,7 +100,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
     /**
      */
-	function test_meta() {
+	function test_meta_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		wp_set_current_user( 1 ); // Need editor privileges.
@@ -242,7 +242,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
     /**
      */
-	function test_attachment() {
+	function test_attachment_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		wp_set_current_user( 1 ); // Need editor privileges.
@@ -286,7 +286,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
     /**
      */
-	function test_media() {
+	function test_media_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		wp_set_current_user( 1 ); // Need editor privileges.
@@ -350,7 +350,7 @@ class Tests_UNFC_Post extends WP_UnitTestCase {
 
     /**
      */
-	function test_custom() {
+	function test_custom_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		wp_set_current_user( 1 ); // Need editor privileges.

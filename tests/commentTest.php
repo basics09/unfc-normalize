@@ -9,7 +9,7 @@ error_log( "\nWordPress $wp_version\n" );
  * @group unfc
  * @group unfc_comment
  */
-class Tests_UNFC_Comment extends WP_UnitTestCase {
+class TestUNFC_Comment extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4 = false;
@@ -53,7 +53,7 @@ class Tests_UNFC_Comment extends WP_UnitTestCase {
 
     /**
      */
-	function test_comment() {
+	function test_comment_filters() {
 		$this->assertTrue( is_admin() ) ;
 
 		do_action( 'init' );

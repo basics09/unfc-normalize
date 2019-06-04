@@ -258,7 +258,7 @@ class UNFC_BaseNormalizer // gitlost
                 if (isset(self::$kcCF[$c])) {
                     return self::$kcCF[$c];
                 }
-                if ("\xf3\xa0\x80\x80" <= $c && $c <= "\xf3\xa0\xbf\xbf") { // U+E0000..E0FFF go to zero-length string, left out of mapping array to lessen size
+                if ("\xf3\xa0\x80\x80" <= $c && $c <= "\xf3\xa0\xbf\xbf") { // U+E0000..E0FFF go to zero-length string, left out of mapping array to lessen size.
                     return '';
                 }
             }

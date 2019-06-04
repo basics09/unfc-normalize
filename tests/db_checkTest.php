@@ -5,7 +5,7 @@
  * @group unfc
  * @group unfc_db_check
  */
-class Tests_UNFC_DB_Check extends WP_UnitTestCase {
+class TestUNFC_DB_Check extends WP_UnitTestCase {
 
 	static $normalizer_state = array();
 	static $is_less_than_wp_4_2 = false;
