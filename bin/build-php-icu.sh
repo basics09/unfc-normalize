@@ -16,7 +16,7 @@ if [ ! -f $ICU_PHP_DIR/bin/php ]; then
 	wget -O icu-src.tgz http://download.icu-project.org/files/icu4c/$ICU_VERSION/icu4c-$(echo $ICU_VERSION | tr '.' '_')-src.tgz
 	mkdir icu-src && tar xzf icu-src.tgz -C icu-src --strip-components=1
 	pushd icu-src/source
-		./configure --prefix=$ICU_DIR --disable-extras --disable-samples --disable-tests --disable-tools
+		./configure --prefix=$ICU_DIR --disable-samples --disable-tests
 		make && make install
 	popd
 	wget -O php-src.tgz http://us1.php.net/get/php-$ICU_PHP_VERSION.tar.gz/from/this/mirror
