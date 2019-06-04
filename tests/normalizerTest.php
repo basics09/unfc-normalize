@@ -142,8 +142,11 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 			$rpn = $rpn->getConstants();
 			$rin = $rin->getConstants();
 
+			if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
+				unset( $rpn['NONE'] ); // Removed PHP 8.
+			}
 			if ( ! self::$icu_unorm2 ) {
-				unset( $rpn['NFKC_CF'] ); // Only defined for PHP >= 7.3 and ICU >= 56
+				unset( $rpn['NFKC_CF'] ); // Only defined for PHP >= 7.3 and ICU >= 56.
 			}
 
 			ksort( $rpn );
@@ -268,7 +271,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		}
         $c = UNFC_Normalizer::normalize( 'déjà', UNFC_Normalizer::NFC ).UNFC_Normalizer::normalize( '훈쇼™', UNFC_Normalizer::NFD );
         $this->assertSame( $c, UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NONE ) );
-		if ( class_exists( 'Normalizer' ) ) {
+		if ( class_exists( 'Normalizer' ) && version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8.
 			if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) { // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
 				$this->assertSame( $c, @Normalizer::normalize( $c, Normalizer::NONE ) );
 			} else {
@@ -310,7 +313,10 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	function test_args_compat( $string ) {
 
 		if ( class_exists( 'Normalizer' ) ) {
-			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NONE, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC );
+			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC );
+			if ( version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8.
+				$forms[] = Normalizer::NONE;
+			}
 			if ( self::$icu_unorm2 ) {
 				$forms[] = Normalizer::NFKC_CF;
 			}
@@ -350,6 +356,9 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 	 * NOTE: need to run phpunit as "PHPRC=. phpunit" to pick up "php-cli.ini" in normalizer directory for "mbstring.func_overload = 2" to be set.
 	 */
 	function test_mbstring() {
+		if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
+			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_mbstring: MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
+		}
 		$this->assertTrue( defined( 'MB_OVERLOAD_STRING' ) && ( ini_get( 'mbstring.func_overload' ) & MB_OVERLOAD_STRING ) );
 
 		$mb_internal_encoding = mb_internal_encoding();
@@ -733,7 +742,7 @@ class Tests_UNFC_Normalizer extends WP_UnitTestCase {
 		foreach ( $form_expecteds as $form => $expected ) {
 			$actual = UNFC_Normalizer::getRawDecomposition( $c, $form );
 			$this->assertSame( $expected, $actual );
-			if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 ) {
+			if ( class_exists( 'Normalizer' ) && self::$icu_unorm2 && ( UNFC_Normalizer::NONE !== $form || version_compare( PHP_VERSION, '8', '<' ) ) ) {
 				$n = Normalizer::getRawDecomposition( $c, $form );
 				$this->assertSame( $expected, $n ); // Check data good.
 				$this->assertSame( $n, $actual );

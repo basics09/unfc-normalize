@@ -79,9 +79,10 @@ matrix:
 install:
 - npm install grunt-cli
 - npm install
+- PHP_VERSION=$(php -r 'echo substr(PHP_VERSION, 0, strspn(PHP_VERSION, "0123456789."));')
+- if [[ $PHP_VERSION = 5.2* ]]; then pecl install phar; pecl install mysql; fi
 
 before_script:
-- PHP_VERSION=$(php -r 'echo substr(PHP_VERSION, 0, strspn(PHP_VERSION, "0123456789."));')
 - if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $PHP_VERSION; UNFC_PHP=$HOME/.build/php-$PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
 - if [[ ! ( $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ) ]]; then phpenv config-rm xdebug.ini || true; fi
 - if [[ $PHP_VERSION = [78]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; elif [[ $PHP_VERSION = 5.6* ]]; then UNFC_PHPUNIT=bin/phpunit-5.7.27; elif [[ $PHP_VERSION = 5.[345]* ]]; then UNFC_PHPUNIT=bin/phpunit-4.8.36; elif [[ $PHP_VERSION = 5.2* ]]; then UNFC_PHPUNIT=bin/phpunit-3.6.12x; else UNFC_PHPUNIT=$(which phpunit); fi
