@@ -139,7 +139,7 @@ class UNFC_BaseNormalizer // gitlost
             }
 
             // Using this method is faster where percentage of normalization candidates < 30%, and significantly faster for < 5%. It's slower where percentage > 40%.
-            $normalize = preg_replace_callback(UNFC_REGEX_NFC_SUBNORMALIZE, 'UNFC_Normalizer::subnormalize', $s);
+            $normalize = preg_replace_callback(UNFC_REGEX_NFC_SUBNORMALIZE, 'UNFC_BaseNormalizer::subnormalize', $s);
 
             if (self::$mb_overload_string) {
                 mb_internal_encoding($mbEncoding);

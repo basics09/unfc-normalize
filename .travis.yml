@@ -14,7 +14,7 @@ cache:
 matrix:
   include:
     - php: 7.3
-      env: WP_VERSION=5.2
+      env: WP_VERSION=5.2 CODE_COVERAGE
 
 install:
 - npm install grunt-cli
@@ -31,8 +31,8 @@ before_script:
 
 script:
 - echo UNFC_PHP $UNFC_PHP UNFC_PHPUNIT $UNFC_PHPUNIT
-- PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose
+- if [[ -v $CODE_COVERAGE ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose --coverage-clover clover.xml; else PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose; fi
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
 after_success:
-- if [[ $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --coverage-clover clover.xml && curl -s https://codecov.io/bash | sed -e 's/TRAVIS_.*_VERSION/^TRAVIS_.*_VERSION=/' | bash; fi
+- if [[ -v $CODE_COVERAGE ]]; then env -u TRAVIS_CMD && bash <(curl -s https://codecov.io/bash); fi
