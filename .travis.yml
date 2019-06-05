@@ -14,7 +14,7 @@ cache:
 matrix:
   include:
     - php: 7.3
-      env: WP_VERSION=5.2 CODE_COVERAGE
+      env: WP_VERSION=5.2 CODE_COVERAGE=1
 
 install:
 - npm install grunt-cli
