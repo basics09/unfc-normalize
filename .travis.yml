@@ -31,8 +31,8 @@ before_script:
 
 script:
 - echo UNFC_PHP $UNFC_PHP UNFC_PHPUNIT $UNFC_PHPUNIT
-- if [[ -v $CODE_COVERAGE ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose --coverage-clover clover.xml; else PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose; fi
+- if [[ -v CODE_COVERAGE ]]; then PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose --coverage-clover clover.xml; else PHPRC=. WP_TESTS_DIR=/tmp/wordpress-tests-lib $UNFC_PHP $UNFC_PHPUNIT --verbose; fi
 - ln -s /tmp/wordpress src && WP_TESTS_DIR=/tmp/wordpress-tests-lib grunt --verbose test_qunit
 
 after_success:
-- if [[ -v $CODE_COVERAGE ]]; then env -u TRAVIS_CMD && bash <(curl -s https://codecov.io/bash); fi
+- if [[ -v CODE_COVERAGE ]]; then env -u TRAVIS_CMD && bash <(curl -s https://codecov.io/bash); fi
