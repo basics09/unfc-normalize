@@ -14,7 +14,63 @@ cache:
 matrix:
   include:
     - php: 7.3
-      env: WP_VERSION=5.2 CODE_COVERAGE=1
+      env: WP_VERSION=5.2 ICU_VERSION=64.2 CODE_COVERAGE=1
+    - php: 7.3
+      env: WP_VERSION=5.1.1
+    - php: 7.2
+      env: WP_VERSION=5.2.1
+    - php: 7.2
+      env: WP_VERSION=5.1.1
+    - php: 7.2
+      env: WP_VERSION=5.1 ICU_VERSION=64.1
+    - php: 7.2
+      env: WP_VERSION=5.0.4
+    - php: 7.2
+      env: WP_VERSION=5.0
+    - php: 7.2
+      env: WP_VERSION=4.9.10
+    - php: 7.2
+      env: WP_VERSION=4.9
+    - php: 7.2
+      env: WP_VERSION=4.8.9
+    - php: 7.1
+      env: WP_VERSION=5.2.1 ICU_VERSION=64.2
+    - php: 7.1
+      env: WP_VERSION=5.1
+    - php: 7.1
+      env: WP_VERSION=5.0.3
+    - php: 7.1
+      env: WP_VERSION=4.9.1
+    - php: 7.1
+      env: WP_VERSION=4.8
+    - php: 7.1
+      env: WP_VERSION=4.7.13
+    - php: 7.0
+      env: WP_VERSION=5.2.1
+    - php: 7.0
+      env: WP_VERSION=4.6.6
+    - php: 7.0
+      env: WP_VERSION=4.5.9
+    - php: 5.6
+      env: WP_VERSION=5.2.1
+    - php: 5.6
+      env: WP_VERSION=4.4.10
+    - php: 5.6
+      env: WP_VERSION=4.3.11
+    - php: 5.6
+      env: WP_VERSION=3.9.13
+    - php: 5.5
+      env: WP_VERSION=4.2.15
+      dist: trusty
+    - php: 5.4
+      env: WP_VERSION=4.1.18
+      dist: trusty
+    - php: 5.3
+      env: WP_VERSION=4.0.18
+      dist: precise
+    - php: 5.2
+      env: WP_VERSION=3.9.13
+      dist: precise
 
 install:
 - npm install grunt-cli
@@ -24,7 +80,7 @@ install:
 
 before_script:
 - if [[ $ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $PHP_VERSION; UNFC_PHP=$HOME/.build/php-$PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
-- if [[ ! ( $PHP_VERSION = 7.3* && $WP_VERSION = 5.2 ) ]]; then phpenv config-rm xdebug.ini || true; fi
+- if [[ ! -v CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini || true; fi
 - if [[ $PHP_VERSION = [78]* ]]; then UNFC_PHPUNIT=bin/phpunit-6.5.14; elif [[ $PHP_VERSION = 5.6* ]]; then UNFC_PHPUNIT=bin/phpunit-5.7.27; elif [[ $PHP_VERSION = 5.[345]* ]]; then UNFC_PHPUNIT=bin/phpunit-4.8.36; elif [[ $PHP_VERSION = 5.2* ]]; then UNFC_PHPUNIT=bin/phpunit-3.6.12x; else UNFC_PHPUNIT=$(which phpunit); fi
 - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 - $UNFC_PHP --info
