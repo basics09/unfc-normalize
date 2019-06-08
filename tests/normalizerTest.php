@@ -412,8 +412,10 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 					}
 				}
 
-				$this->assertSame( @Normalizer::$func( array() ), @UNFC_Normalizer::$func( array() ) );
-				$this->assertSame( @Normalizer::$func( '', PHP_INT_MAX + 1 ), @UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 ) );
+				if ( version_compare( PHP_VERSION, '8', '<' ) ) { // Even if suppressed, TypeError still thrown in PHP 8 for some reason.
+					$this->assertSame( @Normalizer::$func( array() ), @UNFC_Normalizer::$func( array() ) );
+					$this->assertSame( @Normalizer::$func( '', PHP_INT_MAX + 1 ), @UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 ) );
+				}
 			}
 		}
 	}
