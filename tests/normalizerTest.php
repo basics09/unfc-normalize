@@ -322,7 +322,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 
 			foreach ( $forms as $form ) {
 				$is_normalized = Normalizer::isNormalized( $string, $form );
-				if ( Normalizer::NONE === (int) $form ) {
+				if ( UNFC_Normalizer::NONE === (int) $form ) {
 					if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
 						$normalize = $string; // Normalizer::NONE removed PHP 8 so fake.
 					} elseif ( self::$icu_unorm2 ) {
