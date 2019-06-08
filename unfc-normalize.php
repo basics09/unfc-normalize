@@ -23,7 +23,7 @@ if ( ! defined( 'UNFC_VERSION' ) ) {
 	// These need to be synced with "readme.txt".
 	define( 'UNFC_VERSION', '1.0.7' ); // Sync also "package.json" and "language/unfc-normalize.pot".
 	define( 'UNFC_WP_AT_LEAST_VERSION', '3.9.13' );
-	define( 'UNFC_WP_UP_TO_VERSION', '4.8.0' );
+	define( 'UNFC_WP_UP_TO_VERSION', '5.2.1' );
 
 	// Handy now that other *.php stuff has been moved into subdir "includes".
 	define( 'UNFC_FILE', __FILE__ );

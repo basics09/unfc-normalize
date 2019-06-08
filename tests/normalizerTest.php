@@ -146,7 +146,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				unset( $rpn['NONE'] ); // Removed PHP 8.
 			}
 			if ( ! self::$icu_unorm2 ) {
-				unset( $rpn['NFKC_CF'] ); // Only defined for PHP >= 7.3 and ICU >= 56.
+				unset( $rpn['FORM_KC_CF'], $rpn['NFKC_CF'] ); // Only defined for PHP >= 7.3 and ICU >= 56.
 			}
 
 			ksort( $rpn );
@@ -154,7 +154,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 
 			$this->assertSame( $rin, $rpn );
 		} else {
-			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_constants: no class Normalizer' );
+			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
 		}
     }
 
@@ -274,7 +274,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
         $c = UNFC_Normalizer::normalize( 'déjà', UNFC_Normalizer::NFC ).UNFC_Normalizer::normalize( '훈쇼™', UNFC_Normalizer::NFD );
         $this->assertSame( $c, UNFC_Normalizer::normalize( $c, UNFC_Normalizer::NONE ) );
 		if ( class_exists( 'Normalizer' ) && version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8.
-			if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) { // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
+			if ( self::$icu_unorm2 ) { // Normalizer::NONE deprecated PHP 7.3 built against ICU 56 so suppress warning.
 				$this->assertSame( $c, @Normalizer::normalize( $c, Normalizer::NONE ) );
 			} else {
 				$this->assertSame( $c, Normalizer::normalize( $c, Normalizer::NONE ) );
@@ -315,18 +315,21 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	function test_args_compatible( $string ) {
 
 		if ( class_exists( 'Normalizer' ) ) {
-			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC );
-			if ( version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8.
-				$forms[] = Normalizer::NONE;
-			}
+			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NONE, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC, 0.4, '2' );
 			if ( self::$icu_unorm2 ) {
 				$forms[] = Normalizer::NFKC_CF;
 			}
 
 			foreach ( $forms as $form ) {
 				$is_normalized = Normalizer::isNormalized( $string, $form );
-				if ( version_compare( PHP_VERSION, '7.3', '>=' ) && version_compare( PHP_VERSION, '8', '<' ) && Normalizer::NONE === $form ) {
-					$normalize = @Normalizer::normalize( $string, $form ); // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
+				if ( Normalizer::NONE === (int) $form ) {
+					if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
+						$normalize = $string; // Normalizer::NONE removed PHP 8 so fake.
+					} elseif ( self::$icu_unorm2 ) {
+						$normalize = @Normalizer::normalize( $string, $form ); // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
+					} else {
+						$normalize = Normalizer::normalize( $string, $form );
+					}
 				} else {
 					$normalize = Normalizer::normalize( $string, $form );
 				}
@@ -337,7 +340,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				$this->assertSame( $normalize, $unfc_normalize );
 			}
 		} else {
-			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_args_compat: no class Normalizer' );
+			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
 		}
 	}
 
@@ -353,13 +356,93 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Needs convertWarningsToExceptions="true" in phpunit config file "phpunit.xml".
+	 * @dataProvider data_args_type_exception
+	 */
+	function test_args_type_exception( $func ) {
+		$exception = null;
+		try {
+			UNFC_Normalizer::$func( array() );
+		} catch(Exception $e) {
+			$exception = $e;
+		}
+		$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
+		$this->assertSame( 'UNFC_Normalizer::' . $func . '() expects parameter 1 to be string, array given', $exception->getMessage() );
+
+		$exception = null;
+		try {
+			UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 );
+		} catch(Exception $e) {
+			$exception = $e;
+		}
+		$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
+		$this->assertSame( 'UNFC_Normalizer::' . $func . '() expects parameter 2 to be int, float given', $exception->getMessage() );
+
+		if ( class_exists( 'Normalizer' ) ) {
+			if ( 'getRawDecomposition' !== $func || self::$icu_unorm2 ) {
+				if ( version_compare( PHP_VERSION, '7', '>=' ) ) {
+					$exception = null;
+					try {
+						Normalizer::$func( array() );
+					} catch(Exception $e) {
+						$exception = $e;
+					}
+					$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
+					$this->assertSame( 'Normalizer::' . $func . '() expects parameter 1 to be string, array given', $exception->getMessage() );
+
+					$exception = null;
+					try {
+						Normalizer::$func( '', PHP_INT_MAX + 1 );
+					} catch(Exception $e) {
+						$exception = $e;
+					}
+					$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
+					$this->assertSame( 'Normalizer::' . $func . '() expects parameter 2 to be int, float given', $exception->getMessage() );
+				}
+
+				$this->assertSame( @Normalizer::$func( array() ), @UNFC_Normalizer::$func( array() ) );
+				$this->assertSame( @Normalizer::$func( '', PHP_INT_MAX + 1 ), @UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 ) );
+			}
+		}
+	}
+
+	function data_args_type_exception() {
+		return array( array( 'isNormalized' ), array( 'normalize' ), array( 'getRawDecomposition' ) );
+	}
+
+	function test_get_arg_type()
+	{
+		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) { // For availability of ReflectionClass::setAccessible()
+			$this->markTestSkipped( __METHOD__ . ': ReflectionMethod::setAccessible requires PHP >= 5.3' );
+		}
+		$method = new ReflectionMethod( 'UNFC_Normalizer', 'getArgType' );
+		$method->setAccessible( true );
+
+		$this->assertSame('bool', $method->invoke( null, true ) );
+		$this->assertSame('int', $method->invoke( null, 1 ) );
+		$this->assertSame('float', $method->invoke( null, 1.2 ) );
+		$this->assertSame('null', $method->invoke( null, null ) );
+		$fd = fopen( __FILE__, 'r' );
+		$this->assertSame('resource', $method->invoke( null, $fd ) );
+		fclose( $fd );
+		if ( version_compare( PHP_VERSION, '7.2', '>=' ) ) {
+			$this->assertSame('resource', $method->invoke( null, $fd ) );
+		} else {
+			$this->assertSame('unknown', $method->invoke( null, $fd ) );
+		}
+		$this->assertSame('string', $method->invoke( null, 'a' ) );
+		$this->assertSame('array', $method->invoke( null, array() ) );
+		$this->assertSame('object', $method->invoke( null, new stdClass ) );
+	}
+
+	/**
 	 * @requires extension mbstring
 	 *
 	 * NOTE: need to run phpunit as "PHPRC=. phpunit" to pick up "php-cli.ini" in normalizer directory for "mbstring.func_overload = 2" to be set.
 	 */
 	function test_mbstring_overload() {
 		if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
-			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_mbstring: MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
+			$this->markTestSkipped( __METHOD__ . ': MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
 		}
 		$this->assertTrue( defined( 'MB_OVERLOAD_STRING' ) && ( ini_get( 'mbstring.func_overload' ) & MB_OVERLOAD_STRING ) );
 
@@ -589,7 +672,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				unset( $str );
 			}
 		} else {
-			$this->markTestSkipped( 'Tests_UNFC_Normalizer::test_random: no class Normalizer' );
+			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
 		}
 	}
 

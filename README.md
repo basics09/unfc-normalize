@@ -5,7 +5,7 @@
 **Contributors:** [gitlost](https://profiles.wordpress.org/gitlost), [zodiac1978](https://profiles.wordpress.org/zodiac1978)  
 **Tags:** Unicode, Normalization, Form C, Unicode Normalization Form C, Normalize, Normalizer, UTF-8, NFC  
 **Requires at least:** 3.9.13  
-**Tested up to:** 4.8.0  
+**Tested up to:** 5.2.1
 **Stable tag:** 1.0.7  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
@@ -40,7 +40,7 @@ For existing data, the plugin includes an administration tool to scan and normal
 
 A google-cheating schoolboy French translation is supplied.
 
-The plugin should run on PHP 5.2.17 to 7.1, and on WP 3.9.13 to 4.8.0.
+The plugin should run on PHP 5.2.17 to 8.0, and on WP 3.9.13 to 5.2.1.
 
 The project is on [github](https://github.com/gitlost/unfc-normalize).
 
@@ -91,9 +91,10 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 
 ## Changelog ##
 
-### 1.0.7 (X Jun 2017) ###
+### 1.0.7 (X Jun 2019) ###
 * Update qunit; run in travis.
-* WP 4.8.0 compatible.
+* WP 5.2.1 compatible.
+* Unicode 12.1.0
 
 ### 1.0.6 ###
 * Require explicit define of UNFC_DEBUG. Move load of debug file to 'init'.

@@ -27,70 +27,76 @@
 // gitlost begin
 // To test UTF-8 validity, use PCRE UTF-8 mode if available and RFC 3629 compliant, or htmlspecialchars() if RFC 3629 compliant, or as a last resort one of the following regexs.
 // NOTE: The more natural regexs checking positively for validity unfortunately blow up on large (~20K) strings due to unnecessary recursion in PCRE < 8.13.
-define( 'UNFC_REGEX_IS_INVALID_UTF8', // Using (*SKIP) verbs doubles the speed, but verbs only available for PCRE >= 7.3.
-	'/
-	  (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) )
-	| (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) )
-	| (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) | \z ) )
-	| [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
-	| [\xc0\xc1\xf5-\xff]
-	/sx'
+define('UNFC_REGEX_IS_INVALID_UTF8', // Using (*SKIP) verbs doubles the speed, but verbs only available for PCRE >= 7.3.
+    '/
+      (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) )
+    | (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) )
+    | (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP) (?: [^\x80-\xbf] | .(*SKIP)[\x80-\xbf] | \z ) | \z ) | \z ) )
+    | [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
+    | [\xc0\xc1\xf5-\xff]
+    /sx'
 );
-define( 'UNFC_REGEX_IS_INVALID_UTF8_NOVERBS',
-	'/
-	  (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) )
-	| (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) )
-	| (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | . (?: [^\x80-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) | \z ) )
-	| [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
-	| [\xc0\xc1\xf5-\xff]
-	/sx'
+define('UNFC_REGEX_IS_INVALID_UTF8_NOVERBS',
+    '/
+      (?> [\xc2-\xdf] (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) )
+    | (?> [\xe0-\xef] (?: [^\x80-\xbf] | (?<= \xe0 ) [\x80-\x9f] | (?<= \xed ) [\xa0-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) )
+    | (?> [\xf0-\xf4] (?: [^\x80-\xbf] | (?<= \xf0 ) [\x80-\x8f] | (?<= \xf4 ) [\x90-\xbf] | . (?: [^\x80-\xbf] | . (?: [^\x80-\xbf] | .[\x80-\xbf] | \z ) | \z ) | \z ) )
+    | [\x80-\xc1\xf5-\xff] (?<= [\x00-\x7f]. | \A. )
+    | [\xc0\xc1\xf5-\xff]
+    /sx'
 );
 
 // PCRE UTF-8 mode was not RFC 3629 compliant until PCRE 7.3, and then there was a compliance regression for PCRE 8.32 due to an over-enthusiastic interpretation of noncharacters.
 // See https://www.ietf.org/rfc/rfc3629.txt
 // See http://vcs.pcre.org/pcre/code/tags/pcre-8.32/pcre_valid_utf8.c?r1=1032&r2=1098 for the regression.
 // See http://www.unicode.org/versions/corrigendum9.html for the clarification.
-$_unfc_pcre_version = substr( PCRE_VERSION, 0, strspn( PCRE_VERSION, '0123456789.' ) ); // Remove any trailing date stuff.
+$_unfc_pcre_version = substr(PCRE_VERSION, 0, strspn(PCRE_VERSION, '0123456789.')); // Remove any trailing date stuff.
 
 // If PCRE UTF-8 mode is not RFC 3629 compliant or is unavailable...
-if ( version_compare( $_unfc_pcre_version, '7.3', '<' ) || version_compare( $_unfc_pcre_version, '8.32', '=' ) || false === @preg_match( '//u', '' ) ) {
-	// If before htmlspecialchars() RFC 3629 compliance...
-	if ( version_compare( PHP_VERSION, '5.3.4', '<' ) ) {
-		// If verbs unavailable...
-		if ( version_compare( $_unfc_pcre_version, '7.3', '<' ) ) {
-			// Typically PHP 5.2.4 only (with or without PCRE UTF-8 mode).
-			function unfc_is_valid_utf8( $str ) {
-				return 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8_NOVERBS, $str ); // Very slow for PHP < 7.
-			}
-		} else {
-			// Typically when PCRE UTF-8 mode unavailable and PHP < 5.3.4, ie 5.2.5 to 5.2.17 (last), and 5.3.0 to 5.3.3.
-			function unfc_is_valid_utf8( $str ) {
-				return 0 === preg_match( UNFC_REGEX_IS_INVALID_UTF8, $str ); // Very slow for PHP < 7.
-			}
-		}
-	} else {
-		// Typically when PCRE UTF-8 mode unavailable and PHP >= 5.3.4; or when built against PCRE 8.32, ie PHP 5.3.24 to 5.3.29 (last), 5.4.14 to 5.4.40, and 5.5.0 to 5.5.9.
-		function unfc_is_valid_utf8( $str ) {
-			// See https://core.trac.wordpress.org/ticket/29717#comment:11
-			return '' === $str || '' !== htmlspecialchars( $str, ENT_NOQUOTES, 'UTF-8' ); // Fast but not as fast as PCRE UTF-8 mode.
-		}
-	}
+if (version_compare($_unfc_pcre_version, '7.3', '<') || version_compare($_unfc_pcre_version, '8.32', '=') || false === @preg_match('//u', '')) {
+    // If before htmlspecialchars() RFC 3629 compliance...
+    if (version_compare(PHP_VERSION, '5.3.4', '<')) {
+        // If verbs unavailable...
+        if (version_compare($_unfc_pcre_version, '7.3', '<')) {
+            // Typically PHP 5.2.4 only (with or without PCRE UTF-8 mode).
+            function unfc_is_valid_utf8($str) {
+                return 0 === preg_match(UNFC_REGEX_IS_INVALID_UTF8_NOVERBS, $str); // Very slow for PHP < 7.
+            }
+        } else {
+            // Typically when PCRE UTF-8 mode unavailable and PHP < 5.3.4, ie 5.2.5 to 5.2.17 (last), and 5.3.0 to 5.3.3.
+            function unfc_is_valid_utf8($str) {
+                return 0 === preg_match(UNFC_REGEX_IS_INVALID_UTF8, $str); // Very slow for PHP < 7.
+            }
+        }
+    } else {
+        // Typically when PCRE UTF-8 mode unavailable and PHP >= 5.3.4; or when built against PCRE 8.32, ie PHP 5.3.24 to 5.3.29 (last), 5.4.14 to 5.4.40, and 5.5.0 to 5.5.9.
+        function unfc_is_valid_utf8($str) {
+            // See https://core.trac.wordpress.org/ticket/29717#comment:11
+            return '' === $str || '' !== htmlspecialchars($str, ENT_NOQUOTES, 'UTF-8'); // Fast but not as fast as PCRE UTF-8 mode.
+        }
+    }
 } else {
-	// Typically all PHPs with PCRE UTF-8 mode available except 5.2.4 and those built against PCRE 8.32.
-	function unfc_is_valid_utf8( $str ) {
-		return 1 === preg_match( '//u', $str ); // Fastest. Original Normalizer validity check.
-	}
+    // Typically all PHPs with PCRE UTF-8 mode available except 5.2.4 and those built against PCRE 8.32.
+    function unfc_is_valid_utf8($str) {
+        return 1 === preg_match('//u', $str); // Fastest. Original Normalizer validity check.
+    }
 }
-unset( $_unfc_pcre_version );
+unset($_unfc_pcre_version);
 
-if ( ! defined( 'UNFC_REGEX_ALTS_NFC_NOES' ) ) {
-	require dirname( __FILE__ ) . '/unfc_regex_alts.php';
+if (!defined('UNFC_REGEX_ALTS_NFC_NOES')) {
+    require dirname(__FILE__) . '/unfc_regex_alts.php';
 }
 // (Possibly) unstable code point(s) (or end of string) preceded by a stable code point (or start of string). See http://unicode.org/reports/tr15/#Stable_Code_Points
-define( 'UNFC_REGEX_NFC_SUBNORMALIZE', '/(?:\A|[\x00-\x7f]|(?:[\xc2-\xdf]|(?:[\xe0-\xef]|[\xf0-\xf4].).).)(?:(?:' . UNFC_REGEX_ALTS_NFC_NOES_MAYBES_REORDERS . ')++|\z)/' );
+define('UNFC_REGEX_NFC_SUBNORMALIZE', '/(?:\A|[\x00-\x7f]|(?:[\xc2-\xdf]|(?:[\xe0-\xef]|[\xf0-\xf4].).).)(?:(?:' . UNFC_REGEX_ALTS_NFC_NOES_MAYBES_REORDERS . ')++|\z)/');
 // gitlost end
 class UNFC_BaseNormalizer // gitlost
 {
+    const NFD = UNFC_Normalizer::FORM_D;
+    const NFKD = UNFC_Normalizer::FORM_KD;
+    const NFC = UNFC_Normalizer::FORM_C;
+    const NFKC = UNFC_Normalizer::FORM_KC;
+    const NFKC_CF = UNFC_Normalizer::FORM_KC_CF;
+
     private static $C;
     private static $D;
     private static $KD;
@@ -101,19 +107,28 @@ class UNFC_BaseNormalizer // gitlost
     private static $ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
     protected static $s = null, $form = null, $normalize = null; // gitlost Cache various info discovered in isNormalized().
     protected static $mb_overload_string = null; // gitlost Set if mbstring extension loaded with string function overload set.
-	protected static $forms = array(UNFC_Normalizer::NFD => 0, UNFC_Normalizer::NFKD => 0, UNFC_Normalizer::NFC => 0, UNFC_Normalizer::NFKC => 0, UNFC_Normalizer::NFKC_CF => 0);
+    protected static $forms = array(self::NFD => array(), self::NFKD => array('K' => true), self::NFC => array('C' => true), self::NFKC => array('C' => true, 'K' => true), self::NFKC_CF => array('C' => true, 'K' => true, 'kcCF' => true));
 
-    public static function isNormalized($s, $form = UNFC_Normalizer::NFC)
+    public static function isNormalized($s, $form = self::NFC)
     {
-        if (!isset(self::$forms[$form])) { // gitlost
+        // gitlost begin
+        if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            return false;
+        }
+        if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= $form || ~PHP_INT_MAX >= $form)) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            return false;
+        }
+
+        if (!isset(self::$forms[$form])) {
             return false;
         }
         $s = (string) $s;
-        if (UNFC_Normalizer::NFKC_CF !== $form && !isset($s[strspn($s, self::$ASCII)])) {
+        if (self::NFKC_CF !== $form && !isset($s[strspn($s, self::$ASCII)])) {
             return true;
         }
-        // gitlost begin
-        if (UNFC_Normalizer::NFC === $form) {
+        if (self::NFC === $form) {
             if (!unfc_is_valid_utf8($s)) {
                 return false;
             }
@@ -152,7 +167,7 @@ class UNFC_BaseNormalizer // gitlost
         if ($result) {
             self::$s = self::$form = self::$normalize = null; // Clear cache.
         } else {
-            // Note assuming use of "if ! isNormalized() normalize()" pattern.
+            // Note assuming use of "if !isNormalized() normalize()" pattern.
             self::$s = $s; self::$form = $form; self::$normalize = $normalize; // Cache for immediate use in normalize().
         }
 
@@ -160,10 +175,19 @@ class UNFC_BaseNormalizer // gitlost
         // gitlost end
     }
 
-    public static function normalize($s, $form = UNFC_Normalizer::NFC)
+    public static function normalize($s, $form = self::NFC)
     {
-        $s = (string) $s;
         // gitlost begin
+        if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            return false;
+        }
+        if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= ($form += 0) || ~PHP_INT_MAX >= $form)) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            return false;
+        }
+
+        $s = (string) $s;
         if (null !== self::$normalize) {
             if ($s === self::$s && $form === self::$form) { //  Use cache if available.
                 $result = self::$normalize;
@@ -173,25 +197,22 @@ class UNFC_BaseNormalizer // gitlost
             self::$s = self::$form = self::$normalize = null; // Clear cache (try to keep memory usage to a min).
         }
 
-        $C = $K = $kcCF = false;
-        switch ($form) {
-            case UNFC_Normalizer::NONE: return unfc_is_valid_utf8($s) ? $s : false; // Note must still check validity.
-            case UNFC_Normalizer::NFC: $C = true; break;
-            case UNFC_Normalizer::NFD: break;
-            case UNFC_Normalizer::NFKC: $C = $K = true; break;
-            case UNFC_Normalizer::NFKC_CF: $C = $K = $kcCF = true; break;
-            case UNFC_Normalizer::NFKD: $K = true; break;
-            default: return false;
+        if (UNFC_Normalizer::NONE === $form) {
+            return unfc_is_valid_utf8($s) ? $s : false; // Note must still check validity.
         }
-
-        if (!unfc_is_valid_utf8($s)) {
+        if (!isset(self::$forms[$form])) {
             return false;
         }
-        // gitlost end
-
         if ('' === $s) {
             return '';
         }
+        if (!unfc_is_valid_utf8($s)) {
+            return false;
+        }
+
+        $C = $K = $kcCF = false;
+        extract(self::$forms[$form]);
+        // gitlost end
 
         if ($K && null === self::$KD) {
             self::$KD = self::getData('compatibilityDecomposition');
@@ -238,11 +259,20 @@ class UNFC_BaseNormalizer // gitlost
         return $r;
     }
 
-	// gitlost begin
-    public static function getRawDecomposition($c, $form = UNFC_Normalizer::NFC)
+    // gitlost begin
+    public static function getRawDecomposition($s, $form = self::NFC)
     {
-        $c = (string) $c;
-        if ('' === $c || !unfc_is_valid_utf8($c) || isset($c[self::$ulenMask[$c[0] & "\xF0"]])) { // Single UTF-8 char only.
+        if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            return null; // Note differs from isNormalized() and normalize().
+        }
+        if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= ($form += 0) || ~PHP_INT_MAX >= $form)) {
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            return null; // Note differs from isNormalized() and normalize().
+        }
+
+        $s = (string) $s;
+        if ('' === $s || !unfc_is_valid_utf8($s) || isset($s[self::$ulenMask[$s[0] & "\xF0"]])) { // Single UTF-8 char only.
             return null;
         }
 
@@ -250,15 +280,15 @@ class UNFC_BaseNormalizer // gitlost
             return ''; // Undocumented and probably unintended but matches PHP behaviour as of 7.3.5.
         }
 
-        if ($c < "\xEA\xB0\x80" || "\xED\x9E\xA3" < $c) { // If not Hangul.
-            if (UNFC_Normalizer::NFKC_CF === $form) {
+        if ($s < "\xEA\xB0\x80" || "\xED\x9E\xA3" < $s) { // If not Hangul.
+            if (self::NFKC_CF === $form) {
                 if (null === self::$kcCF) {
                     self::$kcCF = self::getData('kcCaseFolding');
                 }
-                if (isset(self::$kcCF[$c])) {
-                    return self::$kcCF[$c];
+                if (isset(self::$kcCF[$s])) {
+                    return self::$kcCF[$s];
                 }
-                if ("\xf3\xa0\x80\x80" <= $c && $c <= "\xf3\xa0\xbf\xbf") { // U+E0000..E0FFF go to zero-length string, left out of mapping array to lessen size.
+                if ("\xf3\xa0\x80\x80" <= $s && $s <= "\xf3\xa0\xbf\xbf") { // U+E0000..E0FFF go to zero-length string, left out of mapping array to lessen size.
                     return '';
                 }
             }
@@ -266,21 +296,21 @@ class UNFC_BaseNormalizer // gitlost
             if (null === self::$RD) {
                 self::$RD = self::getData('rawDecomposition');
             }
-            if (!isset(self::$RD[$c])) {
+            if (!isset(self::$RD[$s])) {
                 return null;
             }
-            if (is_array(self::$RD[$c])) { // Canonical.
-                return self::$RD[$c][0];
+            if (is_array(self::$RD[$s])) { // Canonical.
+                return self::$RD[$s][0];
             }
-            if (UNFC_Normalizer::NFC === $form || UNFC_Normalizer::NFD === $form) {
+            if (self::NFC === $form || self::NFD === $form) {
                 return null;
             }
-            return self::$RD[$c]; // Compatibility.
+            return self::$RD[$s]; // Compatibility.
         }
 
         // Hangul chars
 
-        $uchr = unpack('C*', $c);
+        $uchr = unpack('C*', $s);
         $j = (($uchr[1] - 224) << 12) + (($uchr[2] - 128) << 6) + $uchr[3] - 0xAC80;
 
         if ($c2 = $j % 28) { // A Hangul LVT syllable has a raw decomposition of an LV syllable + T.
@@ -296,7 +326,7 @@ class UNFC_BaseNormalizer // gitlost
 
         return $uchr;
     }
-	// gitlost end
+    // gitlost end
 
     private static function recompose($s)
     {
@@ -582,11 +612,16 @@ class UNFC_BaseNormalizer // gitlost
 
         return $result;
     }
+
+    private static function getArgType($v)
+    {
+        return str_replace(array('boolean', 'integer', 'double', 'NULL', ' (closed)', ' type'), array('bool', 'int', 'float', 'null', '', ''), gettype($v));
+    }
     // gitlost end
 
     private static function getData($file)
     {
-        return require dirname( __FILE__ ).'/Resources/unidata/'.$file.'.php'; // gitlost (__DIR__ is 5.3.0)
+        return require dirname(__FILE__).'/Resources/unidata/'.$file.'.php'; // gitlost (__DIR__ is 5.3.0)
         /* gitlost
         if (file_exists($file = __DIR__.'/Resources/unidata/'.$file.'.php')) {
             return require $file;
