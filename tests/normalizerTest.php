@@ -365,6 +365,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 			UNFC_Normalizer::$func( array() );
 		} catch(Exception $e) {
 			$exception = $e;
+		} catch(Throwable $e) {
+			$exception = $e;
 		}
 		$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
 		$this->assertSame( 'UNFC_Normalizer::' . $func . '() expects parameter 1 to be string, array given', $exception->getMessage() );
@@ -373,6 +375,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 		try {
 			UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 );
 		} catch(Exception $e) {
+			$exception = $e;
+		} catch(Throwable $e) {
 			$exception = $e;
 		}
 		$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
@@ -386,6 +390,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 						Normalizer::$func( array() );
 					} catch(Exception $e) {
 						$exception = $e;
+					} catch(Throwable $e) {
+						$exception = $e;
 					}
 					$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
 					$this->assertSame( 'Normalizer::' . $func . '() expects parameter 1 to be string, array given', $exception->getMessage() );
@@ -394,6 +400,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 					try {
 						Normalizer::$func( '', PHP_INT_MAX + 1 );
 					} catch(Exception $e) {
+						$exception = $e;
+					} catch(Throwable $e) {
 						$exception = $e;
 					}
 					$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
