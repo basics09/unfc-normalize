@@ -315,7 +315,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	function test_args_compatible( $string ) {
 
 		if ( class_exists( 'Normalizer' ) ) {
-			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, Normalizer::NONE, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC, 0.4, '2' );
+			$forms = array( 0, -1, 6, -2, PHP_INT_MAX, -PHP_INT_MAX, UNFC_Normalizer::NONE, Normalizer::NFD, Normalizer::NFKD, Normalizer::NFC, Normalizer::NFKC, 0.4, '2' );
 			if ( self::$icu_unorm2 ) {
 				$forms[] = Normalizer::NFKC_CF;
 			}
@@ -397,7 +397,11 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 						$exception = $e;
 					}
 					$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
-					$this->assertSame( 'Normalizer::' . $func . '() expects parameter 2 to be int, float given', $exception->getMessage() );
+					if ( version_compare( PHP_VERSION, '7.3', '>=' ) ) {
+						$this->assertSame( 'Normalizer::' . $func . '() expects parameter 2 to be int, float given', $exception->getMessage() );
+					} else {
+						$this->assertSame( 'Normalizer::' . $func . '() expects parameter 2 to be integer, float given', $exception->getMessage() );
+					}
 				}
 
 				$this->assertSame( @Normalizer::$func( array() ), @UNFC_Normalizer::$func( array() ) );

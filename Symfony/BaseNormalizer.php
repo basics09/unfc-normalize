@@ -615,6 +615,7 @@ class UNFC_BaseNormalizer // gitlost
 
     private static function getArgType($v)
     {
+		// 'boolean' & 'integer' were used until PHP 7.3. 'double' was used until PHP 7. Returning PHP >= 7.3 names.
         return str_replace(array('boolean', 'integer', 'double', 'NULL', ' (closed)', ' type'), array('bool', 'int', 'float', 'null', '', ''), gettype($v));
     }
     // gitlost end
