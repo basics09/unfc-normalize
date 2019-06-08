@@ -321,23 +321,23 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 			}
 
 			foreach ( $forms as $form ) {
-				$is_normalized = Normalizer::isNormalized( $string, $form );
-				if ( UNFC_Normalizer::NONE === (int) $form ) {
-					if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
-						$normalize = $string; // Normalizer::NONE removed PHP 8 so fake.
-					} elseif ( self::$icu_unorm2 ) {
-						$normalize = @Normalizer::normalize( $string, $form ); // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
+				if ( UNFC_Normalizer::NONE !== (int) $form || version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8 so ignore.
+					$is_normalized = Normalizer::isNormalized( $string, $form );
+					if ( UNFC_Normalizer::NONE === (int) $form ) {
+						if ( self::$icu_unorm2 ) {
+							$normalize = @Normalizer::normalize( $string, $form ); // Normalizer::NONE deprecated PHP 7.3 so suppress warning.
+						} else {
+							$normalize = Normalizer::normalize( $string, $form );
+						}
 					} else {
 						$normalize = Normalizer::normalize( $string, $form );
 					}
-				} else {
-					$normalize = Normalizer::normalize( $string, $form );
-				}
-				$unfc_is_normalized = UNFC_Normalizer::isNormalized( $string, $form );
-				$unfc_normalize = UNFC_Normalizer::normalize( $string, $form );
+					$unfc_is_normalized = UNFC_Normalizer::isNormalized( $string, $form );
+					$unfc_normalize = UNFC_Normalizer::normalize( $string, $form );
 
-				$this->assertSame( $is_normalized, $unfc_is_normalized );
-				$this->assertSame( $normalize, $unfc_normalize );
+					$this->assertSame( $is_normalized, $unfc_is_normalized );
+					$this->assertSame( $normalize, $unfc_normalize );
+				}
 			}
 		} else {
 			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
