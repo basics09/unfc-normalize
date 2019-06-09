@@ -428,11 +428,11 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 					$n_ret = $actual_ret = 'asdfasdf';
 					try {
 						$n_ret = @Normalizer::$func( array() );
-					} catch(TypeError $e) {
+					} catch(Throwable $e) {
 					}
 					try {
 						$actual_ret = @UNFC_Normalizer::$func( array() );
-					} catch(TypeError $e) {
+					} catch(Throwable $e) {
 					}
 					$this->assertSame( 'asdfasdf', $n_ret );
 					$this->assertSame( $n_ret, $actual_ret );
