@@ -154,7 +154,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 
 			$this->assertSame( $rin, $rpn );
 		} else {
-			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
+			$this->markTestSkipped( 'No Normalizer class' );
 		}
     }
 
@@ -340,7 +340,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				}
 			}
 		} else {
-			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
+			$this->markTestSkipped( 'No Normalizer class' );
 		}
 	}
 
@@ -359,7 +359,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	 * Needs convertWarningsToExceptions="true" in phpunit config file "phpunit.xml".
 	 * @dataProvider data_args_type_exception
 	 */
-	function test_args_type_exception( $func ) {
+	function test_args_type_exception( $func, $expected_ret ) {
 		$exception = null;
 		try {
 			UNFC_Normalizer::$func( array() );
@@ -381,6 +381,18 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 		}
 		$this->assertTrue( null !== $exception && method_exists( $exception, 'getMessage' ) );
 		$this->assertSame( 'UNFC_Normalizer::' . $func . '() expects parameter 2 to be int, float given', $exception->getMessage() );
+
+		if ( version_compare( PHP_VERSION, '8', '>=' ) ) { // trigger_error(E_USER_ERROR) in PHP 8, mimicking TypeError which can't be suppressed in PHP 8, so return value never set.
+			$orig_ret = $actual_ret = 'asdfasdf';
+			try {
+				$actual_ret = @UNFC_Normalizer::$func( array() );
+			} catch(Throwable $e) {
+			}
+			$this->assertSame( $orig_ret, $actual_ret );
+		} else {
+			$this->assertSame( $expected_ret, @UNFC_Normalizer::$func( array() ) );
+			$this->assertSame( $expected_ret, @UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 ) );
+		}
 
 		if ( class_exists( 'Normalizer' ) ) {
 			if ( 'getRawDecomposition' !== $func || self::$icu_unorm2 ) {
@@ -412,7 +424,19 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 					}
 				}
 
-				if ( version_compare( PHP_VERSION, '8', '<' ) ) { // Even if suppressed, TypeError still thrown in PHP 8 for some reason.
+				if ( version_compare( PHP_VERSION, '8', '>=' ) ) { // TypeError can't be suppressed in PHP 8, so return value never set.
+					$n_ret = $actual_ret = 'asdfasdf';
+					try {
+						$n_ret = @Normalizer::$func( array() );
+					} catch(TypeError $e) {
+					}
+					try {
+						$actual_ret = @UNFC_Normalizer::$func( array() );
+					} catch(TypeError $e) {
+					}
+					$this->assertSame( 'asdfasdf', $n_ret );
+					$this->assertSame( $n_ret, $actual_ret );
+				} else {
 					$this->assertSame( @Normalizer::$func( array() ), @UNFC_Normalizer::$func( array() ) );
 					$this->assertSame( @Normalizer::$func( '', PHP_INT_MAX + 1 ), @UNFC_Normalizer::$func( '', PHP_INT_MAX + 1 ) );
 				}
@@ -421,13 +445,13 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	}
 
 	function data_args_type_exception() {
-		return array( array( 'isNormalized' ), array( 'normalize' ), array( 'getRawDecomposition' ) );
+		return array( array( 'isNormalized', false ), array( 'normalize', false ), array( 'getRawDecomposition', null ) );
 	}
 
 	function test_get_arg_type()
 	{
 		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) { // For availability of ReflectionClass::setAccessible()
-			$this->markTestSkipped( __METHOD__ . ': ReflectionMethod::setAccessible requires PHP >= 5.3' );
+			$this->markTestSkipped( 'ReflectionMethod::setAccessible requires PHP >= 5.3' );
 		}
 		$method = new ReflectionMethod( 'UNFC_Normalizer', 'getArgType' );
 		$method->setAccessible( true );
@@ -456,7 +480,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 	 */
 	function test_mbstring_overload() {
 		if ( version_compare( PHP_VERSION, '8', '>=' ) ) {
-			$this->markTestSkipped( __METHOD__ . ': MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
+			$this->markTestSkipped( 'MB_OVERLOAD_STRING removed PHP 8 thanks be to jaysus' );
 		}
 		$this->assertTrue( defined( 'MB_OVERLOAD_STRING' ) && ( ini_get( 'mbstring.func_overload' ) & MB_OVERLOAD_STRING ) );
 
@@ -686,7 +710,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				unset( $str );
 			}
 		} else {
-			$this->markTestSkipped( __METHOD__ . ': no class Normalizer' );
+			$this->markTestSkipped( 'No Normalizer class' );
 		}
 	}
 

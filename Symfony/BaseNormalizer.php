@@ -113,11 +113,11 @@ class UNFC_BaseNormalizer // gitlost
     {
         // gitlost begin
         if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return false;
         }
         if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= $form || ~PHP_INT_MAX >= $form)) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return false;
         }
 
@@ -179,11 +179,11 @@ class UNFC_BaseNormalizer // gitlost
     {
         // gitlost begin
         if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return false;
         }
         if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= ($form += 0) || ~PHP_INT_MAX >= $form)) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return false;
         }
 
@@ -263,11 +263,11 @@ class UNFC_BaseNormalizer // gitlost
     public static function getRawDecomposition($s, $form = self::NFC)
     {
         if (!is_string($s) && null !== $s && !is_scalar($s) && !(is_object($s) && method_exists($s, '__toString'))) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 1 to be string, '.self::getArgType($s).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return null; // Note differs from isNormalized() and normalize().
         }
         if (!is_int($form) && (!is_numeric($form) || PHP_INT_MAX <= ($form += 0) || ~PHP_INT_MAX >= $form)) {
-            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', E_USER_WARNING);
+            trigger_error('UNFC_Normalizer::'.__FUNCTION__.'() expects parameter 2 to be int, '.self::getArgType($form).' given', PHP_VERSION_ID >= 80000 ? E_USER_ERROR : E_USER_WARNING);
             return null; // Note differs from isNormalized() and normalize().
         }
 

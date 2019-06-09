@@ -79,6 +79,7 @@ install:
 - npm install
 - PHP_VERSION=$(php -r 'echo substr(PHP_VERSION, 0, strspn(PHP_VERSION, "0123456789."));')
 - if [[ $PHP_VERSION = 5.2* ]]; then pecl install phar; yes '' | pecl install intl; fi
+- sudo touch /var/log/php_errors.log && sudo chmod a+rw /var/log/php_errors.log
 
 before_script:
 - if [[ -v ICU_VERSION ]]; then bash bin/build-php-icu.sh $ICU_VERSION $PHP_VERSION; UNFC_PHP=$HOME/.build/php-$PHP_VERSION-icu-$ICU_VERSION/bin/php; else UNFC_PHP=php; fi
