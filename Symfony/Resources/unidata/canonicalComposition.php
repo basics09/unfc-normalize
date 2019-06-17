@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return array( // https://www.unicode.org/Public/12.1.0/ucd/UnicodeData.txt
   'À' => 'À',
   'Á' => 'Á',
   'Â' => 'Â',

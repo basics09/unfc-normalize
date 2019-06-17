@@ -103,7 +103,7 @@ class UNFC_BaseNormalizer // gitlost
     private static $cC;
     private static $kcCF; // gitlost Array loaded from "kcCaseFolding.php" for NFKC_CF.
     private static $RD; // gitlost Array loaded from "rawDecomposition.php".
-    private static $ulenMask = array("\x00" => 1, "\x10" => 1, "\x20" => 1, "\x30" => 1, "\x40" => 1, "\x50" => 1, "\x60" => 1, "\x70" => 1, "\xC0" => 2, "\xD0" => 2, "\xE0" => 3, "\xF0" => 4); // gitlost Use for ASCII as well.
+    private static $ulenMask = array(0 => 1, 0x10 => 1, 0x20 => 1, 0x30 => 1, 0x40 => 1, 0x50 => 1, 0x60 => 1, 0x70 => 1, 0xC0 => 2, 0xD0 => 2, 0xE0 => 3, 0xF0 => 4); // gitlost Use for ASCII as well.
     private static $ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
     protected static $s = null, $form = null, $normalize = null; // gitlost Cache various info discovered in isNormalized().
     protected static $mb_overload_string = null; // gitlost Set if mbstring extension loaded with string function overload set.
@@ -121,6 +121,7 @@ class UNFC_BaseNormalizer // gitlost
             return false;
         }
 
+        $form = (int) $form;
         if (!isset(self::$forms[$form])) {
             return false;
         }
@@ -132,7 +133,7 @@ class UNFC_BaseNormalizer // gitlost
             if (!unfc_is_valid_utf8($s)) {
                 return false;
             }
-            if (0 === preg_match('/[\xcc-\xf4]/', $s) || 0 === preg_match(UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
+            if (0 === preg_match('/[\xcc-\xf0]/', $s) || 0 === preg_match(UNFC_REGEX_NFC_NOES_MAYBES_REORDERS, $s)) { // If contains no characters that could possibly need normalizing...
                 return true;
             }
 
@@ -188,6 +189,7 @@ class UNFC_BaseNormalizer // gitlost
         }
 
         $s = (string) $s;
+        $form = (int) $form;
         if (null !== self::$normalize) {
             if ($s === self::$s && $form === self::$form) { //  Use cache if available.
                 $result = self::$normalize;
@@ -272,10 +274,11 @@ class UNFC_BaseNormalizer // gitlost
         }
 
         $s = (string) $s;
-        if ('' === $s || !unfc_is_valid_utf8($s) || isset($s[self::$ulenMask[$s[0] & "\xF0"]])) { // Single UTF-8 char only.
+        if ('' === $s || !unfc_is_valid_utf8($s) || isset($s[self::$ulenMask[ord($s[0]) & 0xF0]])) { // Single UTF-8 char only.
             return null;
         }
 
+        $form = (int) $form;
         if (!isset(self::$forms[$form])) {
             return ''; // Undocumented and probably unintended but matches PHP behaviour as of 7.3.5.
         }
@@ -336,7 +339,7 @@ class UNFC_BaseNormalizer // gitlost
 
         $result = $tail = '';
 
-        $i = $ulenMask[$s[0] & "\xF0"];
+        $i = $ulenMask[ord($s[0]) & 0xF0];
         $len = strlen($s);
 
         $lastUchr = substr($s, 0, $i);
@@ -345,7 +348,7 @@ class UNFC_BaseNormalizer // gitlost
         while ($i < $len) {
             // gitlost Don't bother treating ASCII specially. Note this is a subnormalize() biased change.
 
-            $ulen = $ulenMask[$s[$i] & "\xF0"];
+            $ulen = $ulenMask[ord($s[$i]) & 0xF0];
             $uchr = substr($s, $i, $ulen);
 
             if ($lastUcls || $lastUchr < "\xE1\x84\x80" || "\xE1\x84\x92" < $lastUchr // gitlost Seems to be slightly faster to check $lastUcls first, at least in subnormalize() case.
@@ -421,7 +424,7 @@ class UNFC_BaseNormalizer // gitlost
                 continue;
             }
 
-            $ulen = $ulenMask[$s[$i] & "\xF0"];
+            $ulen = $ulenMask[ord($s[$i]) & 0xF0];
             $uchr = substr($s, $i, $ulen);
             $i += $ulen;
 
@@ -432,7 +435,7 @@ class UNFC_BaseNormalizer // gitlost
                     $uchr = $j;
 
                     $j = strlen($uchr);
-                    $ulen = $ulenMask[$uchr[0] & "\xF0"]; // gitlost Use $ulenMask for ASCII as well.
+                    $ulen = $ulenMask[ord($uchr[0]) & 0xF0]; // gitlost Use $ulenMask for ASCII as well.
 
                     if ($ulen != $j) {
                         // Put trailing chars in $s
@@ -508,7 +511,7 @@ class UNFC_BaseNormalizer // gitlost
         $len = strlen($s);
 
         while ($i < $len) {
-            $ulen = $ulenMask[$s[$i] & "\xF0"];
+            $ulen = $ulenMask[ord($s[$i]) & 0xF0];
             $uchr = substr($s, $i, $ulen);
             $i += $ulen;
 
@@ -519,7 +522,7 @@ class UNFC_BaseNormalizer // gitlost
                     $uchr = $j;
 
                     $j = strlen($uchr);
-                    $ulen = $ulenMask[$uchr[0] & "\xF0"];
+                    $ulen = $ulenMask[ord($uchr[0]) & 0xF0];
 
                     if ($ulen != $j) {
                         // Put trailing chars in $s
@@ -599,7 +602,7 @@ class UNFC_BaseNormalizer // gitlost
         $len = strlen($s);
 
         while ($i < $len) {
-            $ulen = $ulenMask[$s[$i] & "\xF0"];
+            $ulen = $ulenMask[ord($s[$i]) & 0xF0];
             $uchr = substr($s, $i, $ulen);
             $i += $ulen;
 
@@ -615,7 +618,7 @@ class UNFC_BaseNormalizer // gitlost
 
     private static function getArgType($v)
     {
-		// 'boolean' & 'integer' were used until PHP 7.3. 'double' was used until PHP 7. Returning PHP >= 7.3 names.
+        // 'boolean' & 'integer' were used until PHP 7.3. 'double' was used until PHP 7. Returning PHP >= 7.3 names.
         return str_replace(array('boolean', 'integer', 'double', 'NULL', ' (closed)', ' type'), array('bool', 'int', 'float', 'null', '', ''), gettype($v));
     }
     // gitlost end

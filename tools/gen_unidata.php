@@ -4,8 +4,12 @@
  *
  * Output the various mapping classes used by the UNFC_Normalizer class to the "Symfony/Resources/unidata" directory.
  *
- * See http://www.unicode.org/Public/12.1.0/ucd/UnicodeData.txt, http://www.unicode.org/Public/12.1.0/ucd/CompositionExclusions.txt
- * and http://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
+ * Requires data directory (default "tests/UCD-<unicode-version>") containing UCD Unicode data files:
+ *   https://www.unicode.org/Public/12.1.0/ucd/UnicodeData.txt
+ *   https://www.unicode.org/Public/12.1.0/ucd/CompositionExclusions.txt
+ *   https://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
+ *
+ * unzip tests/UCD-12.1.0.zip UnicodeData.txt CompositionExclusions.txt DerivedNormalizationProps.txt -d tests/UCD-12.1.0
  */
 
 $basename = basename( __FILE__ );
@@ -14,17 +18,13 @@ $dirdirname = dirname( $dirname );
 
 require $dirname . '/functions.php';
 
-$opts = getopt( 'v:sd:o:' );
-$version = isset( $opts['v'] ) ? $opts['v'] : '12.1.0'; // Unicode version number.
-$suffix = isset( $opts['s'] ); // If set will add Unicode version number as suffix to filename (before ".php" that is).
-$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $version ); // Where to load Unicode data files from.
+$opts = getopt( 'u:d:o:s' );
+$unicode_version = isset( $opts['u'] ) ? $opts['u'] : '12.1.0'; // Unicode version number.
+$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $unicode_version ); // Where to load Unicode data files from.
 $outdirname = isset( $opts['o'] ) ? $opts['o'] : 'Symfony/Resources/unidata'; // Where to put output.
+$suffix = isset( $opts['s'] ); // If set will add Unicode version number as suffix to filename (before ".php" that is).
 
-$filename_suffix = $suffix ? ( '-' . $version ) : '';
-
-if ( ! function_exists( '__' ) ) {
-	function __( $str, $td ) { return $str; }
-}
+$filename_suffix = $suffix ? ( '-' . $unicode_version ) : '';
 
 // First create the decomposition exclusion array.
 
@@ -37,13 +37,11 @@ error_log( "$basename: reading file=$file" );
 // Read the file.
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read composition exclusions file "%s"', 'unfc-normalize' ), $file );
-	error_log( $error );
-	return $error;
+	error_log( $error = "$basename: ERROR: Could not read UCD composition exclusions file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
-$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 // Parse the file, creating array of exclusion codepoints.
 
@@ -78,26 +76,22 @@ function parse_unicode_data_cb( &$codepoints, $cp, $name, $parts, $in_interval, 
 
 	$code = unfc_utf8_chr( $cp );
 
-	$combining_class = intval( $parts[3] );
+	$combining_class = intval( $parts[UNFC_UCD_CANONICAL_COMBINING_CLASS] );
 	if ( $combining_class ) {
 		$combining_classes[ $code ] = $combining_class;
 	}
 
-	$decomp = $parts[5];
+	$decomp = $parts[UNFC_UCD_DECOMPOSITION_TYPE_MAPPING];
 	if ( $decomp ) {
 		$canonic = '<' !== $decomp[0];
 		if ( ! $canonic ) {
 			$decomp = preg_replace( '/^<.*> /', '', $decomp );
 		}
-		$decomps = explode( ' ', $decomp );
-
-		$decomps = array_map( 'hexdec', $decomps );
-		$decomps = array_map( 'unfc_utf8_chr', $decomps );
-		$decomp = implode( '', $decomps );
+		$decomp = unfc_utf8_entry( $decomp, $char_cnt );
 
 		if ( $canonic ) {
 			$canonical_decompositions[ $code ] = $decomp;
-			$exclude = 1 === count( $decomps ) || isset( $exclusions[ $code ] );
+			$exclude = 1 === $char_cnt || isset( $exclusions[ $code ] );
 			if ( ! $exclude ) {
 				$canonical_compositions[ $decomp ] = $code;
 			}
@@ -118,10 +112,8 @@ $file = $dirdirname . '/' . $filename;
 error_log( "$basename: reading file=$file" );
 
 if ( false === unfc_parse_unicode_data( $file, 'parse_unicode_data_cb' ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read unicode data file "%s"', 'unfc-normalize' ), $file );
-	error_log( $error );
-	return $error;
+	error_log( $error = "$basename: ERROR: Could not parse UCD unicode data file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
 do {
@@ -163,13 +155,11 @@ error_log( "$basename: reading file=$file" );
 // Read the file.
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read derived normalization properties file "%s"', 'unfc-normalize' ), $file );
-	error_log( $error );
-	return $error;
+	error_log( $error = "$basename: ERROR: Could not read UCD derived normalization properties file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
-$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 // Parse the file, creating array of NFKC_CF upper to lowercase codepoints.
 
@@ -186,120 +176,47 @@ foreach ( $lines as $line ) {
 		continue;
 	}
 
-	$lower = trim( $matches[2] );
-	if ( '' !== $lower ) {
-		$lowers = explode( ' ', trim( $matches[2] ) );
-
-		$lowers = array_map( 'hexdec', $lowers );
-		$lowers = array_map( 'unfc_utf8_chr', $lowers );
-		$lower = implode( '', $lowers ); // Leave unnormalized.
-	}
-	$upper = $matches[1];
-	if (false !== strpos($upper, '..')) {
-		$range = explode( '..', $matches[1] );
-		$first_cp = hexdec( $range[0] );
-		$last_cp = hexdec( $range[1] );
+	$case_fold = unfc_utf8_entry( trim( $matches[2] ) ); // Leave unnormalized.
+	if ( false !== strpos( $matches[1], '..' ) ) {
+		$codes = explode( '..', $matches[1] );
+		$first_cp = hexdec( $codes[0] );
+		$last_cp = hexdec( $codes[1] );
 		for ( $cp = $first_cp; $cp <= $last_cp; $cp++ ) {
-			if ($cp < 0xE0000 || $cp > 0xE0FFF) { // Treat this block, which goes to zero-length string, specially to lessen file size.
-				$kc_case_foldings[ unfc_utf8_chr( $cp ) ] = $lower;
+			if ( $cp < 0xE0000 || $cp > 0xE0FFF ) { // Treat this block, which goes to zero-length string, specially to lessen file size.
+				$kc_case_foldings[ unfc_utf8_chr( $cp ) ] = $case_fold;
 			}
 		}
 	} else {
-		$kc_case_foldings[ unfc_utf8_chr( hexdec( $upper ) ) ] = $lower;
+		$cp = hexdec( $matches[1] );
+		if ( $cp < 0xE0000 || $cp > 0xE0FFF ) { // Treat this block, which goes to zero-length string, specially to lessen file size.
+			$kc_case_foldings[ unfc_utf8_chr( $cp ) ] = $case_fold;
+		}
 	}
-}
-
-//error_log( "combining_classes(" . count( $combining_classes ) . ")=" . print_r( $combining_classes, true ) );
-//error_log( "canonical_compositions(" . count( $canonical_compositions ) . ")=" . print_r( $canonical_compositions, true ) );
-//error_log( "canonical_decompositions(" . count( $canonical_decompositions ) . ")=" . print_r( $canonical_decompositions, true ) );
-//error_log( "compatibility_decompositions(" . count( $compatibility_decompositions ) . ")=" . print_r( $compatibility_decompositions, true ) );
-//error_log( "raw_decompositions(" . count( $raw_decompositions ) . ")=" . print_r( $raw_decompositions, true ) );
-//error_log( "kc_case_foldings(" . count( $kc_case_foldings ) . ")=" . print_r( $kc_case_foldings, true ) );
-
-function out_esc( $str ) {
-	return str_replace( array( '\\', '\'' ), array( '\\\\', '\\\'', ), $str );
 }
 
 // Output.
 
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $combining_classes as $code => $class ) {
-	$out[] = '  \'' . $code . '\' => ' . $class . ',';
+if ( ! unfc_output_array_file( $combining_classes, $file = $outdirname . '/combiningClass' . $filename_suffix . '.php', $unicode_version, 'UnicodeData.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/combiningClass' . $filename_suffix . '.php', implode( "\n", $out ) );
-
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $canonical_compositions as $decomp => $code ) {
-	$out[] = '  \'' . $decomp . '\' => \'' . $code . '\',';
+if ( ! unfc_output_array_file( $canonical_compositions, $file = $outdirname . '/canonicalComposition' . $filename_suffix . '.php', $unicode_version, 'UnicodeData.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/canonicalComposition' . $filename_suffix . '.php', implode( "\n", $out ) );
-
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $canonical_decompositions as $code => $decomp ) {
-	$out[] = '  \'' . $code . '\' => \'' . $decomp . '\',';
+if ( ! unfc_output_array_file( $canonical_decompositions, $file = $outdirname . '/canonicalDecomposition' . $filename_suffix . '.php', $unicode_version, 'UnicodeData.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/canonicalDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
-
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $compatibility_decompositions as $code => $decomp ) {
-	$out[] = '  \'' . out_esc( $code ) . '\' => \'' . out_esc( $decomp ) . '\',';
+if ( ! unfc_output_array_file( $compatibility_decompositions, $file = $outdirname . '/compatibilityDecomposition' . $filename_suffix . '.php', $unicode_version, 'UnicodeData.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/compatibilityDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
-
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $raw_decompositions as $code => $entry ) {
-	if ( $entry[1] ) {
-		$out[] = '  \'' . out_esc( $code ) . '\' => array(\'' . out_esc( $entry[0] ) . '\'),';
-	} else {
-		$out[] = '  \'' . out_esc( $code ) . '\' => \'' . out_esc( $entry[0] ) . '\',';
-	}
+if ( ! unfc_output_array_file( $raw_decompositions, $file = $outdirname . '/rawDecomposition' . $filename_suffix . '.php', $unicode_version, 'UnicodeData.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/rawDecomposition' . $filename_suffix . '.php', implode( "\n", $out ) );
-
-$out = array();
-$out[] =  '<?php';
-$out[] = '';
-$out[] = 'return array(';
-
-foreach ( $kc_case_foldings as $upper => $lower ) {
-	$out[] = '  \'' . out_esc( $upper ) . '\' => \'' . out_esc( $lower ) . '\',';
+if ( ! unfc_output_array_file( $kc_case_foldings, $file = $outdirname . '/kcCaseFolding' . $filename_suffix . '.php', $unicode_version, 'DerivedNormalizationProps.txt' ) ) {
+	error_log( $error = "$basename: ERROR: Could not write PHP file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
-$out[] = ');';
-$out[] = '';
-
-file_put_contents( $outdirname . '/kcCaseFolding' . $filename_suffix . '.php', implode( "\n", $out ) );

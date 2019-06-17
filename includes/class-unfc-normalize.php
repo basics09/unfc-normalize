@@ -1963,8 +1963,8 @@ class UNFC_Normalize {
 
 		// MySQL's regex doesn't understand hex (or octal or sexagesimal) escape sequences and naked chr codes seem to get molested on their way to the server,
 		// so need to use the hex (or dec as more compact) codes as CHAR()s. Also it's slow unless expressions are simple.
-		// The following is '[\xcc-\xf4]', which takes advantage of knowing we have valid UTF-8 in the database to search for characters >= U+0300.
-		static $regexp = "CONCAT('[',CHAR(204),'-',CHAR(244),']')";
+		// The following is '[\xcc-\xf0]', which takes advantage of knowing we have valid UTF-8 in the database to search for characters >= U+0300 and <= U+3FFFF.
+		static $regexp = "CONCAT('[',CHAR(204),'-',CHAR(240),']')";
 
 		$ret = array();
 		foreach ( $this->db_fields[ $type ] as $field ) {
@@ -2141,7 +2141,7 @@ class UNFC_Normalize {
 
 		// Search for percent-encoded (urlencoded) characters in slugs that are >= U+0300. Equivalent to '[\xcc-\xff]'.
 		// Note this is only used to flag possible non-normalized chars that have been percent-encoded, not to fix as slugs aren't reliably urlencoded.
-		static $slug_regexp = "'%c[c-f]|%[def][0-9a-f]'"; // Don't bother restricting \xf? to <= \xf4 (keep it as simple as possible).
+		static $slug_regexp = "'%c[c-f]|%[def][0-9a-f]'"; // Don't bother restricting \xf? to <= \xf0 (keep it as simple as possible).
 
 		$ret = '';
 

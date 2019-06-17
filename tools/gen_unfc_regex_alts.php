@@ -1,11 +1,17 @@
 <?php
 /**
- * Output "unfc_regexs.php", generating regular expression alternatives defines
+ * Output "Symfony/unfc_regex_alts.php", generating regular expression alternatives defines
  * from the UCD derived normalization properties file "DerivedNormalizationProps.txt"
  * and the derived combining class file "DerivedCombiningClass.txt".
  *
- * See http://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
- * See http://www.unicode.org/Public/12.1.0/ucd/extracted/DerivedCombiningClass.txt
+ * Requires data directory (default "tests/UCD-<unicode-version>") containing UCD Unicode data files:
+ *   https://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
+ *   https://www.unicode.org/Public/12.1.0/ucd/extracted/DerivedCombiningClass.txt
+ *
+ * unzip tests/UCD-12.1.0.zip DerivedNormalizationProps.txt extracted/DerivedCombiningClass.txt -d tests/UCD-12.1.0
+ *
+ * For unit testing need to set UNFC_DEBUG to generate Unicode regexs and dumps in "tests/unfc_regex_alts_u-debug.php".
+ *   UNFC_DEBUG=1 php tools/gen_unfc_regex_alts.php
  */
 
 $basename = basename( __FILE__ );
@@ -15,14 +21,11 @@ $subdirname = basename( $dirname );
 
 require $dirname . '/functions.php';
 
-$opts = getopt( 'v:p:d:' );
-$version = isset( $opts['v'] ) ? $opts['v'] : '12.1.0'; // Unicode version number.
+$opts = getopt( 'u:d:o:p:' );
+$unicode_version = isset( $opts['u'] ) ? $opts['u'] : '12.1.0'; // Unicode version number.
+$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $unicode_version ); // Where to load Unicode data files from.
+$outdirname = isset( $opts['o'] ) ? $opts['o'] : 'Symfony'; // Where to put output.
 $prefix = isset( $opts['p'] ) ? $opts['p'] : 'UNFC_';
-$datadirname = isset( $opts['d'] ) ? $opts['d'] : ( 'tests/UCD-' . $version ); // Where to load Unicode data files from.
-
-if ( ! function_exists( '__' ) ) {
-	function __( $str, $td ) { return $str; }
-}
 
 // Open the properties file.
 
@@ -33,13 +36,11 @@ error_log( "$basename: reading file=$file" );
 // Read the file.
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read UCD derived normalization properties file "%s"', 'unfc-normalize' ), $file );
-	error_log( "$basename: ERROR: $error" );
-	return $error;
+	error_log( $error = "$basename: ERROR: Could not read UCD derived normalization properties file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
-$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 // Parse the file, creating arrays of NO or MAYBE unicode codepoints.
 
@@ -122,10 +123,8 @@ foreach ( $lines as $line ) {
 	}
 }
 if ( count( $haves ) !== count( $idx_strs ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Missing NO or MAYBE codepoints in UCD derived normalization properties file "%s"', 'unfc-normalize' ), $file );
-	error_log( "$basename: ERROR: $error" );
-	return $error;
+	error_log( $error = "$basename: ERROR: Missing NO or MAYBE codepoints in UCD derived normalization properties file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
 // Open the combining file.
@@ -137,13 +136,11 @@ error_log( "$basename: reading file=$file" );
 // Read the file.
 
 if ( false === ( $get = file_get_contents( $file ) ) ) {
-	/* translators: %s: file name */
-	$error = sprintf( __( 'Could not read derived combining class file "%s"', 'unfc-normalize' ), $file );
-	error_log( $error );
-	return $error;
+	error_log( $error = "$basename: ERROR: Could not read UCD derived combining class file \"$file\"" );
+	exit( $error . PHP_EOL );
 }
 
-$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 // Parse the file, creating array of codepoint => class.
 
@@ -199,17 +196,14 @@ $regex_alts = array();
 
 foreach ( $out_idxs as $idx ) {
 	sort( $codepoints[ $idx ] );
-	//error_log( "codepoints[ $idx ]=" . print_r( array_map( 'dechex', $codepoints[ $idx ] ), true ) );
 
 	// Calculate the UTF-8 byte sequence ranges from the unicode codepoints.
 
 	$ranges = unfc_utf8_ranges_from_codepoints( $codepoints[ $idx ] );
-	//error_log( "ranges=" . print_r( unfc_array_map_recursive( 'unfc_utf8_preg_fmt', $ranges ), true ) );
 
 	// Generate the regular expression alternatives.
 
 	$regex_alts[ $idx ] = unfc_utf8_regex_alts( $ranges );
-	//error_log( "regex_alts[ $idx ]={$regex_alts[ $idx ]}" );
 }
 
 // Output.
@@ -228,32 +222,39 @@ foreach ( $out_idxs as $idx ) {
 	$out[] = "define( '{$prefix}REGEX_ALTS_{$IDX}', '" . $regex_alts[ $idx ] . "' );";
 	$out[] = "define( '{$prefix}REGEX_{$IDX}', '/' . {$prefix}REGEX_ALTS_{$IDX} . '/' );";
 }
+$out[] = '';
 
-if ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || ! empty( $_SERVER['UNFC_DEBUG'] ) ) { // Set via command line "UNFC_DEBUG=1 php __FILE__".
-	$out[] = '';
-	$out[] = '// The following unicode versions of the global variable regex alternatives and dumps are for testing/debugging purposes only.';
-	$out[] = '';
-	$out[] = 'if ( ( defined( \'WP_DEBUG\' ) && WP_DEBUG ) ) {';
+if ( ! file_put_contents( $file = $outdirname . '/unfc_regex_alts.php', implode( "\n", $out ) ) ) {
+	exit( "$basename: ERROR: Could not write PHP file \"$file\"" . PHP_EOL );
+}
+
+if ( ! empty( $_SERVER['UNFC_DEBUG'] ) ) { // Set via command line "UNFC_DEBUG=1 php __FILE__".
+	$out = array();
+	$out[] =  '<?php';
+	$out[] = '/**';
+	$out[] = ' * Generated by "' . $subdirname . '/' . $basename . '". Don\'t edit!';
+	$out[] = ' * The following unicode versions of the global variable regex alternatives and dumps are for testing/debugging purposes only.';
+	$out[] = ' */';
 	foreach ( $out_idxs as $idx ) {
-		// Unicode (UTF-16) regular expression charset.
+		// Unicode (UCS) regular expression charset.
 		$regex_alts = unfc_unicode_regex_chars_from_codepoints( $codepoints[ $idx ] );
 
 		$IDX = strtoupper( $idx );
 		$out[] = '';
-		$out[] = "\t" . "define( '{$prefix}REGEX_ALTS_{$IDX}_U', '" . $regex_alts . "' );";
-		$out[] = "\t" . "define( '{$prefix}REGEX_{$IDX}_U', '/[' . {$prefix}REGEX_ALTS_{$IDX}_U . ']/u' );";
+		$out[] = "define( '{$prefix}REGEX_ALTS_{$IDX}_U', '" . $regex_alts . "' );";
+		$out[] = "define( '{$prefix}REGEX_{$IDX}_U', '/[' . {$prefix}REGEX_ALTS_{$IDX}_U . ']/u' );";
 
 		$out[] = '';
-		$out[] = "\t" . "global \$unfc_{$idx};";
-		$out[] = "\t" . "\$unfc_{$idx} = array( // " . count( $codepoints[ $idx ] ) . ' codepoints';
+		$out[] = "global \$unfc_{$idx};";
+		$out[] = "\$unfc_{$idx} = array( // " . count( $codepoints[ $idx ] ) . ' codepoints';
 		foreach ( array_chunk( $codepoints[ $idx ], 20 ) as $codepoints_chunk ) {
-			$out[] = "\t\t" . implode( ', ', array_map( 'unfc_unicode_fmt', $codepoints_chunk ) ) . ',';
+			$out[] = "\t" . implode( ', ', array_map( 'unfc_unicode_fmt', $codepoints_chunk ) ) . ',';
 		}
-		$out[] = "\t" . ');';
+		$out[] = ');';
 	}
-	$out[] = '}';
+	$out[] = '';
+
+	if ( ! file_put_contents( $file = 'tests/unfc_regex_alts_u-debug.php', implode( "\n", $out ) ) ) {
+		exit( "$basename: ERROR: Could not write PHP file \"$file\"" . PHP_EOL );
+	}
 }
-
-$out = implode( "\n", $out ) . "\n";
-
-echo $out;

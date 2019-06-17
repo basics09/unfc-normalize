@@ -14,6 +14,7 @@ class TestUNFC_Tools extends WP_UnitTestCase {
 		$dirname = dirname( dirname( __FILE__ ) );
 		require_once $dirname . '/tools/functions.php';
 		require_once $dirname . '/Symfony/unfc_regex_alts.php';
+		require_once $dirname . '/tests/unfc_regex_alts_u-debug.php';
 
 		self::$pcre_utf8 = false !== @preg_match( '//u', '' );
 	}

@@ -37,7 +37,7 @@ function unfc_unicode_chr( $c ) {
 	if ( 1 === $len ) {
 		return ord( $c[0] );
 	}
-	$uchr = unpack('C*', substr( $c, 0, $len ) );
+	$uchr = unpack( 'C*', substr( $c, 0, $len ) );
 	if ( 2 === $len ) {
 		return ( ( $uchr[1] & 0x1F ) << 6 ) + ( $uchr[2] & 0x3F );
 	}
@@ -70,7 +70,7 @@ function unfc_utf8_ints( $c ) {
 		return array( 0, 0, 0, $c );
 	}
 	if ( $c < 0x800 ) {
-		return array( 0, 0, 0xc0 | $c >> 6 , 0x80 | $c & 0x3f );
+		return array( 0, 0, 0xc0 | $c >> 6, 0x80 | $c & 0x3f );
 	}
 	if ( $c < 0x10000 ) {
 		return array( 0, 0xe0 | $c >> 12, 0x80 | $c >> 6 & 0x3f, 0x80 | $c & 0x3f );
@@ -346,7 +346,7 @@ function unfc_utf8_ranges_from_codepoints( $codepoints ) {
 }
 
 /**
- * Calculate the Unicode (UTF-16) ranges from unicode codepoints.
+ * Calculate the Unicode (UCS) ranges from unicode codepoints.
  */
 function unfc_unicode_ranges_from_codepoints( $codepoints ) {
 	$ranges = array();
@@ -381,7 +381,7 @@ function unfc_unicode_ranges_from_codepoints( $codepoints ) {
 }
 
 /**
- * Calculate the Unicode (UTF-16) alternatives from unicode codepoints.
+ * Calculate the Unicode (UCS) alternatives from unicode codepoints.
  */
 function unfc_unicode_regex_chars_from_codepoints( $codepoints ) {
 	$regex_alts = '';
@@ -439,11 +439,11 @@ function unfc_parse_unicode_data( $file, $callback ) {
 	// Read the file.
 
 	if ( false === ( $get = file_get_contents( $file ) ) ) {
-		error_log( "unfc_parse_unicode_data: failed to read file '$file'" );
+		error_log( __FUNCTION__ . "(): failed to read file \"$file\"" );
 		return false;
 	}
 
-	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 	$first = 'First>';
 	$first_len_minus = -strlen( $first );
@@ -471,11 +471,13 @@ function unfc_parse_unicode_data( $file, $callback ) {
 				$last_cp = hexdec( $parts[0] );
 				for ( $cp = $first_cp + 1; $cp <= $last_cp; $cp++ ) {
 					if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, $last_cp ) ) ) {
-						error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
+						error_log( __FUNCTION__ . "(): user func fail line_num=$line_num" );
+						return false;
 					}
 				}
 			} else {
-				error_log( "unfc_parse_unicode_data: invalid first/last pair line_num=$line_num" );
+				error_log( __FUNCTION__ . "(): invalid first/last pair line_num=$line_num" );
+				return false;
 			}
 			$in_interval = false;
 		} else {
@@ -485,7 +487,8 @@ function unfc_parse_unicode_data( $file, $callback ) {
 				$first_cp = $cp;
 			}
 			if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $name, $parts, $in_interval, $first_cp, 0 /*$last_cp*/ ) ) ) {
-				error_log( "unfc_parse_unicode_data: user func fail line_num=$line_num" );
+				error_log( __FUNCTION__ . "(): user func fail line_num=$line_num" );
+				return false;
 			}
 		}
 	}
@@ -503,11 +506,11 @@ function unfc_parse_scripts( $file, $callback ) {
 	// Read the file.
 
 	if ( false === ( $get = file_get_contents( $file ) ) ) {
-		error_log( "unfc_parse_scripts: failed to read file '$file'" );
+		error_log( __FUNCTION__ . "(): failed to read file '$file'" );
 		return false;
 	}
 
-	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip newlines.
+	$lines = array_map( 'unfc_get_cb', explode( "\n", $get ) ); // Strip carriage returns.
 
 	// Parse the file.
 
@@ -537,13 +540,15 @@ function unfc_parse_scripts( $file, $callback ) {
 			$last_cp = hexdec( $codes[1] );
 			for ( $cp = $first_cp; $cp <= $last_cp; $cp++ ) {
 				if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $script, $parts, true /*$in_interval*/, $first_cp, $last_cp ) ) ) {
-					error_log( "unfc_parse_scripts: user func fail line_num=$line_num" );
+					error_log( __FUNCTION__ . "(): user func fail line_num=$line_num" );
+					return false;
 				}
 			}
 		} else {
 			$cp = hexdec( $code );
 			if ( false === call_user_func_array( $callback, array( &$codepoints, $cp, $script, $parts, false /*$in_interval*/, 0 /*$first_cp*/, 0 /*$last_cp*/ ) ) ) {
-				error_log( "unfc_parse_scripts: user func fail line_num=$line_num" );
+				error_log( __FUNCTION__ . "(): user func fail line_num=$line_num" );
+				return false;
 			}
 		}
 	}
@@ -748,10 +753,61 @@ function unfc_icu_version() {
 }
 
 /**
- * Strip newlines callback.
+ * Strip carriage returns callback.
  */
 function unfc_get_cb( $el ) {
 	return rtrim( $el, "\r" );
+}
+
+/**
+ * Return UTF-8 of space-separated hex entry in Unicode file.
+ */
+function unfc_utf8_entry( $entry, &$char_cnt = -1 ) {
+    if ( ! $entry ) {
+        return '';
+    }
+    $chars = explode( ' ', $entry );
+    $chars = array_map( 'hexdec', $chars );
+    $chars = array_map( 'unfc_utf8_chr', $chars );
+	if ( -1 !== $char_cnt ) {
+		$char_cnt = count( $chars );
+	}
+    return implode( '', $chars );
+}
+
+/**
+ * Escape for output as PHP string.
+ */
+function unfc_out_esc( $str ) {
+    return str_replace( array( '\\', '\'' ), array( '\\\\', '\\\'' ), $str );
+}
+
+/**
+ * Output a PHP array file.
+ */
+function unfc_output_array_file( $array, $file, $unicode_version, $ucd_name ) {
+	$out = array();
+	$out[] =  '<?php';
+	$out[] = '';
+	$out[] = 'return array( // https://www.unicode.org/Public/' . $unicode_version . '/ucd/' . $ucd_name;
+
+	foreach ( $array as $code => $entry ) {
+		if ( is_int( $entry ) ) {
+			$out[] = '  \'' . $code . '\' => ' . $entry . ',';
+		} elseif( is_array( $entry ) ) {
+			if ( $entry[1] ) {
+				$out[] = '  \'' . unfc_out_esc( $code ) . '\' => array(\'' . unfc_out_esc( $entry[0] ) . '\'),'; // Use type being array as flag true to save space.
+			} else {
+				$out[] = '  \'' . unfc_out_esc( $code ) . '\' => \'' . unfc_out_esc( $entry[0] ) . '\',';
+			}
+		} else {
+			$out[] = '  \'' . unfc_out_esc( $code ) . '\' => \'' . unfc_out_esc( $entry ) . '\',';
+		}
+	}
+	$out[] = ');';
+	$out[] = '';
+
+	return file_put_contents( $file, implode( "\n", $out ) );
 }
 
 /**

@@ -796,6 +796,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 		$char_combining_ypogegrammeni = self::chr( 0x0345 ); // COMBINING GREEK YPOGEGRAMMENI
 		$char_iota_tonos = self::chr( 0x03AF ); // GREEK SMALL LETTER IOTA WITH TONOS
 		$char_alpha_tonos = self::chr( 0x03AC ); // GREEK SMALL LETTER ALPHA WITH TONOS
+		$char_sharp_s = self::chr( 0xDF ); // LATIN SMALL LETTER SHARP S
+		$char_SHARP_S = self::chr( 0x1E9E ); // LATIN CAPITAL LETTER SHARP S
 
 		$ret = array(
 			array('ABC', 'abc'),
@@ -826,6 +828,8 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 			array( $char_eta_ypogegrammeni, $char_eta . $char_iota ),
 			array( $char_ALPHA . $char_combining_ypogegrammeni . $char_combining_acute /* Non-normalized */, $char_alpha . $char_iota_tonos ),
 			array( $char_ALPHA . $char_combining_acute . $char_combining_ypogegrammeni /* Normalized */, $char_alpha_tonos . $char_iota ),
+			array( $char_sharp_s, 'ss' ),
+			array( $char_SHARP_S, 'ss' ),
 
 			array( self::chr( 0xAC00 ) /* HANGUL SYLLABLE GA */, self::chr( 0xAC00 ) ),
 			array( self::chr( 0xAC01 ) /* HANGUL SYLLABLE GAG */, self::chr( 0xAC01 ) ),
@@ -855,6 +859,22 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 		$ret[] = array( $concat_str, $concat_expected );
 
 		return $ret;
+	}
+
+	function test_normalization_form_nfkc_cf_all_chars() {
+		if ( ! class_exists( 'Normalizer' ) ) {
+			$this->markTestSkipped( 'No Normalizer class' );
+		}
+		if ( ! self::$icu_unorm2 ) {
+			$this->markTestSkipped( 'Requires PHP >= 7.3 linked with ICU >= 56' );
+		}
+		for ($i = 0; $i <= 0x10ffff; $i++) {
+			$char = self::chr( $i );
+			if ( self::$REIWA !== $char || ! self::$ignore_REIWA ) {
+				$err_msg = "0x" . dechex( $i ) . " char=$char";
+				$this->assertSame( Normalizer::normalize( $char, Normalizer::NFKC_CF ), UNFC_Normalizer::normalize( $char, UNFC_Normalizer::NFKC_CF ), $err_msg );
+			}
+		}
 	}
 
 	/**
@@ -1041,6 +1061,21 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 				UNFC_Normalizer::NFKC_CF => null,
 			) ),
 		);
+	}
+
+	function test_get_raw_decomposition_all_chars() {
+		if ( ! method_exists( 'Normalizer', 'getRawDecomposition' ) ) {
+			$this->markTestSkipped( 'No Normalizer::getRawDecomposition() method' );
+		}
+		for ($i = 0; $i <= 0x10ffff; $i++) {
+			$char = self::chr( $i );
+			$err_msg = "0x" . dechex( $i ) . " char=$char";
+			$this->assertSame( Normalizer::getRawDecomposition( $char ), UNFC_Normalizer::getRawDecomposition( $char ), $err_msg );
+			if ( self::$REIWA !== $char || ! self::$ignore_REIWA ) {
+				$this->assertSame( Normalizer::getRawDecomposition( $char, Normalizer::NFKD ), UNFC_Normalizer::getRawDecomposition( $char, UNFC_Normalizer::NFKD ), $err_msg );
+				$this->assertSame( Normalizer::getRawDecomposition( $char, Normalizer::NFKC_CF ), UNFC_Normalizer::getRawDecomposition( $char, UNFC_Normalizer::NFKC_CF ), $err_msg );
+			}
+		}
 	}
 
 	/**

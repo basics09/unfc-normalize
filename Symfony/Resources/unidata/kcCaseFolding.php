@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return array( // https://www.unicode.org/Public/12.1.0/ucd/DerivedNormalizationProps.txt
   'A' => 'a',
   'B' => 'b',
   'C' => 'c',
@@ -6220,6 +6220,4 @@ return array(
   '鼖' => '鼖',
   '鼻' => '鼻',
   '𪘀' => '𪘀',
-  '󠀀' => '',
-  '󠀁' => '',
 );
