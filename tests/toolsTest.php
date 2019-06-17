@@ -9,14 +9,30 @@
 class TestUNFC_Tools extends WP_UnitTestCase {
 
 	static $pcre_utf8 = false;
+	static $temp_dir = null;
 
 	public static function wpSetUpBeforeClass() {
+		// Note This gets called before each individual test for some sad broken reason.
 		$dirname = dirname( dirname( __FILE__ ) );
 		require_once $dirname . '/tools/functions.php';
 		require_once $dirname . '/Symfony/unfc_regex_alts.php';
 		require_once $dirname . '/tests/unfc_regex_alts_u-debug.php';
 
 		self::$pcre_utf8 = false !== @preg_match( '//u', '' );
+
+		self::$temp_dir = sys_get_temp_dir() . '/unfc-normalize-test';
+		if ( ! file_exists( self::$temp_dir ) ) {
+			mkdir( self::$temp_dir );
+		}
+	}
+
+	public static function wpTearDownAfterClass() {
+		if ( self::$temp_dir && file_exists( self::$temp_dir ) ) {
+			foreach ( glob( self::$temp_dir . '/*' ) as $tmp_file ) {
+				unlink( $tmp_file );
+			}
+			rmdir( self::$temp_dir );
+		}
 	}
 
 	function setUp() {
@@ -363,10 +379,65 @@ class TestUNFC_Tools extends WP_UnitTestCase {
 
 	/**
 	 */
+    function test_unfc_utf8_preg_fmt_range_entry() {
+		$this->assertSame( '\xff', unfc_utf8_preg_fmt_range_entry( 0xff ) );
+		$this->assertSame( '\x0a', unfc_utf8_preg_fmt_range_entry( array( 0xa, 0xa ) ) );
+		$this->assertSame( '\x0a\x0b', unfc_utf8_preg_fmt_range_entry( array( 0xa, 0xb ) ) );
+		$this->assertSame( '\x0a-\x0c', unfc_utf8_preg_fmt_range_entry( array( 0xa, 0xc ) ) );
+	}
+
+	/**
+	 */
     function test_unfc_get_cb() {
 		$in = "\rasdfasdf\n\r";
 		$expected = "\rasdfasdf\n";
 		$out = unfc_get_cb( $in );
+		$this->assertSame( $expected, $out );
+	}
+
+	/**
+	 */
+    function test_unfc_utf8_entry() {
+		$in = "0000 FFFD 10FFFF";
+		$expected = "\x00\xef\xbf\xbd\xf4\x8f\xbf\xbf";
+		$out = unfc_utf8_entry( $in, $char_cnt );
+		$this->assertSame( $expected, $out );
+		$this->assertSame( 3, $char_cnt );
+		$out = unfc_utf8_entry( $in );
+		$this->assertSame( $expected, $out );
+	}
+
+	/**
+	 */
+    function test_unfc_out_esc() {
+		$in = "a\\\r'\\\n";
+		$expected = "a\\\\\r\\'\\\\\n";
+		$out = unfc_out_esc( $in );
+		$this->assertSame( $expected, $out );
+	}
+
+	/**
+	 */
+    function test_unfc_output_array_file() {
+		$arr = array( 'a' => 2, '\'' => 'blah', '', '\\' => array( 'flah', true ), 'c' => array( 'glah', false ) );
+		$file = self::$temp_dir . '/output_array_file.php';
+		$unicode_version = '11.0.0';
+		$ucd_name = 'Fake.txt';
+		$this->assertTrue( false !== unfc_output_array_file( $arr, $file, $unicode_version, $ucd_name ) );
+		$out = file_get_contents( $file );
+		unlink( $file );
+		$expected = <<<EOD
+<?php
+
+return array( // https://www.unicode.org/Public/11.0.0/ucd/Fake.txt
+  'a' => 2,
+  '\'' => 'blah',
+  '0' => '',
+  '\\\\' => array('flah'),
+  'c' => 'glah',
+);
+
+EOD;
 		$this->assertSame( $expected, $out );
 	}
 
