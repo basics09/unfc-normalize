@@ -9,15 +9,16 @@
  * file that was distributed with this source code.
  */
 
-// gitlost removed namespace stuff, renamed to UNFC_BaseNormalizer to avoid conflicts.
+// gitlost removed namespace stuff, renamed to UNFC_Normalizer (UNFC_BaseNormalizer) to avoid conflicts.
 // gitlost use unfc_is_valid_utf8() and generated regex alternatives, added full isNormalized() check.
+// gitlost made PHP 7.3 compat by implementing NFKC_CF and getRawDecomposition().
 
 // namespace Symfony\Polyfill\Intl\Normalizer; // gitlost
 
 /**
- * BaseNormalizer is the parent of the Normalizer class provided by the intl extension.
+ * UNFC_BaseNormalizer is the parent and main implementation of the UNFC_Normalizer polyfill class.
  *
- * It has been validated with Unicode 9.0.0 Normalization Conformance Test. // gitlost
+ * It has been validated with Unicode 12.1.0 Normalization Conformance Test. // gitlost
  * See http://www.unicode.org/reports/tr15/ for detailed info about Unicode normalizations.
  *
  * @author Nicolas Grekas <p@tchwork.com>

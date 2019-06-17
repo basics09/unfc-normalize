@@ -206,6 +206,7 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 
         $this->assertTrue( UNFC_Normalizer::isNormalized( '' ) );
         $this->assertTrue( UNFC_Normalizer::isNormalized( 'abc' ) );
+        $this->assertFalse( UNFC_Normalizer::isNormalized( 'abc', UNFC_Normalizer::NONE ) );
 
         $this->assertTrue( UNFC_Normalizer::isNormalized( $c ) );
         $this->assertTrue( UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFC ) );
@@ -234,6 +235,13 @@ class TestUNFC_Normalizer extends WP_UnitTestCase {
 
 			$this->assertSame( Normalizer::isNormalized( '' ), UNFC_Normalizer::isNormalized( '' ) );
 			$this->assertSame( Normalizer::isNormalized( 'abc' ), UNFC_Normalizer::isNormalized( 'abc' ) );
+			if ( version_compare( PHP_VERSION, '8', '<' ) ) { // Normalizer::NONE removed PHP 8.
+				if ( self::$icu_unorm2 ) { // Normalizer::NONE deprecated PHP 7.3 built against ICU 56 so suppress warning.
+					$this->assertSame( @Normalizer::isNormalized( 'abc', Normalizer::NONE ), UNFC_Normalizer::isNormalized( 'abc', UNFC_Normalizer::NONE ) );
+				} else {
+					$this->assertSame( Normalizer::isNormalized( 'abc', Normalizer::NONE ), UNFC_Normalizer::isNormalized( 'abc', UNFC_Normalizer::NONE ) );
+				}
+			}
 
 			$this->assertSame( Normalizer::isNormalized( $c ), UNFC_Normalizer::isNormalized( $c ) );
 			$this->assertSame( Normalizer::isNormalized( $c, Normalizer::NFC ), UNFC_Normalizer::isNormalized( $c, UNFC_Normalizer::NFC ) );
