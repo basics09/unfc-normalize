@@ -201,14 +201,13 @@ class UNFC_Normalize {
 				require self::$dirname . '/includes/debug.php';
 			}
 			require self::$dirname . '/includes/class-unfc-normalize-command.php';
-			require self::$dirname . '/includes/command.php';
 			return;
 		}
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
 		// Don't run anything else in the plugin, if we're on an incompatible system.
-		if ( ! self::compatible_version() || ! $this->is_blog_utf8() ) {
+		if ( ! self::compatible_version() || ! self::is_blog_utf8() ) {
 			return;
 		}
 
@@ -247,7 +246,7 @@ class UNFC_Normalize {
 	/**
 	 * Helper to test if using UTF-8.
 	 */
-	function is_blog_utf8() {
+	static function is_blog_utf8() {
 		return in_array( strtoupper( get_option( 'blog_charset' ) ), array( 'UTF-8', 'UTF8' ), true );
 	}
 
@@ -1284,6 +1283,11 @@ class UNFC_Normalize {
 					</p>
 				<?php } ?>
 				<input id="unfc_db_check_items" class="button" name="unfc_db_check_items" value="<?php echo esc_attr( $value ); ?>" type="submit">
+				<?php if ( ! $rescan ) { ?>
+					<p class="unfc_db_check_form_hide">
+						<?php _e( 'If non-normalized data is found, you will then be asked whether you wish to update.', 'unfc-normalize' ); ?>
+					</p>
+				<?php } ?>
 				<p>
 					<?php _e( 'Scanning the database can take a long time depending on the amount and type of data you have.', 'unfc-normalize' ); ?>
 				</p>
@@ -1372,6 +1376,11 @@ class UNFC_Normalize {
 					</p>
 				<?php } ?>
 				<input id="unfc_db_check_slugs" class="button" name="unfc_db_check_slugs" value="<?php echo esc_attr( $value ); ?>" type="submit">
+				<?php if ( ! $rescan ) { ?>
+					<p class="unfc_db_check_form_hide">
+						<?php _e( 'You can then choose from the list which slugs to normalize using "Bulk Actions > Normalize".', 'unfc-normalize' ); ?>
+					</p>
+				<?php } ?>
 				<p>
 					<?php _e( 'Scanning the slugs can take a long time depending on the amount and type of data you have.', 'unfc-normalize' ); ?>
 				</p>
@@ -1818,7 +1827,11 @@ class UNFC_Normalize {
 			/* translators: %s: formatted number of items normalized. */
 			$admin_notices[] = array( 'updated', sprintf( _n( '%s item normalized.', '%s items normalized.', $num_updates, 'unfc-normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
+			if ( $num_locked || $num_fails ) {
+				$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
+			} else {
+				$admin_notices[] = array( 'updated', __( 'No non-normalized data detected - nothing updated!' ) );
+			}
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */
@@ -2141,7 +2154,7 @@ class UNFC_Normalize {
 
 		// Search for percent-encoded (urlencoded) characters in slugs that are >= U+0300. Equivalent to '[\xcc-\xff]'.
 		// Note this is only used to flag possible non-normalized chars that have been percent-encoded, not to fix as slugs aren't reliably urlencoded.
-		static $slug_regexp = "'%c[c-f]|%[def][0-9a-f]'"; // Don't bother restricting \xf? to <= \xf0 (keep it as simple as possible).
+		static $slug_regexp = "'%c[c-f]|%[def][0-9a-f]'"; // Don't bother restricting \xf? to \xf0 (keep it as simple as possible).
 
 		$ret = '';
 
@@ -2262,7 +2275,11 @@ class UNFC_Normalize {
 			/* translators: %s: formatted number of slugs normalized. */
 			$admin_notices[] = array( 'updated', sprintf( _n( '%s slug normalized.', '%s slugs normalized.', $num_updates, 'unfc-normalize' ), number_format_i18n( $num_updates ) ) );
 		} else {
-			$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
+			if ( $num_locked || $num_fails ) {
+				$admin_notices[] = array( 'updated', __( 'Nothing updated!', 'unfc-normalize' ) );
+			} else {
+				$admin_notices[] = array( 'updated', __( 'No non-normalized percent-encoded slugs detected - nothing updated!' ) );
+			}
 		}
 		if ( $num_locked ) {
 			/* translators: %s: formatted number of items locked. */

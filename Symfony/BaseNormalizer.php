@@ -197,7 +197,7 @@ class UNFC_BaseNormalizer // gitlost
                 self::$s = self::$form = self::$normalize = null; // Clear cache (try to keep memory usage to a min).
                 return $result;
             }
-            self::$s = self::$form = self::$normalize = null; // Clear cache (try to keep memory usage to a min).
+            self::$s = self::$form = self::$normalize = null; // Clear cache.
         }
 
         if (UNFC_Normalizer::NONE === $form) {

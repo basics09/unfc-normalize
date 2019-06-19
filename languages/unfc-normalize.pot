@@ -231,14 +231,14 @@ msgstr ""
 msgid "Select All"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:231
+#: includes/class-unfc-normalize.php:230
 #. translators: %s: url to admin plugins page.
 msgid ""
 "The plugin \"UNFC Normalize\" is not compatible with your system and can't "
 "be activated. <a href=\"%s\">Return to Plugins page.</a>"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:239
+#: includes/class-unfc-normalize.php:238
 #. translators: %1$s: lowest WordPress version tested; %2$s: highest WordPress
 #. version tested; %3$s: user's current WordPress version.
 msgid ""
@@ -247,224 +247,244 @@ msgid ""
 "%3$s."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:333
+#: includes/class-unfc-normalize.php:332
 msgid "Plugin deactivated!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:334
+#: includes/class-unfc-normalize.php:333
 msgid ""
 "The plugin \"UNFC Normalize\" is not compatible with your system and has "
 "been deactivated."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:862
+#: includes/class-unfc-normalize.php:861
 msgid "Please wait..."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:993 includes/class-unfc-normalize.php:1214
+#: includes/class-unfc-normalize.php:992 includes/class-unfc-normalize.php:1213
 msgid "UNFC Nörmalize Database Check"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:993
+#: includes/class-unfc-normalize.php:992
 msgid "UNFC Nörm Db Check"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1007
-#: includes/class-unfc-normalize.php:1207
+#: includes/class-unfc-normalize.php:1006
+#: includes/class-unfc-normalize.php:1206
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1273
+#: includes/class-unfc-normalize.php:1272
 msgid "Rescan the Database"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1275
+#: includes/class-unfc-normalize.php:1274
 msgid "Scan the Database"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1283
+#: includes/class-unfc-normalize.php:1282
 msgid "You can scan the database for non-normalized data (nothing will be updated):"
 msgstr ""
 
 #: includes/class-unfc-normalize.php:1288
 msgid ""
+"If non-normalized data is found, you will then be asked whether you wish to "
+"update."
+msgstr ""
+
+#: includes/class-unfc-normalize.php:1292
+msgid ""
 "Scanning the database can take a long time depending on the amount and type "
 "of data you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1305
+#: includes/class-unfc-normalize.php:1309
 msgid ""
 "You can normalize the non-normalized data found in the database. The "
 "database <strong>will be updated</strong>."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1308
+#: includes/class-unfc-normalize.php:1312
 msgid ""
 "<strong>Important:</strong> before updating, please <a "
 "href=\"https://codex.wordpress.org/WordPress_Backups\">back up your "
 "database</a>."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1310
+#: includes/class-unfc-normalize.php:1314
 msgid "Normalize All"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1312
+#: includes/class-unfc-normalize.php:1316
 msgid ""
 "Normalizing can take a long time depending on the amount and type of data "
 "you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1328
+#: includes/class-unfc-normalize.php:1332
 #. translators: %1$s: formatted maximum number of non-normalized items listed;
 #. %2$s: formatted total number of non-normalized items found.
 msgid "First %1$s Non-Normalized Items of %2$s Found"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1332
+#: includes/class-unfc-normalize.php:1336
 msgid "Non-Normalized Items"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1358
+#: includes/class-unfc-normalize.php:1362
 msgid "Rescan Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1360
+#: includes/class-unfc-normalize.php:1364
 msgid "Scan Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1368
+#: includes/class-unfc-normalize.php:1372
 msgid ""
 "You can scan the database for slugs that could be percent-encoded from "
 "non-normalized data (nothing will be updated):"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1371
+#: includes/class-unfc-normalize.php:1375
 msgid "A list of posts and/or terms with suspect slugs will be displayed."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1376
+#: includes/class-unfc-normalize.php:1381
+msgid ""
+"You can then choose from the list which slugs to normalize using \"Bulk "
+"Actions > Normalize\"."
+msgstr ""
+
+#: includes/class-unfc-normalize.php:1385
 msgid ""
 "Scanning the slugs can take a long time depending on the amount and type of "
 "data you have."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1392
+#: includes/class-unfc-normalize.php:1401
 #. translators: %1$s: formatted maximum number of non-normalized slugs listed;
 #. %2$s: formatted total number of non-normalized slugs found.
 msgid "First %1$s Non-Normalized Slugs of %2$s Found"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1396
+#: includes/class-unfc-normalize.php:1405
 msgid "Non-Normalized Slugs"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1521
+#: includes/class-unfc-normalize.php:1530
 msgid "Database error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1522
+#: includes/class-unfc-normalize.php:1531
 msgid "Meta data error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1523
+#: includes/class-unfc-normalize.php:1532
 msgid "Parameters error."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1524
+#: includes/class-unfc-normalize.php:1533
 msgid "Transient has expired. Please re-scan."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1525
+#: includes/class-unfc-normalize.php:1534
 msgid "Data out of sync!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1526
+#: includes/class-unfc-normalize.php:1535
 msgid "No items selected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1601
-#: includes/class-unfc-normalize.php:2037
+#: includes/class-unfc-normalize.php:1610
+#: includes/class-unfc-normalize.php:2050
 msgid "..."
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1638
+#: includes/class-unfc-normalize.php:1647
 #. translators: %s: formatted number of items detected.
 msgid "%s non-normalized item detected."
 msgid_plural "%s non-normalized items detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1641
+#: includes/class-unfc-normalize.php:1650
 msgid "<strong>No</strong> non-normalized data detected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1819
+#: includes/class-unfc-normalize.php:1828
 #. translators: %s: formatted number of items normalized.
 msgid "%s item normalized."
 msgid_plural "%s items normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1821
-#: includes/class-unfc-normalize.php:2265
+#: includes/class-unfc-normalize.php:1831
+#: includes/class-unfc-normalize.php:2279
 msgid "Nothing updated!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:1826
+#: includes/class-unfc-normalize.php:1833
+msgid "No non-normalized data detected - nothing updated!"
+msgstr ""
+
+#: includes/class-unfc-normalize.php:1839
 #. translators: %s: formatted number of items locked.
 msgid "%s item not normalized, somebody is editing it."
 msgid_plural "%s items not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:1832
+#: includes/class-unfc-normalize.php:1845
 #. translators: %s: formatted number of items that failed to normalize.
 msgid "%s item not normalized, failed to normalize."
 msgid_plural "%s items not normalized, failed to normalize."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2071
+#: includes/class-unfc-normalize.php:2084
 #. translators: %s: formatted number of percent-encoded items detected.
 msgid "%s non-normalized percent-encoded slug detected."
 msgid_plural "%s non-normalized percent-encoded slugs detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2075
+#: includes/class-unfc-normalize.php:2088
 msgid "<strong>No</strong> non-normalized percent-encoded slugs detected!"
 msgstr ""
 
-#: includes/class-unfc-normalize.php:2263
+#: includes/class-unfc-normalize.php:2276
 #. translators: %s: formatted number of slugs normalized.
 msgid "%s slug normalized."
 msgid_plural "%s slugs normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2270
+#: includes/class-unfc-normalize.php:2281
+msgid "No non-normalized percent-encoded slugs detected - nothing updated!"
+msgstr ""
+
+#: includes/class-unfc-normalize.php:2287
 #. translators: %s: formatted number of items locked.
 msgid "%s slug not normalized, somebody is editing it."
 msgid_plural "%s slugs not normalized, somebody is editing them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2276
+#: includes/class-unfc-normalize.php:2293
 #. translators: %s: formatted number of slugs not found.
 msgid "%s slug not normalized, no longer exists."
 msgid_plural "%s slugs not normalized, no longer exist."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2282
+#: includes/class-unfc-normalize.php:2299
 #. translators: %s: formatted number of slugs not non-normalized.
 msgid "%s slug not normalized, no longer non-normalized."
 msgid_plural "%s slugs not normalized, no longer non-normalized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-unfc-normalize.php:2288
+#: includes/class-unfc-normalize.php:2305
 #. translators: %s: formatted number of slugs that failed to normalize.
 msgid "%s slug not normalized, failed to normalize."
 msgid_plural "%s slugs not normalized, failed to normalize."
@@ -476,13 +496,11 @@ msgstr[1] ""
 #: tools/gen_remove_accents_missing.php:53
 #: tools/gen_remove_accents_ranges.php:48
 #: tools/gen_script_test_combining.php:44 tools/gen_trans_latin_ascii.php:63
-#: tools/gen_unidata.php:122
 #. translators: %s: file name
 msgid "Could not read unicode data file \"%s\""
 msgstr ""
 
 #: tools/gen_combining_class.php:36 tools/gen_unfc_ins.php:132
-#: tools/gen_unfc_regex_alts.php:141
 #. translators: %s: file name
 msgid "Could not read derived combining class file \"%s\""
 msgstr ""
@@ -497,26 +515,16 @@ msgstr ""
 msgid "Could not read scripts file \"%s\""
 msgstr ""
 
-#: tools/gen_unfc_ins.php:33 tools/gen_unfc_regex_alts.php:37
+#: tools/gen_unfc_ins.php:33
 #. translators: %s: file name
 msgid "Could not read UCD derived normalization properties file \"%s\""
 msgstr ""
 
-#: tools/gen_unfc_ins.php:117 tools/gen_unfc_regex_alts.php:126
+#: tools/gen_unfc_ins.php:117
 #. translators: %s: file name
 msgid ""
 "Missing NO or MAYBE codepoints in UCD derived normalization properties file "
 "\"%s\""
-msgstr ""
-
-#: tools/gen_unidata.php:41
-#. translators: %s: file name
-msgid "Could not read composition exclusions file \"%s\""
-msgstr ""
-
-#: tools/gen_unidata.php:167
-#. translators: %s: file name
-msgid "Could not read derived normalization properties file \"%s\""
 msgstr ""
 
 #. Plugin Name of the plugin/theme

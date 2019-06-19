@@ -87,6 +87,7 @@ module.exports = function( grunt ) { //The wrapper function
 							'../unfc-normalize/includes/class-unfc-db_check-list-table.php',
 							'../unfc-normalize/includes/class-unfc-list-table.php',
 							'../unfc-normalize/includes/class-unfc-normalize.php',
+							'../unfc-normalize/includes/class-unfc-normalize-command.php',
 							'../unfc-normalize/includes/debug.php',
 							'../unfc-normalize/js/ie8.js',
 							'../unfc-normalize/js/ie8.min.js',
