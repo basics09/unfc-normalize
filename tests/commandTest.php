@@ -70,7 +70,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$output = $return_var = null;
 		$cmd = 'wp unfc-normalize scan-db --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
 		exec( $cmd, $output, $return_var );
-		$this->assertSame( 1, count( $output ) );
+		$this->assertSame( 1, count( $output ), implode( "\n", $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected!', $output[0] );
 
 		// Same as default.
