@@ -96,4 +96,6 @@ script:
 
 after_success:
 - if [[ -v CODE_COVERAGE ]]; then env -u TRAVIS_CMD && bash <(curl -s https://codecov.io/bash); fi
+
+after_failure:
 - cat /var/log/php_errors.log || true
