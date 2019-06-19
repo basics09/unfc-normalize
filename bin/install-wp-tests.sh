@@ -116,7 +116,7 @@ install_test_suite() {
 	sed $ioption "s/yourpasswordhere/$DB_PASS/" wp-tests-config.php
 	sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
 	# For WP-CLI
-	ln -s wp-tests-config.php wp-config.php
+	sed $ioption "s|'wp_'|'wptests_'|" "$WP_CORE_DIR/wp-config.php"
 }
 
 install_wp

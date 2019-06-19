@@ -27,7 +27,6 @@
 				<file>Symfony/NormalizerO.php</file>
 				<file>Symfony/NormalizerS.php</file>
 				<file>Symfony/unfc_ins.php</file>
-				<file>includes/class-unfc-normalize-command.php</file>
 				<file>includes/command.php</file>
 				<file>tools/gen_cat_regex_alts.php</file>
 				<file>tools/gen_combining_class.php</file>

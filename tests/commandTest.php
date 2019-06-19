@@ -64,29 +64,30 @@ class TestUNFC_Command extends WP_UnitTestCase {
 	function test_scan_db_command() {
 
 		$dirname = dirname( __FILE__ );
+		$wp_fmt = 'wp unfc-normalize scan-db %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
 
 		// No non-normalized.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
-		$this->assertSame( 1, count( $output ), implode( "\n", $output ) );
+		$this->assertSame( 1, count( $output ), $cmd . "\n" . implode( "\n", $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected!', $output[0] );
 
 		// Same as default.
 		$output2 = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --format=table --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=table' );
 		exec( $cmd, $output2, $return_var );
 		$this->assertSame( $output, $output2 );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --format=csv --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=csv' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected!', $output[0] );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --quiet --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--quiet' );
 		exec( $cmd, $output, $return_var );
 		$this->assertTrue( empty( $output ) );
 
@@ -122,7 +123,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 7, $cnt );
@@ -144,14 +145,14 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$this->assertTrue( false !== strpos( $concat, 'option_value' ) );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --format=csv --quiet --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=csv --quiet' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 6, $cnt );
 		$this->assertSame( 'ID,Title,Type,Subtype,"Field (1st detected only)"', $output[0] );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --format=count --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=count' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( '5', $output[0] );
@@ -169,7 +170,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 
 		// Make sure everything gone.
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-db --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected!', $output[0] );
@@ -180,9 +181,10 @@ class TestUNFC_Command extends WP_UnitTestCase {
 	function test_db_command() {
 
 		$dirname = dirname( __FILE__ );
+		$wp_fmt = 'wp unfc-normalize db %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize db --yes --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--yes' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected - nothing updated!', $output[0] );
@@ -208,7 +210,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'echo y | wp unfc-normalize db --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = 'echo y | ' . sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 2, $cnt ); // Confirmation & success message go on to one line.
@@ -222,7 +224,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize db --yes --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--yes' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized data detected - nothing updated!', $output[0] );
@@ -233,29 +235,30 @@ class TestUNFC_Command extends WP_UnitTestCase {
 	function test_scan_slugs_command() {
 
 		$dirname = dirname( __FILE__ );
+		$wp_fmt = 'wp unfc-normalize scan-slugs %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
 
 		// No non-normalized.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized percent-encoded slugs detected!', $output[0] );
 
 		// Same as default.
 		$output2 = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --format=table --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=table' );
 		exec( $cmd, $output2, $return_var );
 		$this->assertSame( $output, $output2 );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --format=csv --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=csv' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized percent-encoded slugs detected!', $output[0] );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --quiet --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--quiet' );
 		exec( $cmd, $output, $return_var );
 		$this->assertTrue( empty( $output ) );
 
@@ -284,7 +287,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 5, $cnt );
@@ -298,14 +301,14 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$this->assertTrue( false !== strpos( $concat, $term1_name ) );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --format=csv --quiet --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=csv --quiet' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 4, $cnt );
 		$this->assertSame( 'ID,Title,Type,Slug,Decoded,"If Normalized","Normalized Decoded"', $output[0] );
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --format=count --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--format=count' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( '3', $output[0] );
@@ -321,7 +324,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 
 		// Make sure everything gone.
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize scan-slugs --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized percent-encoded slugs detected!', $output[0] );
@@ -332,9 +335,10 @@ class TestUNFC_Command extends WP_UnitTestCase {
 	function test_slugs_command() {
 
 		$dirname = dirname( __FILE__ );
+		$wp_fmt = 'wp unfc-normalize slugs %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize slugs --yes --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--yes' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized percent-encoded slugs detected - nothing updated!', $output[0] );
@@ -360,7 +364,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'echo y | wp unfc-normalize slugs --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = 'echo y | ' . sprintf( $wp_fmt, '' );
 		exec( $cmd, $output, $return_var );
 		$cnt = count( $output );
 		$this->assertSame( 2, $cnt ); // Confirmation & success message go on to one line.
@@ -376,7 +380,7 @@ class TestUNFC_Command extends WP_UnitTestCase {
 		$wpdb->query( 'COMMIT' ); // Need to write data so wp-cli can see it.
 
 		$output = $return_var = null;
-		$cmd = 'wp unfc-normalize slugs --yes --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
+		$cmd = sprintf( $wp_fmt, '--yes' );
 		exec( $cmd, $output, $return_var );
 		$this->assertSame( 1, count( $output ) );
 		$this->assertSame( 'Success: No non-normalized percent-encoded slugs detected - nothing updated!', $output[0] );
