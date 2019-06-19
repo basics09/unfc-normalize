@@ -4,7 +4,7 @@
  *
  * @group unfc
  * @group unfc_command
- * @require PHP 5.3
+ * @requires PHP 5.3
  */
 class TestUNFC_Command extends WP_UnitTestCase {
 
