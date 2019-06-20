@@ -8,7 +8,7 @@ fi
 WP_CLI_PHP_VERSION=$1
 
 if [[ $WP_CLI_PHP_VERSION = 5.3* ]]; then
-	wget -O wp-cli.phar https://github.com/wp-cli/wp-cli/releases/download/v2.0.1/wp-cli-2.0.1.phar
+	wget -O wp-cli.phar https://github.com/wp-cli/wp-cli/releases/download/v1.5.1/wp-cli-1.5.1.phar
 else
 	wget https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 fi

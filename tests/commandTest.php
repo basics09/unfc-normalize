@@ -62,6 +62,9 @@ class TestUNFC_Command extends WP_UnitTestCase {
     /**
      */
 	function test_scan_db_command() {
+		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+			$this->markTestSkipped( 'WP-CLI requires PHP >= 5.3' );
+		}
 
 		$dirname = dirname( __FILE__ );
 		$wp_fmt = 'wp unfc-normalize scan-db %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
@@ -179,6 +182,9 @@ class TestUNFC_Command extends WP_UnitTestCase {
     /**
      */
 	function test_db_command() {
+		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+			$this->markTestSkipped( 'WP-CLI requires PHP >= 5.3' );
+		}
 
 		$dirname = dirname( __FILE__ );
 		$wp_fmt = 'wp unfc-normalize db %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
@@ -233,6 +239,9 @@ class TestUNFC_Command extends WP_UnitTestCase {
     /**
      */
 	function test_scan_slugs_command() {
+		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+			$this->markTestSkipped( 'WP-CLI requires PHP >= 5.3' );
+		}
 
 		$dirname = dirname( __FILE__ );
 		$wp_fmt = 'wp unfc-normalize scan-slugs %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';
@@ -333,6 +342,9 @@ class TestUNFC_Command extends WP_UnitTestCase {
     /**
      */
 	function test_slugs_command() {
+		if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+			$this->markTestSkipped( 'WP-CLI requires PHP >= 5.3' );
+		}
 
 		$dirname = dirname( __FILE__ );
 		$wp_fmt = 'wp unfc-normalize slugs %s --path=' . ABSPATH . ' --require=' . $dirname . '/wp-cli-bootstrap.php 2>&1';

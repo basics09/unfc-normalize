@@ -82,8 +82,9 @@ No, it doesn't. Alas, such files would have to re-uploaded. However if (enough -
 
 = 1.0.7 (X Jun 2019) =
 * Update qunit; run in travis.
-* WP 5.2.1 compatible.
+* WP 5.2.2 compatible.
 * Unicode 12.1.0
+* WP-CLI command
 
 = 1.0.6 =
 * Require explicit define of UNFC_DEBUG. Move load of debug file to 'init'.
