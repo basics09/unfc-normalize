@@ -840,6 +840,11 @@ class UNFC_Normalize {
 	function enqueue_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		$rangyinputs_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '-src' : '';
+		
+		// Disable enqueuig of scripts in frontend.
+		if (!is_admin()) {
+			return;
+		}
 
 		// Load IE8 Array.prototype.reduceRight polyfill for unorm.
 		wp_enqueue_script( 'unfc-ie8', plugins_url( "js/ie8{$suffix}.js", UNFC_FILE ), array(), UNFC_VERSION, true /*in_footer*/ );
